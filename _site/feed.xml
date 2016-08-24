@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>wngn123-GitBlog</title>
+        <description>GitBlog是一个简单易用的Markdown博客系统</description>
+        <link>/</link>
+        <atom:link href="//feed.xml" rel="self" type="application/rss+xml" />
+        <pubDate>2016-08-24 14:08:37</pubDate>
+        <lastBuildDate>2016-08-24 14:08:37</lastBuildDate>
+        <generator>Gitblog v1.0</generator>
+                <item>
+            <title>OpenResty</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+date: 2015-08-24
+title: OpenResty
+tags: lua
+category: Lua
+status: publish
+summary: OpenResty
+--&gt;
+&lt;h2&gt;OpenResty 练习目录&lt;/h2&gt;
+&lt;p&gt;学习openresty&lt;/p&gt;
+&lt;h2&gt;相关shell脚本&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;    mkdir /home/work/openresty
+    cd /home/work/openresty
+    git clone https://github.com/wngn123/wngn-luastudy.git
+    cd wngn-luastudy
+    cp -rf /home/work/openresty/wngn-luastudy/src/openresty/lua /home/work/openresty/
+    cp -rf /home/work/openresty/wngn-luastudy/src/openresty/nginx /home/work/openresty/
+    sudo cp -rf /home/work/openresty/nginx/nginx.conf /home/local/openresty/nginx/conf/
+    sh /home/work/openresty/nginx/nginx_start.sh
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-24 14:00:33</pubDate>
+            <link>//blog/openresty.html</link>
+            <guid isPermaLink="true">//blog/openresty.html</guid>
+                                               <category>Lua</category>
+                                    </item>
+                <item>
+            <title>Java源码 Integer</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+date: 2015-08-24
+title: Java源码 Integer
+tags: java
+category: Java
+status: publish
+summary: public final class Integer extends Number implements Comparable&lt;Integer&gt;
+--&gt;
+&lt;h1&gt;Java源码 Integer&lt;/h1&gt;
+&lt;p&gt;Integer的签名如下，继承了Number类并实现Comparable接口&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public final class Integer extends Number implements Comparable&amp;lt;Integer&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Comparable接口强行对实现它的每个类的对象进行整体排序。此排序被称为该类的自然排序，类的 compareTo 方法被称为它的自然比较方法。实现此接口的对象列表（和数组）可以通过Collections.sort（和Arrays.sort）进行自动排序。实现此接口的对象可以用作有序映射表中的键或有序集合中的元素，无需指定比较器。强烈推荐（虽然不是必需的）使自然排序与 equals 一致。所谓与equals一致是指对于类C的每一个e1和e2来说，当且仅当 (e1.compareTo((Object)e2) == 0) 与e1.equals((Object)e2) 具有相同的布尔值时，类C的自然排序才叫做与equals一致 &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public interface Comparable&amp;lt;T&amp;gt; {
+    public int compareTo(T o);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Number为抽象类，提供了实数基本类型的互相转换方法：int,long,short,byte,float,double
+Number的基本实现类有java.lang.Byte，java.lang.Double，java.lang.Float，java.lang.Integer，java.lang.Long，java.lang.Short等&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public abstract class Number implements java.io.Serializable {
+    public abstract int intValue();
+    public abstract long longValue();
+    public abstract float floatValue();
+    public abstract double doubleValue();
+    public byte byteValue() {
+        return (byte)intValue();
+    }
+    public short shortValue() {
+        return (short)intValue();
+    }
+    private static final long serialVersionUID = -8742448824652078965L;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Integer类包装了int基本类型,所有Integer的实际值是存储在一个int类型的熟悉value上的，int存储占用4字节32位内存，第一位是符号位，所以int的最大值是2的31次幂减1，最小值是负2的31次幂，因此int的最大值是：0111 1111 1111 1111 1111 1111 1111 1111=0x7fffffff,int的最小值为负值，负数的表示为正值二进制的补码：
+```负数：正值的补码
+补码：反码加一
+源码：绝对值二进制
+反码：二进制按位取反&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;负数最小值的正值为2的31次幂，正值的二进制为：1000 0000 0000 0000 00000 0000 0000 0000，二进制取反之后为：0111 1111 1111 1111 1111 1111 1111 1111，则正值的补码为：1000 0000 0000 0000 00000 0000 0000 0000，即int的最小值为：0x80000000
+
+Integer有2个构造函数，可以传递一个int数字或者一个数字字符串，数字字符串会被转换成十进制的int数字。
+
+```java
+    private final int value;
+    public static final int MIN_VALUE = 0x80000000;
+    public static final int MAX_VALUE = 0x7fffffff;
+    public static final int SIZE = 32;//int存储位数
+
+    public Integer(int value) {
+        this.value = value;
+    }
+    public Integer(String s) throws NumberFormatException {
+        this.value = parseInt(s, 10);
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Integer的实例方法，Integer实现了从Number类和Comparable接口以及Object继承的方法。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public byte byteValue() {
+        return (byte)value;
+    }
+    public short shortValue() {
+        return (short)value;
+    }
+    public int intValue() {
+        return value;
+    }
+    public long longValue() {
+        return (long)value;
+    }
+    public float floatValue() {
+        return (float)value;
+    }
+    public double doubleValue() {
+        return (double)value;
+    }
+     public String toString() {
+        return toString(value);
+    }
+    public int hashCode() {
+        return value;
+    }
+    //判断数字相等使用基本类型int值比较，直接使用==比较Integer的是地址。
+    public boolean equals(Object obj) {
+        if (obj instanceof Integer) {
+            return value == ((Integer)obj).intValue();
+        }
+        return false;
+    }
+    //此处调用了类的静态方法比较两个int型数字的大小
+    public int compareTo(Integer anotherInteger) {
+        return compare(this.value, anotherInteger.value);
+    }
+
+    public static int compare(int x, int y) {
+        return (x &amp;lt; y) ? -1 : ((x == y) ? 0 : 1);
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;IntegerCache&lt;/h4&gt;
+&lt;p&gt;Integer类内部有一个私有的静态内部类IntegerCache，该类缓存了一些常用的int值到缓存中，从而保证这些int可以直接获取而不用构造。最大值可以通过虚拟机参数java.lang.Integer.IntegerCache.high类配置，但是最小的为127.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private static class IntegerCache {
+        static final int low = -128;//最小缓存int值
+        static final int high;//最大缓存int值，默认127
+        static final Integer cache[];
+
+        static {
+            // high value may be configured by property
+            int h = 127;
+            String integerCacheHighPropValue =
+                sun.misc.VM.getSavedProperty(&quot;java.lang.Integer.IntegerCache.high&quot;);
+            if (integerCacheHighPropValue != null) {
+                int i = parseInt(integerCacheHighPropValue);
+                i = Math.max(i, 127);
+                // Maximum array size is Integer.MAX_VALUE
+                h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
+            }
+            high = h;
+
+            cache = new Integer[(high - low) + 1];
+            int j = low;
+            for(int k = 0; k &amp;lt; cache.length; k++)
+                cache[k] = new Integer(j++);
+        }
+
+        private IntegerCache() {}
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;bitCount&lt;/h4&gt;
+&lt;p&gt;Integer中的类方法：bitCount(int i),返回int数字的二进制原码中1出现的次数
+如&lt;code&gt;Integer.bitCount(10)==2&lt;/code&gt;,10的二进制源码为1010,1出现2次。&lt;/p&gt;
+&lt;h6&gt;原理：二分法，两两一组相加，之后四个四个一组相加，接着八个八个，最后就得到各位之和了。&lt;/h6&gt;
+&lt;p&gt;1.两两一组相加,并且用该对应的两位来存储这个个数：二进制中先分割为2位计算，如108=01101100=0000 0000 0000 0000 0000 0000 0110 1100，第一个2位为00，出现1的个数为0+0=00，最后4个两位为：01,10,11,00,计算后的二进制为：
+0+1=01,1+0=01,1+1=10,0+0=00,即0101 1000,最后得到的二进制是：0000 0000 0000 0000 0000 0000 0101 1000&lt;/p&gt;
+&lt;p&gt;2.四四一组相加，并且用该对应的四位来存储这个个数：对两两一组相加相加的结果四四一组相加，即
+0000 0000 0000 0000 0000 0000 0101 1000进行四四一组相加，0101：01+01=0010，1000：10+00=0010,最后结果为：0000 0000 0000 0000 0000 0000 0010 0010&lt;/p&gt;
+&lt;p&gt;3.八八一组相加，并且用该对应的八位来存储这个个数：对四四一组相加相加的结果八八一组相加，即
+0000 0000 0000 0000 0000 0000 0010 0010进行八八一组相加，00100010：0010+0010=00000100最后结果为：0000 0000 0000 0000 0000 0000 0000 0100&lt;/p&gt;
+&lt;p&gt;4.十六十六一组相加，并且用该对应的十六位来存储这个个数：对八八一组相加相加的结果十六十六一组相加，即0000 0000 0000 0100：0000 0000 + 0000 0100 = 0000 0000 0000 0100
+最后结果为：0000 0000 0000 0000 0000 0000 0000 0100
+最后相加：0000 0000 0000 0000 + 0000 0000 0000 0100 = 0000 0000 0000 0000 0000 0000 0000 0100 = 4&lt;/p&gt;
+&lt;h5&gt;计算过程：&lt;/h5&gt;
+&lt;p&gt;第一行：i = i - ((i &amp;gt;&amp;gt;&amp;gt; 1) &amp;amp; 0x55555555);
+i=0000 0000 0000 0000 0000 0000 0110 1100
+0x55555555=0101 0101 0101 0101 0101 0101 0101 0101
+二位二进制中:原码-高位值=1出现的个数，
+（11-(11&amp;gt;&amp;gt;1)&amp;amp;01）=10=2
+（10-(10&amp;gt;&amp;gt;1)&amp;amp;01）=01=1
+（01-(01&amp;gt;&amp;gt;1)&amp;amp;01）=01=1
+（00-(00&amp;gt;&amp;gt;1)&amp;amp;01）=00=0
+i&amp;gt;&amp;gt;&amp;gt;1:原码值右移一位：01 10 11 00--&amp;gt;00 11 01 10
+(i &amp;gt;&amp;gt;&amp;gt; 1) &amp;amp; 0x55555555：原码中所有两位二进制高位值：00 01 01 00
+i - ((i &amp;gt;&amp;gt;&amp;gt; 1) &amp;amp; 0x55555555)：原码中所有两位二进制1的个数：01 01 10 00
+二进制减法的规则是低位不足向高位借位，二位二进制原码-高位值，这样在做减法的时候保证了2位相减不会出现借位。&lt;/p&gt;
+&lt;p&gt;第二行：i = (i &amp;amp; 0x33333333) + ((i &amp;gt;&amp;gt;&amp;gt; 2) &amp;amp; 0x33333333);
+i=0000 0000 0000 0000 0000 0000 0101 1000
+0x33333333：0011 0011 0011 0011 0011 0011 0011 0011
+（i &amp;amp; 0x33333333)：4位中的低二位值：0000 0000 0000 0000 0000 0000 0001 0000
+((i &amp;gt;&amp;gt;&amp;gt; 2) &amp;amp; 0x33333333)：4位中的高二位值：0000 0000 0000 0000 0000 0000 0001 0010
+四位中的高二位和低二位相加为：0000 0000 0000 0000 0000 0000 0010 0010&lt;/p&gt;
+&lt;p&gt;第三行：i = (i + (i &amp;gt;&amp;gt;&amp;gt; 4)) &amp;amp; 0x0f0f0f0f;
+i=0000 0000 0000 0000 0000 0000 0010 0010
+0x0f0f0f0f：0000 1111 0000 1111 0000 1111 0000 1111
+i + (i &amp;gt;&amp;gt;&amp;gt; 4)：原码和右移四位相加，44相加，一般值无效，
+0000 0000 0000 0000 0000 0000 0010 0010 +
+0000 0000 0000 0000 0000 0000 0000 0010 =
+0000（无） 0000（有） 0000（无） 0000（有） 0000（无） 0000（有） 0010（无） 0100（有）
+(i + (i &amp;gt;&amp;gt;&amp;gt; 4)) &amp;amp; 0x0f0f0f0f：去除无效值（无效值全部变为0）：00000000 00000000 00000000 00000100&lt;/p&gt;
+&lt;p&gt;第四行：i = i + (i &amp;gt;&amp;gt;&amp;gt; 8);
+i = 00000000 00000000 00000000 00000100
+i + (i &amp;gt;&amp;gt;&amp;gt; 8)：原码右移8位与原码相加（错8位相加）
+00000000（有） 00000000（有） 00000000（有） 00000100（有）
+00000000（无） 00000000（有） 00000000（有） 00000000（有）
+00000000（无） 00000000（有） 00000000（无） 00000100（有）
+i = i + (i &amp;gt;&amp;gt;&amp;gt; 8)： 00000000 00000000 00000000 00000100&lt;/p&gt;
+&lt;p&gt;第五行：i = i + (i &amp;gt;&amp;gt;&amp;gt; 16);
+i = 00000000（无） 00000000（有） 00000000（无） 00000100（有）
+i + (i &amp;gt;&amp;gt;&amp;gt; 16): 原码右移16位与原码相加（错16位相加）
+00000000（无） 00000000（有） 00000000（无） 00000100（有）
+00000000（无） 00000000（无） 00000000（无） 00000000（有）
+00000000（无） 00000000（无） 00000000（无） 00000100（有）&lt;/p&gt;
+&lt;p&gt;第六行：i &amp;amp; 0x3f;
+i= 00000000（无） 00000000（无） 00000000（无） 00000100（有）
+0x3f:0011 0000 0000 0000 0000 0011 1111
+i &amp;amp; 0x3f:最后计算的结果只有后6位二进制是有效结果：000100=4&lt;/p&gt;
+&lt;h4&gt;i=1111 1111 1111 1111 1111 1111 1111 1111&lt;/h4&gt;
+&lt;p&gt;第一行：i = i - ((i &amp;gt;&amp;gt;&amp;gt; 1) &amp;amp; 0x55555555);
+i=11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0x55555555=01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01
+i - ((i &amp;gt;&amp;gt;&amp;gt; 1) &amp;amp; 0x55555555):10 10 10 10 10 10 10 10 &lt;/p&gt;
+&lt;p&gt;第二行：i = (i &amp;amp; 0x33333333) + ((i &amp;gt;&amp;gt;&amp;gt; 2) &amp;amp; 0x33333333);
+i=1010 1010 1010 1010
+0x33333333：0011 0011 0011 0011 0011 0011 0011 0011
+（i &amp;amp; 0x33333333)：0010 0010 0010 0010 0010 0010 0010 0010
+((i &amp;gt;&amp;gt;&amp;gt; 2) &amp;amp; 0x33333333)：4位中的高二位值：0010 0010 0010 0010 0010 0010 0010 0010
+四位中的高二位和低二位相加为：0100 0100 0100 0100 0100 0100 0100 0100 0100&lt;/p&gt;
+&lt;p&gt;第三行：i = (i + (i &amp;gt;&amp;gt;&amp;gt; 4)) &amp;amp; 0x0f0f0f0f;
+i=0100 0100 0100 0100 0100 0100 0100 0100 0100
+0x0f0f0f0f：0000 1111 0000 1111 0000 1111 0000 1111
+i + (i &amp;gt;&amp;gt;&amp;gt; 4)：原码和右移四位相加，44相加，一般值无效，
+0100 0100 0100 0100 0100 0100 0100 0100 0100 +
+0000 0100 0100 0100 0100 0100 0100 0100 0100 =
+0000（无效） 1000 1000（无效） 1000 1000（无效） 1000 1000（无效） 1000
+(i + (i &amp;gt;&amp;gt;&amp;gt; 4)) &amp;amp; 0x0f0f0f0f：去除无效值（无效值全部变为0）：
+00001000 0001000 0001000 0001000&lt;/p&gt;
+&lt;p&gt;第四行：i = i + (i &amp;gt;&amp;gt;&amp;gt; 8);
+i=00001000 0001000 0001000 0001000
+00001000（有） 00001000（有） 00001000（有） 00001000（有）
+00000000（无） 00001000（有） 00001000（有） 00001000（有）
+00000000（无） 00010000（有） 00010000（无） 00010000（有）
+i = i + (i &amp;gt;&amp;gt;&amp;gt; 8)：00000000（无） 00010000（有） 00010000（无效） 00010000（有）&lt;/p&gt;
+&lt;p&gt;第五行：i = i + (i &amp;gt;&amp;gt;&amp;gt; 16);
+00000000（无） 00010000（有） 00010000（无） 00010000（有）
+00000000（无） 00000000（无） 00000000（无） 00010000 （有）
+00000000（无） 00010000（无） 00010000（无） 00100000 （有）&lt;/p&gt;
+&lt;p&gt;第六行：i &amp;amp; 0x3f;
+i=00000000（无） 00010000（无） 00010000（无） 00100000 （有）
+0x3f:0011 0000 0000 0000 0000 0011 1111
+i &amp;amp; 0x3f:最后计算的结果只有后6位二进制是有效结果：100000=32&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static int bitCount(int i) {
+        // HD, Figure 5-2
+        i = i - ((i &amp;gt;&amp;gt;&amp;gt; 1) &amp;amp; 0x55555555);
+        i = (i &amp;amp; 0x33333333) + ((i &amp;gt;&amp;gt;&amp;gt; 2) &amp;amp; 0x33333333);
+        i = (i + (i &amp;gt;&amp;gt;&amp;gt; 4)) &amp;amp; 0x0f0f0f0f;
+        i = i + (i &amp;gt;&amp;gt;&amp;gt; 8);
+        i = i + (i &amp;gt;&amp;gt;&amp;gt; 16);
+        return i &amp;amp; 0x3f;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;String转换成Integer&lt;/h4&gt;
+&lt;p&gt;Integer的valueOf方法：如果缓存中有值，则读取缓存中的数字&lt;/p&gt;
+&lt;p&gt;Integer的parseInt方法：将字符串解析成Integer&lt;/p&gt;
+&lt;p&gt;Integer的decode方法： 字符串解码位数字。&lt;/p&gt;
+&lt;p&gt;valueOf和parseInt的参数必须是标准数字十进制&lt;/p&gt;
+&lt;p&gt;decode可以是各种形式的数据&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;System.out.println(parseInt(&quot;111&quot;));
+System.out.println(parseInt(&quot;111&quot;,10));
+System.out.println(valueOf(&quot;111&quot;));
+System.out.println(valueOf(&quot;111&quot;,10));
+System.out.println(valueOf(10));
+System.out.println(Integer.decode(&quot;100&quot;));//十进制
+System.out.println(Integer.decode(&quot;0xa&quot;));//十六进制
+System.out.println(Integer.decode(&quot;0Xa&quot;));//十六进制
+System.out.println(Integer.decode(&quot;#a&quot;));//十六进制
+System.out.println(Integer.decode(&quot;010&quot;));//八进制
+System.out.println(Integer.decode(&quot;+100&quot;));//正数
+System.out.println(Integer.decode(&quot;-100&quot;));//负数&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static int parseInt(String s) throws NumberFormatException {
+        return parseInt(s,10);
+    }
+
+    public static int parseInt(String s, int radix)
+                throws NumberFormatException {
+        /*
+         * WARNING: This method may be invoked early during VM initialization
+         * before IntegerCache is initialized. Care must be taken to not use
+         * the valueOf method.
+         */
+        //s不能为空，进制数在Character.MIN_RADIX（2）和Character.MAX_RADIX（36）之间
+        if (s == null) {
+            throw new NumberFormatException(&quot;null&quot;);
+        }
+        if (radix &amp;lt; Character.MIN_RADIX) {
+            throw new NumberFormatException(&quot;radix &quot; + radix +
+                                            &quot; less than Character.MIN_RADIX&quot;);
+        }
+        if (radix &amp;gt; Character.MAX_RADIX) {
+            throw new NumberFormatException(&quot;radix &quot; + radix +
+                                            &quot; greater than Character.MAX_RADIX&quot;);
+        }
+
+        int result = 0;
+        boolean negative = false;//符号
+        int i = 0;//偏移值
+        int len = s.length();
+        int limit = -Integer.MAX_VALUE;
+        int multmin;
+        int digit;
+        if (len &amp;gt; 0) {
+            char firstChar = s.charAt(0);
+            if (firstChar &amp;lt; '0') { // Possible leading &quot;+&quot; or &quot;-&quot;
+                if (firstChar == '-') {
+                    negative = true;
+                    limit = Integer.MIN_VALUE;
+                } else if (firstChar != '+')
+                    throw NumberFormatException.forInputString(s);
+                if (len == 1) // Cannot have lone &quot;+&quot; or &quot;-&quot;
+                    throw NumberFormatException.forInputString(s);
+                i++;
+            }
+            multmin = limit / radix;
+            //一个字符一个字符累加
+            while (i &amp;lt; len) {
+                // Accumulating negatively avoids surprises near MAX_VALUE
+                digit = Character.digit(s.charAt(i++),radix);
+                if (digit &amp;lt; 0) {
+                    throw NumberFormatException.forInputString(s);
+                }
+                if (result &amp;lt; multmin) {
+                    throw NumberFormatException.forInputString(s);
+                }
+                result *= radix;
+                if (result &amp;lt; limit + digit) {
+                    throw NumberFormatException.forInputString(s);
+                }
+                result -= digit;//通过负数减法计算加法
+            }
+        } else {
+            throw NumberFormatException.forInputString(s);
+        }
+        return negative ? result : -result;
+    }
+
+    public static Integer valueOf(String s, int radix) throws NumberFormatException {
+        return Integer.valueOf(parseInt(s,radix));
+    }
+
+    public static Integer valueOf(String s) throws NumberFormatException {
+        return Integer.valueOf(parseInt(s, 10));
+    }
+
+    public static Integer valueOf(int i) {
+        assert IntegerCache.high &amp;gt;= 127;
+        //判断数字是否有缓存
+        if (i &amp;gt;= IntegerCache.low &amp;amp;&amp;amp; i &amp;lt;= IntegerCache.high)
+            return IntegerCache.cache[i + (-IntegerCache.low)];
+        return new Integer(i);
+    }
+
+    public static Integer decode(String nm) throws NumberFormatException {
+        int radix = 10;//进制数
+        int index = 0;//偏移数
+        boolean negative = false;//是否有符号
+        Integer result;//最后结果
+
+        if (nm.length() == 0)
+            throw new NumberFormatException(&quot;Zero length string&quot;);
+        char firstChar = nm.charAt(0);
+        // Handle sign, if present
+        if (firstChar == '-') {
+            negative = true;//负数
+            index++;
+        } else if (firstChar == '+')
+            index++;
+
+        // Handle radix specifier, if present
+        if (nm.startsWith(&quot;0x&quot;, index) || nm.startsWith(&quot;0X&quot;, index)) {
+            index += 2;
+            radix = 16;//16进制
+        }
+        else if (nm.startsWith(&quot;#&quot;, index)) {
+            index ++;
+            radix = 16;//16进制
+        }
+        else if (nm.startsWith(&quot;0&quot;, index) &amp;amp;&amp;amp; nm.length() &amp;gt; 1 + index) {
+            index ++;
+            radix = 8;//8进制
+        }
+
+        if (nm.startsWith(&quot;-&quot;, index) || nm.startsWith(&quot;+&quot;, index))
+            throw new NumberFormatException(&quot;Sign character in wrong position&quot;);
+
+        try {
+            result = Integer.valueOf(nm.substring(index), radix);//字符串转换成Integer
+            result = negative ? Integer.valueOf(-result.intValue()) : result;//判断正负值
+        } catch (NumberFormatException e) {
+            // If number is Integer.MIN_VALUE, we'll end up here. The next line
+            // handles this case, and causes any genuine format error to be
+            // rethrown.
+            String constant = negative ? (&quot;-&quot; + nm.substring(index))
+                                       : nm.substring(index);
+            result = Integer.valueOf(constant, radix);
+        }
+        return result;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;Integer转换成String&lt;/h4&gt;
+&lt;p&gt;toString(int i, int radix) 转换成指定进制的字符串&lt;/p&gt;
+&lt;p&gt;toString(int i) 转换成十进制的字符串&lt;/p&gt;
+&lt;p&gt;toHexString(int i) 转换成十六进制的字符串&lt;/p&gt;
+&lt;p&gt;toOctalString(int i) 转换成八进制的字符串&lt;/p&gt;
+&lt;p&gt;toBinaryString(int i) 转换成二进制的字符串&lt;/p&gt;
+&lt;p&gt;toUnsignedString(int i, int shift) &lt;/p&gt;
+&lt;p&gt;int转2进制：&lt;code&gt;toUnsignedString（i,1）&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;int转8进制：&lt;code&gt;toUnsignedString（i,3）&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;int转16进制：&lt;code&gt;toUnsignedString（i,4）&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static String toString(int i, int radix) {
+        if (radix &amp;lt; Character.MIN_RADIX || radix &amp;gt; Character.MAX_RADIX)
+            radix = 10;
+        /* Use the faster version */
+        if (radix == 10) {
+            return toString(i);
+        }
+        char buf[] = new char[33];
+        boolean negative = (i &amp;lt; 0);
+        int charPos = 32;
+        if (!negative) {
+            i = -i;
+        }
+        while (i &amp;lt;= -radix) {
+            buf[charPos--] = digits[-(i % radix)];
+            i = i / radix;
+        }
+        buf[charPos] = digits[-i];
+
+        if (negative) {
+            buf[--charPos] = '-';
+        }
+        return new String(buf, charPos, (33 - charPos));
+    }
+
+    public static String toString(int i) {
+        if (i == Integer.MIN_VALUE)
+            return &quot;-2147483648&quot;;
+        int size = (i &amp;lt; 0) ? stringSize(-i) + 1 : stringSize(i);
+        char[] buf = new char[size];
+        getChars(i, size, buf);
+        return new String(buf, true);
+    }
+
+    public static String toHexString(int i) {
+        return toUnsignedString(i, 4);
+    }
+    public static String toOctalString(int i) {
+        return toUnsignedString(i, 3);
+    }
+     public static String toBinaryString(int i) {
+        return toUnsignedString(i, 1);
+    }
+    private static String toUnsignedString(int i, int shift) {
+        char[] buf = new char[32];//int型最大为32位
+        int charPos = 32;//数组下标位置
+        int radix = 1 &amp;lt;&amp;lt; shift;//将0001左移，shift为偏移位，如16进制则偏移4位计算，8进制偏移3位计算
+        int mask = radix - 1;//计算元数据的计算为，如果转16进制取后4位计算，mask为1111，与的结果为取后四位为有效位
+        do {
+            buf[--charPos] = digits[i &amp;amp; mask];
+            i &amp;gt;&amp;gt;&amp;gt;= shift;//通过右移将计算过的位数舍弃掉，如10010100的后四位计算过了，则右移4位变成1001
+        } while (i != 0);
+        //将char转换成字符串，并舍弃前面的0
+        return new String(buf, charPos, (32 - charPos));
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Interget.getChars:将数字转换成字符数组，第一个参数为要转换的数字，第二个参数为字符数组的长度，第三个参数为字符数组的引用。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;q = i / 100; r = i - ((q &amp;lt;&amp;lt; 6) + (q &amp;lt;&amp;lt; 5) + (q &amp;lt;&amp;lt; 2))&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;此处计算相当于r = i - (q * 100);即求i除以100之后的余数，i%100&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;(int * 52429) &amp;gt;&amp;gt;&amp;gt; 19 === (int * 52429)/524288 === int / 10&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;原理:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;i - (q * (64 + 32 + 4)) 
+==&amp;gt; i - (q * (64 + 32 + 4)) 
+==&amp;gt; i - (q * 64 + q * 32 + q * 4)) 
+==&amp;gt; i - (q &amp;lt;&amp;lt; 6 + q &amp;lt;&amp;lt; 5 + q &amp;lt;&amp;lt; 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;q = (i * 52429) &amp;gt;&amp;gt;&amp;gt; (16+3); r = i - ((q &amp;lt;&amp;lt; 3) + (q &amp;lt;&amp;lt; 1));  // r = i-(q*10)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;此处计算相当于r = i-(q*10);即求i除以10之后的余数，i%10&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    //该方法用于将数字转换成字符数组
+    static void getChars(int i, int index, char[] buf) {
+        int q, r;
+        int charPos = index;
+        char sign = 0;
+
+        if (i &amp;lt; 0) {
+            sign = '-';
+            i = -i;
+        }
+
+        // Generate two digits per iteration
+        //数字的二进制长度大于16位则每2位转换一次字符，
+        while (i &amp;gt;= 65536) {
+            q = i / 100; //q为数字去掉右边两位之后的数值
+            // really: r = i - (q * 100);
+            r = i - ((q &amp;lt;&amp;lt; 6) + (q &amp;lt;&amp;lt; 5) + (q &amp;lt;&amp;lt; 2)); //余数
+            i = q;
+            buf [--charPos] = DigitOnes[r];
+            buf [--charPos] = DigitTens[r];
+        }
+
+        // Fall thru to fast mode for smaller numbers
+        // assert(i &amp;lt;= 65536, i);
+        for (;;) {
+            q = (i * 52429) &amp;gt;&amp;gt;&amp;gt; (16+3);
+            r = i - ((q &amp;lt;&amp;lt; 3) + (q &amp;lt;&amp;lt; 1));  // r = i-(q*10)
+            buf [--charPos] = digits [r];
+            i = q;
+            if (i == 0) break;
+        }
+        if (sign != 0) {
+            buf [--charPos] = sign;
+        }
+    }
+    //字符数组
+    final static char[] digits = {
+            '0' , '1' , '2' , '3' , '4' , '5' ,
+            '6' , '7' , '8' , '9' , 'a' , 'b' ,
+            'c' , 'd' , 'e' , 'f' , 'g' , 'h' ,
+            'i' , 'j' , 'k' , 'l' , 'm' , 'n' ,
+            'o' , 'p' , 'q' , 'r' , 's' , 't' ,
+            'u' , 'v' , 'w' , 'x' , 'y' , 'z'
+        };
+   //数字字符数组。用于通过下标获取数据，该数字获取2位数中十位数值
+   //如获取23十位数字为：DigitTens[23]=2
+    final static char [] DigitTens = {
+            '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
+            '2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
+            '3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
+            '4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
+            '5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
+            '6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
+            '7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
+            '8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
+            '9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
+            } ;
+    //数字字符数组。用于通过下标获取数据，该数字获取2位数中个位数值
+    //如获取23个位数字为：DigitOnes[23]=3
+    final static char [] DigitOnes = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        } ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Integer  highestOneBit和lowestOneBit
+数字二进制中1出现的位置（最高位和最低位）
+如：20=10100，
+最高位：10000 = 16
+最低位：100 = 4&lt;/p&gt;
+&lt;p&gt;按位与： &amp;amp; ：真真为真，其余为假：遇0为0
+按位或： | ：假假为假，其余为真：遇1为1
+按位非： ~ ：取反码
+按位异或： ^ ：真假为真，其余为假：不同为1&lt;/p&gt;
+&lt;p&gt;highestOneBitd的原理&lt;/p&gt;
+&lt;p&gt;将二进制数的所有位数都转换为1，
+然后用原数减去全为一的数右移一位后的数。
+如10010 -- 11111 -- 11111 - 1111 = 10000&lt;/p&gt;
+&lt;p&gt;i |= (i &amp;gt;&amp;gt;  1);&lt;/p&gt;
+&lt;p&gt;i = 10100 | 10100 &amp;gt;&amp;gt; 1 = 10100 | 1010 = 11110
+i = 11110 | 11110 &amp;gt;&amp;gt; 2 = 11110 | 111 = 11111
+i = 11111 | 11111 &amp;gt;&amp;gt; 4 = 11111 | 1 = 11111
+i = 11111 | 11111 &amp;gt;&amp;gt; 8 = 11111 | 0 = 11111
+i = 11111 | 11111 &amp;gt;&amp;gt; 16 = 11111 | 0 = 11111
+i = 11111 - (11111 &amp;gt;&amp;gt;&amp;gt; 1) = 11111 - 1111 = 10000&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static int highestOneBit(int i) {
+        // HD, Figure 3-1
+        i |= (i &amp;gt;&amp;gt;  1);//
+        i |= (i &amp;gt;&amp;gt;  2);
+        i |= (i &amp;gt;&amp;gt;  4);
+        i |= (i &amp;gt;&amp;gt;  8);
+        i |= (i &amp;gt;&amp;gt; 16);
+        return i - (i &amp;gt;&amp;gt;&amp;gt; 1);
+    }
+
+    public static int lowestOneBit(int i) {
+        // HD, Section 2-1
+        return i &amp;amp; -i;
+    }&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-24 13:59:14</pubDate>
+            <link>//blog/integer.html</link>
+            <guid isPermaLink="true">//blog/integer.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>lua_regex_cache_max_entries</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+date: 2015-08-24
+title: lua_regex_cache_max_entries
+tags: lua
+category: Lua
+status: publish
+summary: 指定在worker进程级别编译的正则表达式缓存结果的最大数量
+--&gt;
+&lt;h2&gt;lua_regex_cache_max_entries&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries &amp;lt;num&amp;gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries 1024&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Specifies the maximum number of entries allowed in the worker process level compiled regex cache.&lt;/p&gt;
+&lt;p&gt;The regular expressions used in &lt;a href=&quot;#ngxrematch&quot;&gt;ngx.re.match&lt;/a&gt;, &lt;a href=&quot;#ngxregmatch&quot;&gt;ngx.re.gmatch&lt;/a&gt;, &lt;a href=&quot;#ngxresub&quot;&gt;ngx.re.sub&lt;/a&gt;, and &lt;a href=&quot;#ngxregsub&quot;&gt;ngx.re.gsub&lt;/a&gt; will be cached within this cache if the regex option &lt;code&gt;o&lt;/code&gt; (i.e., compile-once flag) is specified.&lt;/p&gt;
+&lt;p&gt;The default number of entries allowed is 1024 and when this limit is reached, new regular expressions will not be cached (as if the &lt;code&gt;o&lt;/code&gt; option was not specified) and there will be one, and only one, warning in the &lt;code&gt;error.log&lt;/code&gt; file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2011/08/27 23:18:26 [warn] 31997#0: *1 lua exceeding regex cache max entries (1024), ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Do not activate the &lt;code&gt;o&lt;/code&gt; option for regular expressions (and/or &lt;code&gt;replace&lt;/code&gt; string arguments for &lt;a href=&quot;#ngxresub&quot;&gt;ngx.re.sub&lt;/a&gt; and &lt;a href=&quot;#ngxregsub)&quot;&gt;ngx.re.gsub&lt;/a&gt; that are generated &lt;em&gt;on the fly&lt;/em&gt; and give rise to infinite variations to avoid hitting the specified limit.&lt;/p&gt;
+&lt;h2&gt;中文&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries &amp;lt;num&amp;gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries 1024&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;指定在worker进程级别编译的正则表达式缓存结果的最大数量。&lt;/p&gt;
+&lt;p&gt;当正则选项o被指定的时候，ngx.re.match，ngx.re.gmatch，ngx.re.sub，ngx.re.gsub使用的正则表达式会被缓存在缓存中。&lt;/p&gt;
+&lt;p&gt;缓存数量的最大值默认是1024，如果数量达到最大值限定值，新的正则表达式将不会被缓存（就像o选项没有指定一样），但是会写一条，仅仅一条警告日志到error.log文件中。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2011/08/27 23:18:26 [warn] 31997#0: *1 lua exceeding regex cache max entries (1024), ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注意不要激活那些会很快的产生和引起无数的变化的正则表达式的o选项（或者为ngx.re.sub和ngx.re.gsub替换字符串参数），以避免达到指定的限制。&lt;/p&gt;
+&lt;h4&gt;扩展&lt;/h4&gt;
+&lt;p&gt;o 选项参数用于提高性能，指明该参数之后，被编译的 Pattern 将会在 worker 进程中缓存，并且被当前 worker 进程的每次请求所共享。 Pattern 缓存的上限值通过 lua_regex_cache_max_entries 来修改&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# nginx.conf
+location /test {
+    content_by_lua '
+        local regex = [[\\d+]]
+
+        -- 参数&quot;o&quot;是开启缓存必须的
+        local m = ngx.re.match(&quot;hello, 1234&quot;, regex, &quot;o&quot;)  
+        if m then
+            ngx.say(m[0])
+        else
+            ngx.say(&quot;not matched!&quot;)
+        end
+    ';
+}
+# 在网址中输入&quot;yourURL/test&quot;，即会在网页中显示 1234 。&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-24 13:54:48</pubDate>
+            <link>//blog/lua_regex_cache_max_entries.html</link>
+            <guid isPermaLink="true">//blog/lua_regex_cache_max_entries.html</guid>
+                                               <category>Lua</category>
+                                    </item>
+                <item>
+            <title>lua_use_default_type</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+date: 2015-08-24
+title: lua_use_default_type
+tags: lua
+category: Lua
+status: publish
+summary: 指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态&gt;（off）。
+--&gt;
+&lt;h2&gt;lua_use_default_type&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Specifies whether to use the MIME type specified by the &lt;a href=&quot;http://nginx.org/en/docs/http/ngx_http_core_module.html#default_type&quot;&gt;default_type&lt;/a&gt; directive for the default value of the &lt;code&gt;Content-Type&lt;/code&gt; response header. If you do not want a default &lt;code&gt;Content-Type&lt;/code&gt; response header for your Lua request handlers, then turn this directive off.&lt;/p&gt;
+&lt;p&gt;This directive is turned on by default.&lt;/p&gt;
+&lt;p&gt;This directive was first introduced in the &lt;code&gt;v0.9.1&lt;/code&gt; release.&lt;/p&gt;
+&lt;h2&gt;中文&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法 :&lt;/strong&gt; &lt;em&gt;lua_use_default_type on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态（off）。&lt;/p&gt;
+&lt;p&gt;这个指令默认是开启状态（on）&lt;/p&gt;
+&lt;p&gt;这个指令第一次出现是在 v0.9.1 稳定版中。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;wngn123@163.com on 206-07-12&lt;/code&gt;&lt;/p&gt;            </description>
+            <pubDate>2016-08-24 13:54:00</pubDate>
+            <link>//blog/lua_use_default_type.html</link>
+            <guid isPermaLink="true">//blog/lua_use_default_type.html</guid>
+                                               <category>Lua</category>
+                                    </item>
+                <item>
+            <title>lua_code_cache</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+date: 2015-08-24
+title: lua_code_cache
+tags: lua
+category: Lua
+status: publish
+summary: 开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效
+--&gt;
+&lt;h2&gt;lua_code_cache&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_code_cache on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_code_cache on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Enables or disables the Lua code cache for Lua code in &lt;code&gt;*_by_lua_file&lt;/code&gt; directives (like &lt;a href=&quot;#set_by_lua_file&quot;&gt;set_by_lua_file&lt;/a&gt; and
+&lt;a href=&quot;#content_by_lua_file)&quot;&gt;content_by_lua_file&lt;/a&gt; and Lua modules.&lt;/p&gt;
+&lt;p&gt;When turning off, every request served by ngx_lua will run in a separate Lua VM instance, starting from the &lt;code&gt;0.9.3&lt;/code&gt; release. So the Lua files referenced in &lt;a href=&quot;#set_by_lua_file&quot;&gt;set_by_lua_file&lt;/a&gt;,
+&lt;a href=&quot;#content_by_lua_file&quot;&gt;content_by_lua_file&lt;/a&gt;, &lt;a href=&quot;#access_by_lua_file&quot;&gt;access_by_lua_file&lt;/a&gt;,
+and etc will not be cached
+and all Lua modules used will be loaded from scratch. With this in place, developers can adopt an edit-and-refresh approach.&lt;/p&gt;
+&lt;p&gt;Please note however, that Lua code written inlined within nginx.conf
+such as those specified by &lt;a href=&quot;#set_by_lua&quot;&gt;set_by_lua&lt;/a&gt;, &lt;a href=&quot;#content_by_lua&quot;&gt;content_by_lua&lt;/a&gt;,
+&lt;a href=&quot;#access_by_lua&quot;&gt;access_by_lua&lt;/a&gt;, and &lt;a href=&quot;#rewrite_by_lua&quot;&gt;rewrite_by_lua&lt;/a&gt; will not be updated when you edit the inlined Lua code in your &lt;code&gt;nginx.conf&lt;/code&gt; file because only the Nginx config file parser can correctly parse the &lt;code&gt;nginx.conf&lt;/code&gt;
+file and the only way is to reload the config file
+by sending a &lt;code&gt;HUP&lt;/code&gt; signal or just to restart Nginx.&lt;/p&gt;
+&lt;p&gt;Even when the code cache is enabled, Lua files which are loaded by &lt;code&gt;dofile&lt;/code&gt; or &lt;code&gt;loadfile&lt;/code&gt;
+in *_by_lua_file cannot be cached (unless you cache the results yourself). Usually you can either use the &lt;a href=&quot;#init_by_lua&quot;&gt;init_by_lua&lt;/a&gt;
+or &lt;a href=&quot;#init-by_lua_file&quot;&gt;init_by_lua_file&lt;/a&gt; directives to load all such files or just make these Lua files true Lua modules
+and load them via &lt;code&gt;require&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The ngx_lua module does not support the &lt;code&gt;stat&lt;/code&gt; mode available with the
+Apache &lt;code&gt;mod_lua&lt;/code&gt; module (yet).&lt;/p&gt;
+&lt;p&gt;Disabling the Lua code cache is strongly
+discouraged for production use and should only be used during
+development as it has a significant negative impact on overall performance. For example, the performance a &amp;quot;hello world&amp;quot; Lua example can drop by an order of magnitude after disabling the Lua code cache.&lt;/p&gt;
+&lt;h2&gt;中文&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法:&lt;/strong&gt; &lt;em&gt;lua_code_cache on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_code_cache on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效。
+从0.9.3稳定版开始，当lua_code_cache指令关闭时，所以被ngx_lua解析的请求都将运行在单独的虚拟机实例中。因此，被set_by_lua_file，content_by_lua_file，access_by_lua_file等等引用的Lua文件将不会被缓存，所有lua模块在被使用时都将会被重新读取加载，在这里，开发人员可以编辑刷新即可显示，不需要重启nginx服务。&lt;/p&gt;
+&lt;p&gt;然而,请注意,当你编辑lua脚本时，那些被写在nginx.conf内部的lua脚本（如set_by_lua，content_by_lua，access_by_lua和rewrite_by_lua引用的脚本）将不会被重新加载，因为只有Nginx配置文件解析器能正确解析nginx.conf配置文件，而且能够重新加载配置文件的方式只有发送HUP信号量和重启Nginx。&lt;/p&gt;
+&lt;p&gt;甚至当lua代码缓存被开启的时候，这些在*_by_lua_file中通过dofile或者loadfile被加载的lua文件也不能被缓存（除非你自己去缓存他）。通常你能用init_by_lua或者init-by_lua_file指令加载所以这样的文件，或者编译这些lua文件到lua模块通过require加载。&lt;/p&gt;
+&lt;p&gt;ngx_lua模块任然不支持stat模式。&lt;/p&gt;
+&lt;p&gt;强烈的不建议在生成环境中关闭lua代码缓存，仅仅在开发期间关闭，因为关闭缓存对整体性能有很大的负面影响。例如在一个hello world的lua示例中关闭代码缓存，性能将下降一个数量级。&lt;/p&gt;            </description>
+            <pubDate>2016-08-24 13:52:19</pubDate>
+            <link>//blog/lua_code_cache.html</link>
+            <guid isPermaLink="true">//blog/lua_code_cache.html</guid>
+                                               <category>Lua</category>
+                                    </item>
+                <item>
+            <title>欢迎使用GitBlog</title>
+            <description>
+            &lt;!--
+author: jockchou
+head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+date: 2015-07-31
+title: 欢迎使用GitBlog
+tags: git blog
+category: GitBlog
+status: publish
+summary: GitBlog是一个简单易用的Markdown博客系统，它不需要数据库，没有管理后台功能，更新博客只需要添加你写好的Markdown文件即可。
+--&gt;
+&lt;h2&gt;一. 简介&lt;/h2&gt;
+&lt;p&gt;GitBlog是一个简单易用的Markdown博客系统，它不需要数据库，没有管理后台功能，更新博客只需要添加你写好的Markdown文件即可。它摆脱了在线编辑器排版困难，无法实时预览的缺点，一切都交给Markdown来完成，一篇博客就是一个Markdown文件。同时也支持评论，代码高亮，数学公式，页面PV统计等常用功能。GitBlog提供了不同的主题样式，你可以根据自己的喜好配置，如果你想自己制作博客主题，也是非常容易的。GitBlog还支持整站静态导出，你完全可以导出整站静态网页部署到Github Pages。&lt;/p&gt;
+&lt;h2&gt;二. 功能特点&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;使用Markdown  &lt;/li&gt;
+&lt;li&gt;评论框  &lt;/li&gt;
+&lt;li&gt;代码高亮  &lt;/li&gt;
+&lt;li&gt;PV统计  &lt;/li&gt;
+&lt;li&gt;Latex数学公式  &lt;/li&gt;
+&lt;li&gt;自制主题  &lt;/li&gt;
+&lt;li&gt;响应式  &lt;/li&gt;
+&lt;li&gt;全站静态导出  &lt;/li&gt;
+&lt;li&gt;良好的SEO  &lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;三. GitBlog优势&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;无需数据库，系统更轻量，移植更方便  &lt;/li&gt;
+&lt;li&gt;使用Markdown编写，摆脱后台编辑排版困难，无法实时预览的缺点  &lt;/li&gt;
+&lt;li&gt;可全站静态导出  &lt;/li&gt;
+&lt;li&gt;配置灵活，可自由开关某些功能  &lt;/li&gt;
+&lt;li&gt;多主题支持，可自制主题  &lt;/li&gt;
+&lt;li&gt;博客，分类，标签，归档  &lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;四. 环境要求&lt;/h2&gt;
+&lt;p&gt;PHP 5.2.4+&lt;/p&gt;
+&lt;h2&gt;五. 安装步骤&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;下载GitBlog源代码  &lt;/li&gt;
+&lt;li&gt;解压上传到你的PHP网站根目录  &lt;/li&gt;
+&lt;li&gt;打开浏览器，访问网站首页  &lt;/li&gt;
+&lt;li&gt;上传Markdown文件到&lt;code&gt;posts&lt;/code&gt;文件夹  &lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;六. 详细说明&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/install.html&quot;&gt;1. 安装&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/struct.html&quot;&gt;2. 目录结构&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/config.html&quot;&gt;3. 配置说明&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/edit.html&quot;&gt;4. 编写博客&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/other-func.html&quot;&gt;5. 评论，订阅，统计等&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/cache.html&quot;&gt;6. 缓存机制&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/export.html&quot;&gt;7. 全站静态导出&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/theme.html&quot;&gt;8. 主题制作&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/nginx.html&quot;&gt;9. 在Nginx上运行GitBlog&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/apache.html&quot;&gt;10. 在Apache上运行GitBlog&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/sae.html&quot;&gt;11. 在SAE上运行GitBlog&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/github-pages.html&quot;&gt;12. 使用GitBlog和Github Pages搭建博客&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/update.html&quot;&gt;13. Gitblog升级&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/wordpress.html&quot;&gt;14. 从wordpress导入&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;七. 问题及bug反馈&lt;/h2&gt;
+&lt;p&gt;如果在实际使用过程中对GitBlog有新的功能需求，或者在使用GitBlog的过程中发现了Bug，欢迎反馈给我。可以直接在Github上提交，也可以发邮件至&lt;code&gt;164068300[AT]qq.com&lt;/code&gt;与我取得联系，我将及时回复。如果你自己制作了漂亮好用的主题，也非常欢迎你提交给我，我会在这里展示你的主题链接。如果你正在使用GitBlog，也可以告诉我，我将也会在这里列出使用者名单。如果你想和其他GitBlog使用者讨论交流，欢迎加入QQ群&lt;code&gt;84692078&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;八. 使用者列表&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.hiweeds.net&quot;&gt;Weeds&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://xiaochengzi.sinaapp.com&quot;&gt;橙子&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://jockchou.gitblog.cn&quot;&gt;jockchou&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://gitblogdoc.sinaapp.com&quot;&gt;GitBlog Doc&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://zxy.link&quot;&gt;zxy&lt;/a&gt;  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;九. 感谢&lt;/h2&gt;
+&lt;p&gt;GitBlog的成长需要喜欢Markdown，喜欢写博客的各位亲们支持！感谢你们使用GitBlog，感激你们对Gitblog的良好建议与Bug反馈。&lt;/p&gt;
+&lt;p&gt;QQ群：&lt;code&gt;84692078&lt;/code&gt;&lt;br /&gt;
+作者邮箱：&lt;code&gt;164068300[AT]qq.com&lt;/code&gt;    &lt;/p&gt;            </description>
+            <pubDate>2016-08-24 13:59:43</pubDate>
+            <link>//blog/welcome.html</link>
+            <guid isPermaLink="true">//blog/welcome.html</guid>
+                                               <category>GitBlog</category>
+                                    </item>
+            </channel>
+</rss>
