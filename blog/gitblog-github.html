@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>wngn123-GitBlog</title>
-	<meta name="keywords" content="php7,GitBlog,GitBlog,博客,Markdown博客,wngn123,wngn123-GitBlog">
-	<meta name="description" content="GitBlog是一个简单易用的Markdown博客系统">
+	<title>GitBlog和GitHub同步|wngn123-GitBlog</title>
+	<meta name="keywords" content="git,blog,GitBlog,wngn123-GitBlog">
+	<meta name="description" content="GitBlog部署本地虚拟机服务器上，在GitHub上通过GotPage功能展示静态网页，每次更新博客将PHP程序静态导出，同步到GitHub仓库中。">
 	
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
@@ -29,54 +29,70 @@
 	</div>
 </div>
 </header>		    <div id="content">
-					    	    	
-    	    		<div class="quest-row" id="title-container">
-	<div class="container title-container">
-		<div class="row">
-			<div class="col-md-6">
-				<h3>GitBlog</h3>
-			</div>
-			<div class="col-md-6">
-				<ul class="breadcrumbs">
-					<li><a href="/">Home</a></li>
-					<li><a href="/category/107260689.html">GitBlog</a></li></ul>
-				</div>
-		</div>
-	</div>
-</div>    		<div class="quest-row site-content">
+	<div class="quest-row site-content">
 		<div class="container">
 			<div class="row">
-				<div id="primary" class="content-area col-md-9">
+				<div id="primary" class="content-area single col-md-9">
 					<div id="main" class="site-main" role="main">
-																	        	<article class="post hentry">
+						<article class="post hentry">
 	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/php7-install.html" rel="bookmark">php7.0.10安装</a></h1>
+	<h1 class="post-title"><a href="/blog/gitblog-github.html" rel="bookmark">GitBlog和GitHub同步</a></h1>
 	<div class="entry-meta">
-		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-28</time>
+		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-29</time>
 				<span class="seperator">/</span>
-	    <span><i class="fa fa-user"></i> wngn123</span>
+	    <span><i class="fa fa-user"></i> wangn123</span>
 	    	</div><!-- .entry-meta -->
 </header><!-- .entry-header -->	<div class="entry-content">
 	<p>
-		<p>php7.0.10安装,centos7源码安装php7.0.10.</p>
+		<!--
+author: wangn123
+head: head.png
+date: 2016-08-29
+title: GitBlog和GitHub同步
+tags: git blog
+category: GitBlog
+status: publish
+summary: GitBlog部署本地虚拟机服务器上，在GitHub上通过GotPage功能展示静态网页，每次更新博客将PHP程序静态导出，同步到GitHub仓库中。
+-->
+<h2>一. 简介</h2>
+<p>GitBlog部署本地虚拟机服务器上，在GitHub上通过GotPage功能展示静态网页，每次更新博客将PHP程序静态导出，同步到GitHub仓库中。</p>
+<h2>二. 导出静态文件</h2>
+<p>GitBlog支持把整个博客网站导出为静态HTML文件，这样导出整个网站后，可以把它上传到网站空间，以静态形式访问，导出的后的网站结构和运行在PHP环境中一样。</p>
+<p>你可以使用以下命令静态导出网站：</p>
+<pre><code class="language-shell">/usr/local/php5/bin/php /home/work/prod/php/gitblog/index.php Gitblog exportSite</code></pre>
+<p>以上命令请换成你的网站路径。成功导出后，会在GitBlog目录下生成一个_site的文件夹，所有导出的静态资源都在这里，你可以随意复制它布署到你的环境中。</p>
+<p>导出前可清除cache目录中的缓存，以便导出最新的资源。</p>
+<pre><code class="language-shell">sudo rm -rf /home/work/prod/php/gitblog/app/cache/*</code></pre>
+<h2>三. GitHub同步</h2>
+<pre><code class="language-shell">cd /home/work
+git clone https://github.com/wngn123/wngn123.github.io.git
+cd wngn123.github.io
+rm -rf /home/work/wngn123.github.io/*
+cp -rf /home/work/prod/php/gitblog/_site/* /home/work/wngn123.github.io
+git status
+git add --all
+git commit -m 'gitblog 2016-08-29'
+git push origin master</code></pre>
+<h2>四. 清理数据</h2>
+<pre><code class="language-shell">cd /home/work
+rm -rf /home/work/wngn123.github.io
+rm -rf /home/work/prod/php/gitblog/_site</code></pre>
 		</p>
 </div><!-- .entry-content -->	<footer class="entry-footer">
 		<ul class="post-categories">
           
-          <li><a href="/category/26890208.html" rel="category">PHP</a></li>
+          <li><a href="/category/107260689.html" rel="category">GitBlog</a></li>
         	</ul>
 		
 		<ul class="post-tags">
-                   <li><a href="/tags/1783669539.html" rel="tag">php</a></li>
-                   <li><a href="/tags/367908174.html" rel="tag">php7</a></li>
+                   <li><a href="/tags/2511338272.html" rel="tag">git</a></li>
+                   <li><a href="/tags/2013555047.html" rel="tag">blog</a></li>
         	</ul>
 		
-		<div class="read-more">
-		<a href="/blog/php7-install.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											</div>
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
 					<!-- #main -->
 				</div>
+				<!-- #primary -->
 				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
 	<aside class="widget widget_categories sidebar-widget clearfix">
 	<h3 class="widget-title">分类目录</h3>
@@ -132,7 +148,7 @@
 		<!-- .container -->
 	</div>
 	<!-- .quest-row -->
-</div><!-- #content -->		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 copyright-text">
