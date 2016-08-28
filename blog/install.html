@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>nginx lua 环境搭建|wngn123-GitBlog</title>
+	<meta name="keywords" content="lua,Lua,wngn123-GitBlog">
+	<meta name="description" content="nginx lua 环境搭建">
+	
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/style.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/customizer.css?ver=2.1" type="text/css" media="all" />
+	<link rel="alternate" type="application/rss+xml" title="wngn123-GitBlog" href="//feed.xml" />
+	
+	</head>
+
+<body class="home blog wide">
+	<div id="page" class="hfeed site">
+		<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+		    <header id="masthead" class="main-header" role="banner">
+<div class="container">
+	<div class="row">
+		<div class="site-branding col-md-4">
+			<h1 class="site-title"><a href="/" rel="home">wngn123-GitBlog</a></h1>
+				<span class="site-description">GitBlog</span>
+		</div>
+		<!-- .site-branding -->
+	</div>
+</div>
+</header>		    <div id="content">
+	<div class="quest-row site-content">
+		<div class="container">
+			<div class="row">
+				<div id="primary" class="content-area single col-md-9">
+					<div id="main" class="site-main" role="main">
+						<article class="post hentry">
+	<header class="entry-header">
+	<h1 class="post-title"><a href="/blog/install.html" rel="bookmark">nginx lua 环境搭建</a></h1>
+	<div class="entry-meta">
+		<time class="post-date"><i class="fa fa-clock-o"></i>2015-08-24</time>
+				<span class="seperator">/</span>
+	    <span><i class="fa fa-user"></i> wngn123</span>
+	    	</div><!-- .entry-meta -->
+</header><!-- .entry-header -->	<div class="entry-content">
+	<p>
+		<!--
+author: wngn123
+date: 2015-08-24
+title: nginx lua 环境搭建
+tags: lua
+category: Lua
+status: publish
+summary: nginx lua 环境搭建
+-->
+<h2>nginx lua 环境搭建</h2>
+<h6>目录结构：</h6>
+<pre><code>drwxr-xr-x. 6 wang wang     93 May 15  2015 LuaJIT-2.0.4
+-rw-r--r--. 1 root root 847615 Jun  6 21:16 LuaJIT-2.0.4.tar.gz
+drwxrwxr-x. 9 root root   4096 May 26 10:41 lua-nginx-module-0.10.5
+-rw-r--r--. 1 root root 579793 Jun  6 21:35 lua-nginx-module-0.10.5.tar.gz
+drwxr-xr-x. 9 work work   4096 Jun  6 21:25 nginx-1.10.1
+-rw-r--r--. 1 root root 909077 Jun  6 21:17 nginx-1.10.1.tar.gz
+drwxrwxr-x. 9 root root   4096 May 10 05:28 ngx_devel_kit-0.3.0
+-rw-r--r--. 1 root root  66455 Jun  6 21:34 ngx_devel_kit-0.3.0.tar.gz</code></pre>
+<h6>安装依赖</h6>
+<pre><code class="language-shell">#使用root用户登录
+yum -y install gcc gcc-c++ autoconf automake
+yum -y install zlib zlib-devel openssl openssl-devel pcre-devel</code></pre>
+<h6>下载解压安装文件</h6>
+<pre><code class="language-shell">cd /usr/local/src
+wget http://nginx.org/download/nginx-1.10.1.tar.gz
+wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+wget https://github.com/chaoslawful/lua-nginx-module/archive/v1.10.5.tar.gz
+wget https://github.com/simpl/ngx_devel_kit/releases/tag/v0.3.0
+tar -zxvf LuaJIT-2.0.4.tar.gz
+tar -zxvf nginx-1.10.1.tar.gz
+
+tar -zxvf lua-nginx-module-0.10.5.tar.gz
+tar -zxvf ngx_devel_kit-0.3.0.tar.gz
+tar -zxvf echo-nginx-module-0.59
+
+tar -zxvf v0.59
+tar -zxvf v1.10.5.tar.gz
+tar -zxvf v0.3.0.tar.gz</code></pre>
+<h6>安装LuaJIT</h6>
+<pre><code class="language-shell">cd /usr/local/src/LuaJIT-2.0.4
+make
+make install
+export LUAJIT_LIB=/usr/local/lib
+export LUAJIT_INC=/usr/local/include/luajit-2.0
+ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2</code></pre>
+<h6>安装NGINX</h6>
+<pre><code class="language-shell">cd /usr/local/src/nginx-1.10.1
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0 --add-module=/usr/local/src/echo-nginx-module-0.59 
+make -j2
+make install</code></pre>
+<h6>配置NGINX</h6>
+<pre><code class="language-shell">cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak
+vi /usr/local/nginx/conf/nginx.conf
+
+location ~* ^/2328(/.*) {
+    default_type 'text/plain';
+    content_by_lua 'ngx.say("hello, ttlsa lua")';
+}</code></pre>
+<h6>启动NGINX</h6>
+<pre><code class="language-shell">/usr/local/nginx/sbin/nginx -v
+/usr/local/nginx/sbin/nginx</code></pre>
+<h6>测试NGINX</h6>
+<pre><code class="language-shell">curl http://localhost/2328/</code></pre>
+<h2>注</h2>
+<ol>
+<li>echo命令只能放在url请求中，如果放在url请求外，会报错 如果报[emerg]: &quot;echo&quot; directive is not allowed here in  ，请检查echo放置的位置</li>
+<li>一次url请求，echo 只能打印一行，如果有逻辑判断，且判断成功，则echo会执行判断成功里边的echo，否则执行最后一句echo（此处不一定正确，在测试中发现是此现象）</li>
+<li>如果echo后边有配置return 或者配置 proxy_pass，则echo的输出会被覆盖，即浏览器无法看到echo的内容</li>
+<li>echo的内容不是写在nginx的配置文件中，而是输出到浏览器中，所以echo的打印字符的查看请在浏览器中查看</li>
+</ol>
+<h5>参考：</h5>
+<p><a href="http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/">http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/</a></p>
+		</p>
+</div><!-- .entry-content -->	<footer class="entry-footer">
+		<ul class="post-categories">
+          
+          <li><a href="/category/1914056710.html" rel="category">Lua</a></li>
+        	</ul>
+		
+		<ul class="post-tags">
+                   <li><a href="/tags/1386710576.html" rel="tag">lua</a></li>
+        	</ul>
+		
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
+					<!-- #main -->
+				</div>
+				<!-- #primary -->
+				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
+	<aside class="widget widget_categories sidebar-widget clearfix">
+	<h3 class="widget-title">分类目录</h3>
+	<ul>
+		        <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
+                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
+                <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
+                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
+                <li class="cat-item"><a href="/category/1769324555.html" >HTTPS</a></li>
+        	</ul>
+</aside>
+	<aside class="widget widget_archive sidebar-widget clearfix">
+	<h3 class="widget-title">文章归档</h3>
+	<ul>
+		<li><a href="/archive/201508.html">2015-08</a></li>
+		<li><a href="/archive/201507.html">2015-07</a></li>
+		<li><a href="/archive/201608.html">2016-08</a></li>
+		</ul>
+</aside>	<aside class="widget widget_recent_entries sidebar-widget clearfix">
+	<h3 class="widget-title">近期文章</h3>
+	<ul>
+	    <li><a href="/blog/https-java-cert.html">HTTPS带证书java访问</a></li>
+        <li><a href="/blog/https-keytool-cert.html">HTTPS 证书keytool</a></li>
+        <li><a href="/blog/https-double-cert.html">HTTPS 双向证书</a></li>
+        <li><a href="/blog/https-single-cert.html">HTTPS 服务端证书</a></li>
+        <li><a href="/blog/php5-install.html">php5.6.25安装</a></li>
+    	</ul>
+</aside>
+	<aside class="widget widget_tag_cloud sidebar-widget clearfix">
+	<h3 class="widget-title">标签</h3>
+	<div class="tagcloud">
+		<a href="/tags/1386710576.html"  title="lua" >lua</a>
+		<a href="/tags/3692263176.html"  title="java" >java</a>
+		<a href="/tags/2511338272.html"  title="git" >git</a>
+		<a href="/tags/2013555047.html"  title="blog" >blog</a>
+		<a href="/tags/1783669539.html"  title="php" >php</a>
+		<a href="/tags/367908174.html"  title="php7" >php7</a>
+		<a href="/tags/1845431629.html"  title="php5" >php5</a>
+		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
+		<a href="/tags/3635419366.html"  title="https" >https</a>
+		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
+		<a href="/tags/915562279.html"  title="client" >client</a>
+		</div>
+</aside>
+	<aside class="widget widget_text sidebar-widget clearfix">
+	<h3 class="widget-title">介绍</h3>
+	<div class="textwidget">
+		<p>本博客使用Gitblog搭建，欢迎你!</p>
+	</div>
+</aside>
+</div><!-- #secondary -->			</div>
+			<!-- .row -->
+		</div>
+		<!-- .container -->
+	</div>
+	<!-- .quest-row -->
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 copyright-text">
+				<a href="https://github.com/jockchou/gitblog">Proudly powered by Gitblog</a>
+			</div>
+			<div class="col-md-6 social-icon-container clearfix">
+				<ul></ul>
+			</div>
+		</div>
+		<!-- end row -->
+	</div>
+	<!-- end container -->
+</footer>	</div><!-- #page -->
+	<a href="#0" class="cd-top"><i class="fa fa-angle-up"></i></a>
+
+
+<script type="text/javascript" src="/theme/quest/assets/plugins/modernizr/modernizr.custom.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery.js?ver=1.11.2"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/bootstrap/js/bootstrap.min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/wow/wow.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/colorbox/jquery.colorbox-min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/js/quest.js?ver=2.1"></script>
+	
+<link rel="stylesheet" href="http://cdn.bootcss.com/highlight.js/8.6/styles/default.min.css">
+<script src="http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

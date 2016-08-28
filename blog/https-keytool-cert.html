@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>HTTPS 证书keytool|wngn123-GitBlog</title>
+	<meta name="keywords" content="keytool,HTTPS,wngn123-GitBlog">
+	<meta name="description" content="HTTPS 证书keytool">
+	
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/style.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/customizer.css?ver=2.1" type="text/css" media="all" />
+	<link rel="alternate" type="application/rss+xml" title="wngn123-GitBlog" href="//feed.xml" />
+	
+	</head>
+
+<body class="home blog wide">
+	<div id="page" class="hfeed site">
+		<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+		    <header id="masthead" class="main-header" role="banner">
+<div class="container">
+	<div class="row">
+		<div class="site-branding col-md-4">
+			<h1 class="site-title"><a href="/" rel="home">wngn123-GitBlog</a></h1>
+				<span class="site-description">GitBlog</span>
+		</div>
+		<!-- .site-branding -->
+	</div>
+</div>
+</header>		    <div id="content">
+	<div class="quest-row site-content">
+		<div class="container">
+			<div class="row">
+				<div id="primary" class="content-area single col-md-9">
+					<div id="main" class="site-main" role="main">
+						<article class="post hentry">
+	<header class="entry-header">
+	<h1 class="post-title"><a href="/blog/https-keytool-cert.html" rel="bookmark">HTTPS 证书keytool</a></h1>
+	<div class="entry-meta">
+		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-28</time>
+				<span class="seperator">/</span>
+	    <span><i class="fa fa-user"></i> wngn123</span>
+	    	</div><!-- .entry-meta -->
+</header><!-- .entry-header -->	<div class="entry-content">
+	<p>
+		<!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: HTTPS 证书keytool
+tags: keytool
+category: HTTPS
+status: publish
+summary: HTTPS 证书keytool
+-->
+<h2>证书keytool</h2>
+<ul>
+<li>-genkeypair：生成一对非对称密钥;</li>
+<li>-alias：指定密钥对的别名，该别名是公开的;</li>
+<li>-keyalg：指定加密算法，本例中的采用通用的RAS加密算法;</li>
+<li>-keystore:密钥库的路径及名称，不指定的话，默认在操作系统的用户目录下生成一个&quot;.keystore&quot;的文件</li>
+<li>-validity 365”含义是证书有效期，365表示1年，默认值是90天</li>
+<li>-keypass 密钥密码</li>
+<li>-storepass 密钥库密码</li>
+</ul>
+<p><strong> 注意keypass和storepass保持一致 </strong></p>
+<ul>
+<li><strong>证书系统：</strong> 证书系统管理很多证书库（keystore）</li>
+<li><strong>证书仓库：</strong>证书仓库管理很多证书条目（alias）</li>
+<li><strong>证书条目：</strong>证书条目即一条证书</li>
+</ul>
+<h4>证书管理</h4>
+<pre><code>创建
+keytool -genkey -alias "name" -keyalg RSA keystore "test.keystore" -storepass password
+显示
+keytool -printcert -file "test.crt"   
+列表
+keytool -list -keystore test.keystore [-v -alias name]
+导出
+keytool -export -alias name -file test.cer -keystore test.keystore
+导入
+keytool -import -keystore test_cacerts -file test.cer
+删除：
+keytool -delete -keystore test.keystore -alias name
+修改密码
+keytool -keypasswd -alias name -keystore test.keystore
+keytool -keypasswd -alias name -keypass testtesttest1 -new testtest1 -storepass testtest -keystore test.keystore  </code></pre>
+<h4>jdk证书</h4>
+<p>为服务器生成证书</p>
+<pre><code>keytool -list -keystore %JAVA_HOME%/jre/lib/security/cacerts -v  -alias name
+keytool -export -file test.cer -keystore %JAVA_HOME%/jre/lib/security/cacerts -alias name
+keytool -import -file test.cer -keystore %JAVA_HOME%/jre/lib/security/cacerts -alias name
+keytool -delete -keystore %JAVA_HOME%/jre/lib/security/cacerts -alias name</code></pre>
+<h4>window实例：</h4>
+<p>证书库路径：D:/wngn/cert/wngn/wngn.keystore
+证书别名：wngn-server wngn-client-1 wngn-client-2 wngn-client-n</p>
+<pre><code>What is your first and last name?
+  [Unknown]:  www.wngn.com
+What is the name of your organizational unit?
+  [Unknown]:  wngn.com
+What is the name of your organization?
+  [Unknown]:  wngn
+What is the name of your City or Locality?
+  [Unknown]:  BJ
+What is the name of your State or Province?
+  [Unknown]:  BJ
+What is the two-letter country code for this unit?
+  [Unknown]:  CH
+Is CN=java.vfou.com, OU=vfou.com, O=vfou, L=BJ, ST=BJ, C=CH correct?
+  [no]:  y
+
+keytool -genkey -alias wngn-server -keyalg RSA -keysize 1024 -keypass wanggang -validity 365 -keystore D:/wngn/cert/wngn/wngn-server.keystore -dname "CN=www.wngn.com,OU=wngn.com,O=wngn,L=BJ,ST=BJ,C=CH" -storepass wanggang -keypass wanggang</code></pre>
+<h4>遇到错误</h4>
+<p>输入keystore密码：</p>
+<p>keytool错误： java.io.IOException: Keystore was tampered with, or password was incorrect </p>
+<p>对于很多服务器比如glassfish或者tomcat之类的，在证书过期，我们需要删除时，需要输入保护密码，默认的就是changeit，输入这个密码就可以了。 </p>
+		</p>
+</div><!-- .entry-content -->	<footer class="entry-footer">
+		<ul class="post-categories">
+          
+          <li><a href="/category/1769324555.html" rel="category">HTTPS</a></li>
+        	</ul>
+		
+		<ul class="post-tags">
+                   <li><a href="/tags/2278070035.html" rel="tag">keytool</a></li>
+        	</ul>
+		
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
+					<!-- #main -->
+				</div>
+				<!-- #primary -->
+				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
+	<aside class="widget widget_categories sidebar-widget clearfix">
+	<h3 class="widget-title">分类目录</h3>
+	<ul>
+		        <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
+                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
+                <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
+                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
+                <li class="cat-item"><a href="/category/1769324555.html" >HTTPS</a></li>
+        	</ul>
+</aside>
+	<aside class="widget widget_archive sidebar-widget clearfix">
+	<h3 class="widget-title">文章归档</h3>
+	<ul>
+		<li><a href="/archive/201508.html">2015-08</a></li>
+		<li><a href="/archive/201507.html">2015-07</a></li>
+		<li><a href="/archive/201608.html">2016-08</a></li>
+		</ul>
+</aside>	<aside class="widget widget_recent_entries sidebar-widget clearfix">
+	<h3 class="widget-title">近期文章</h3>
+	<ul>
+	    <li><a href="/blog/https-java-cert.html">HTTPS带证书java访问</a></li>
+        <li><a href="/blog/https-keytool-cert.html">HTTPS 证书keytool</a></li>
+        <li><a href="/blog/https-double-cert.html">HTTPS 双向证书</a></li>
+        <li><a href="/blog/https-single-cert.html">HTTPS 服务端证书</a></li>
+        <li><a href="/blog/php5-install.html">php5.6.25安装</a></li>
+    	</ul>
+</aside>
+	<aside class="widget widget_tag_cloud sidebar-widget clearfix">
+	<h3 class="widget-title">标签</h3>
+	<div class="tagcloud">
+		<a href="/tags/1386710576.html"  title="lua" >lua</a>
+		<a href="/tags/3692263176.html"  title="java" >java</a>
+		<a href="/tags/2511338272.html"  title="git" >git</a>
+		<a href="/tags/2013555047.html"  title="blog" >blog</a>
+		<a href="/tags/1783669539.html"  title="php" >php</a>
+		<a href="/tags/367908174.html"  title="php7" >php7</a>
+		<a href="/tags/1845431629.html"  title="php5" >php5</a>
+		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
+		<a href="/tags/3635419366.html"  title="https" >https</a>
+		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
+		<a href="/tags/915562279.html"  title="client" >client</a>
+		</div>
+</aside>
+	<aside class="widget widget_text sidebar-widget clearfix">
+	<h3 class="widget-title">介绍</h3>
+	<div class="textwidget">
+		<p>本博客使用Gitblog搭建，欢迎你!</p>
+	</div>
+</aside>
+</div><!-- #secondary -->			</div>
+			<!-- .row -->
+		</div>
+		<!-- .container -->
+	</div>
+	<!-- .quest-row -->
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 copyright-text">
+				<a href="https://github.com/jockchou/gitblog">Proudly powered by Gitblog</a>
+			</div>
+			<div class="col-md-6 social-icon-container clearfix">
+				<ul></ul>
+			</div>
+		</div>
+		<!-- end row -->
+	</div>
+	<!-- end container -->
+</footer>	</div><!-- #page -->
+	<a href="#0" class="cd-top"><i class="fa fa-angle-up"></i></a>
+
+
+<script type="text/javascript" src="/theme/quest/assets/plugins/modernizr/modernizr.custom.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery.js?ver=1.11.2"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/bootstrap/js/bootstrap.min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/wow/wow.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/colorbox/jquery.colorbox-min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/js/quest.js?ver=2.1"></script>
+	
+<link rel="stylesheet" href="http://cdn.bootcss.com/highlight.js/8.6/styles/default.min.css">
+<script src="http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

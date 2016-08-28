@@ -4,9 +4,710 @@
         <description>GitBlog是一个简单易用的Markdown博客系统</description>
         <link>/</link>
         <atom:link href="//feed.xml" rel="self" type="application/rss+xml" />
-        <pubDate>2016-08-24 14:08:37</pubDate>
-        <lastBuildDate>2016-08-24 14:08:37</lastBuildDate>
+        <pubDate>2016-08-28 16:08:01</pubDate>
+        <lastBuildDate>2016-08-28 16:08:01</lastBuildDate>
         <generator>Gitblog v1.0</generator>
+                <item>
+            <title>HTTPS带证书java访问</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: HTTPS带证书java访问
+tags: java ssl client
+category: HTTPS
+status: publish
+summary: HTTPS 带证书java访问，Java需要验证客户端证书和服务端证书，客户端证书为P12库，服务端为keystore库，如果服务端证书已经添加到JVM证书库中，则代码可省略服务端的证书验证。
+--&gt;
+&lt;h2&gt;HTTPS带证书java访问&lt;/h2&gt;
+&lt;p&gt;1.Java需要验证客户端证书和服务端证书，客户端证书为P12库，服务端为keystore库，客户端库需要密码，服务端库不需要密码。&lt;/p&gt;
+&lt;p&gt;2.如果服务端证书已经添加到JVM证书库中，则代码可省略服务端的证书验证。&lt;/p&gt;
+&lt;h4&gt;JAVA SSL&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;package com.dianru.analysis.module.weixin;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+public class HttpsPost {
+    /** 获得KeyStore.
+     * 
+     * @param keyStorePath
+     *                        密钥库路径
+     * @param password
+     *                        密码
+     * @return 密钥库
+     * @throws Exception */
+    public static KeyStore getKeyStore(String password, String keyStorePath) throws Exception {
+        // 实例化密钥库
+        KeyStore ks = KeyStore.getInstance(&quot;JKS&quot;);
+        // 获得密钥库文件流
+        FileInputStream is = new FileInputStream(keyStorePath);
+        // 加载密钥库
+        ks.load(is, password.toCharArray());
+        // 关闭密钥库文件流
+        is.close();
+        return ks;
+    }
+
+    /** 获得SSLSocketFactory.
+     * 
+     * @param password
+     *                        密码
+     * @param keyStorePath
+     *                        密钥库路径
+     * @param trustStorePath
+     *                        信任库路径
+     * @return SSLSocketFactory
+     * @throws Exception */
+    public static SSLContext getSSLContext(String password, String keyStorePath, String trustStorePath)
+            throws Exception {
+        // 实例化密钥库
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        // 获得密钥库
+        KeyStore keyStore = getKeyStore(password, keyStorePath);
+        // 初始化密钥工厂
+        keyManagerFactory.init(keyStore, password.toCharArray());
+
+        // 实例化信任库
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory
+                .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        // 获得信任库
+        KeyStore trustStore = getKeyStore(password, trustStorePath);
+        // 初始化信任库
+        trustManagerFactory.init(trustStore);
+        // 实例化SSL上下文
+        SSLContext ctx = SSLContext.getInstance(&quot;TLS&quot;);
+        // 初始化SSL上下文
+        ctx.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+        // 获得SSLSocketFactory
+        return ctx;
+    }
+
+    /** 初始化HttpsURLConnection.
+     * 
+     * @param password
+     *                        密码
+     * @param keyStorePath
+     *                        密钥库路径
+     * @param trustStorePath
+     *                        信任库路径
+     * @throws Exception */
+    public static void initHttpsURLConnection(String password, String keyStorePath, String trustStorePath)
+            throws Exception {
+        // 声明SSL上下文
+        SSLContext sslContext = null;
+        // 实例化主机名验证接口
+        HostnameVerifier hnv = new MyHostnameVerifier();
+        try {
+            sslContext = getSSLContext(password, keyStorePath, trustStorePath);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        if (sslContext != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+        }
+        HttpsURLConnection.setDefaultHostnameVerifier(hnv);
+    }
+
+    /** 发送请求.
+     * 
+     * @param httpsUrl
+     *                        请求的地址
+     * @param xmlStr
+     *                        请求的数据 */
+    public static void post(String httpsUrl, String xmlStr) {
+        HttpsURLConnection urlCon = null;
+        try {
+            urlCon = (HttpsURLConnection) (new URL(httpsUrl)).openConnection();
+            urlCon.setDoInput(true);
+            urlCon.setDoOutput(true);
+            urlCon.setRequestMethod(&quot;POST&quot;);
+            urlCon.setRequestProperty(&quot;Content-Length&quot;, String.valueOf(xmlStr.getBytes().length));
+            urlCon.setUseCaches(false);
+            //设置为gbk可以解决服务器接收时读取的数据中文乱码问题
+            urlCon.getOutputStream().write(xmlStr.getBytes(&quot;gbk&quot;));
+            urlCon.getOutputStream().flush();
+            urlCon.getOutputStream().close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlCon.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** 测试方法.
+     * 
+     * @param args
+     * @throws Exception */
+    public static void main(String[] args) throws Exception {
+        // 密码
+        String password = &quot;wanggang&quot;;
+        // 密钥库
+        String keyStorePath = &quot;D:/wngn/cert/wngn/java-client.p12&quot;;
+        // 信任库
+        String trustStorePath = &quot;D:/wngn/cert/wngn/java-server.truststore&quot;;
+        // 本地起的https服务
+        String httpsUrl = &quot;https://java.vfou.com:8086/data/active/getLatest&quot;;
+        // 传输文本
+        String xmlStr = &quot;&quot;;
+        HttpsPost.initHttpsURLConnection(password, keyStorePath, trustStorePath);
+        // 发起请求
+        HttpsPost.post(httpsUrl, xmlStr);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;package com.dianru.analysis.module.weixin;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+/**
+ * 实现用于主机名验证的基接口。 
+ * 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，则验证机制可以回调此接口的实现程序来确定是否应该允许此连接。
+ */
+public class MyHostnameVerifier implements HostnameVerifier {
+    @Override
+    public boolean verify(String hostname, SSLSession session) {
+        if(&quot;localhost&quot;.equals(hostname)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;HTTP CLIENT&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;package com.dianru.analysis.module.weixin;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/** User: rizenguo Date: 2014/10/29 Time: 14:36 */
+public class HttpsRequest {
+
+    public static Logger LOG = LogManager.getLogger(HttpsRequest.class);
+
+    public interface ResultListener {
+        public void onConnectionPoolTimeoutError();
+    }
+
+    // 表示请求器是否已经做了初始化工作
+    private boolean hasInit = false;
+    // 请求器的配置
+    private RequestConfig requestConfig;
+
+    // HTTP请求器
+    private CloseableHttpClient httpClient;
+
+    public HttpsRequest() {
+        try {
+            init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void init() throws IOException, KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException,
+            KeyManagementException {
+
+        KeyStore keyStore = KeyStore.getInstance(&quot;PKCS12&quot;);
+        FileInputStream instream = new FileInputStream(new File(&quot;D:/wngn/cert/wngn/java-client.p12&quot;));
+
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        FileInputStream instream2 = new FileInputStream(new File(&quot;D:/wngn/cert/wngn/java-server.truststore&quot;));
+
+        try {
+            keyStore.load(instream, &quot;wanggang&quot;.toCharArray());// 设置证书密码
+            trustStore.load(instream2, &quot;wanggang&quot;.toCharArray());// 设置证书密码
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } finally {
+            instream.close();
+        }
+        // Trust own CA and all self-signed certs 相信自己的CA和所有自签名的证书 
+        SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, &quot;wanggang&quot;.toCharArray())
+                .loadTrustMaterial(trustStore).build();
+        // Allow TLSv1 protocol only  只允许使用TLSv1协议 
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { &quot;TLSv1&quot; }, null,
+                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+        // 根据默认超时限制初始化requestConfig
+        requestConfig = RequestConfig.custom().setSocketTimeout(10 * 1000).setConnectTimeout(30 * 1000).build();
+        hasInit = true;
+    }
+
+    public String sendPost(String url) throws UnrecoverableKeyException, KeyManagementException,
+            NoSuchAlgorithmException, KeyStoreException, IOException {
+        if (!hasInit) {
+            init();
+        }
+        String result = null;
+        HttpPost httpPost = new HttpPost(url);
+        System.out.println(&quot;API，POST过去的数据是：&quot;);
+        // 得指明使用UTF-8编码，否则到API服务器XML的中文不能被成功识别
+        StringEntity postEntity = new StringEntity(&quot;&quot;, &quot;UTF-8&quot;);
+        httpPost.addHeader(&quot;Content-Type&quot;, &quot;text/xml&quot;);
+        httpPost.setEntity(postEntity);
+        // 设置请求器的配置
+        httpPost.setConfig(requestConfig);
+
+        try {
+            HttpResponse response = httpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            result = EntityUtils.toString(entity, &quot;UTF-8&quot;);
+            System.out.println(result);
+        } catch (Exception e) {
+            LOG.error(url + &quot;-&quot; + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            httpPost.abort();
+        }
+        return result;
+    }
+
+    private static final String HTTPS_URL = &quot;https://java.vfou.com:8086/data/active/getLatest&quot;;
+
+    public static void main(String[] args) throws UnrecoverableKeyException, KeyManagementException,
+            NoSuchAlgorithmException, KeyStoreException, IOException {
+        HttpsRequest CLIENT = new HttpsRequest();
+        String response = CLIENT.sendPost(HTTPS_URL);
+        System.out.println(response);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-28 15:56:54</pubDate>
+            <link>//blog/https-java-cert.html</link>
+            <guid isPermaLink="true">//blog/https-java-cert.html</guid>
+                                               <category>HTTPS</category>
+                                    </item>
+                <item>
+            <title>HTTPS 证书keytool</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: HTTPS 证书keytool
+tags: keytool
+category: HTTPS
+status: publish
+summary: HTTPS 证书keytool
+--&gt;
+&lt;h2&gt;证书keytool&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;-genkeypair：生成一对非对称密钥;&lt;/li&gt;
+&lt;li&gt;-alias：指定密钥对的别名，该别名是公开的;&lt;/li&gt;
+&lt;li&gt;-keyalg：指定加密算法，本例中的采用通用的RAS加密算法;&lt;/li&gt;
+&lt;li&gt;-keystore:密钥库的路径及名称，不指定的话，默认在操作系统的用户目录下生成一个&amp;quot;.keystore&amp;quot;的文件&lt;/li&gt;
+&lt;li&gt;-validity 365”含义是证书有效期，365表示1年，默认值是90天&lt;/li&gt;
+&lt;li&gt;-keypass 密钥密码&lt;/li&gt;
+&lt;li&gt;-storepass 密钥库密码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt; 注意keypass和storepass保持一致 &lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;证书系统：&lt;/strong&gt; 证书系统管理很多证书库（keystore）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;证书仓库：&lt;/strong&gt;证书仓库管理很多证书条目（alias）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;证书条目：&lt;/strong&gt;证书条目即一条证书&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;证书管理&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;创建
+keytool -genkey -alias &quot;name&quot; -keyalg RSA keystore &quot;test.keystore&quot; -storepass password
+显示
+keytool -printcert -file &quot;test.crt&quot;   
+列表
+keytool -list -keystore test.keystore [-v -alias name]
+导出
+keytool -export -alias name -file test.cer -keystore test.keystore
+导入
+keytool -import -keystore test_cacerts -file test.cer
+删除：
+keytool -delete -keystore test.keystore -alias name
+修改密码
+keytool -keypasswd -alias name -keystore test.keystore
+keytool -keypasswd -alias name -keypass testtesttest1 -new testtest1 -storepass testtest -keystore test.keystore  &lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;jdk证书&lt;/h4&gt;
+&lt;p&gt;为服务器生成证书&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;keytool -list -keystore %JAVA_HOME%/jre/lib/security/cacerts -v  -alias name
+keytool -export -file test.cer -keystore %JAVA_HOME%/jre/lib/security/cacerts -alias name
+keytool -import -file test.cer -keystore %JAVA_HOME%/jre/lib/security/cacerts -alias name
+keytool -delete -keystore %JAVA_HOME%/jre/lib/security/cacerts -alias name&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;window实例：&lt;/h4&gt;
+&lt;p&gt;证书库路径：D:/wngn/cert/wngn/wngn.keystore
+证书别名：wngn-server wngn-client-1 wngn-client-2 wngn-client-n&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;What is your first and last name?
+  [Unknown]:  www.wngn.com
+What is the name of your organizational unit?
+  [Unknown]:  wngn.com
+What is the name of your organization?
+  [Unknown]:  wngn
+What is the name of your City or Locality?
+  [Unknown]:  BJ
+What is the name of your State or Province?
+  [Unknown]:  BJ
+What is the two-letter country code for this unit?
+  [Unknown]:  CH
+Is CN=java.vfou.com, OU=vfou.com, O=vfou, L=BJ, ST=BJ, C=CH correct?
+  [no]:  y
+
+keytool -genkey -alias wngn-server -keyalg RSA -keysize 1024 -keypass wanggang -validity 365 -keystore D:/wngn/cert/wngn/wngn-server.keystore -dname &quot;CN=www.wngn.com,OU=wngn.com,O=wngn,L=BJ,ST=BJ,C=CH&quot; -storepass wanggang -keypass wanggang&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;遇到错误&lt;/h4&gt;
+&lt;p&gt;输入keystore密码：&lt;/p&gt;
+&lt;p&gt;keytool错误： java.io.IOException: Keystore was tampered with, or password was incorrect &lt;/p&gt;
+&lt;p&gt;对于很多服务器比如glassfish或者tomcat之类的，在证书过期，我们需要删除时，需要输入保护密码，默认的就是changeit，输入这个密码就可以了。 &lt;/p&gt;            </description>
+            <pubDate>2016-08-28 15:32:01</pubDate>
+            <link>//blog/https-keytool-cert.html</link>
+            <guid isPermaLink="true">//blog/https-keytool-cert.html</guid>
+                                               <category>HTTPS</category>
+                                    </item>
+                <item>
+            <title>HTTPS 双向证书</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: HTTPS 双向证书
+tags: keytool https
+category: HTTPS
+status: publish
+summary: HTTPS 双向证书
+--&gt;
+&lt;h2&gt;双向证书&lt;/h2&gt;
+&lt;p&gt;服务器(centos)：172.16.1.10 &lt;/p&gt;
+&lt;p&gt;127.0.0.1 localhost&lt;/p&gt;
+&lt;p&gt;127.0.0.1 java.vfou.com&lt;/p&gt;
+&lt;p&gt;本地主机(window)：172.16.1.101&lt;/p&gt;
+&lt;p&gt;127.0.0.1 localhost&lt;/p&gt;
+&lt;p&gt;172.16.1.10 java.vfou.com&lt;/p&gt;
+&lt;h6&gt;1.生成服务端证书：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -genkey -v -alias java-server -keyalg RSA -keystore /home/java/cert/java/java-server.keystore -dname &quot;CN=java.vfou.com,OU=vfou.com,O=vfou,L=BJ,ST=BJ,C=CH&quot; -storepass wanggang -keypass wanggang &lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;2.导出服务端证书：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -export -v -alias java-server -keystore /home/java/cert/java/java-server.keystore -storepass wanggang -rfc -file /home/java/cert/java/java-server.cer&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;3.生产客户端证书：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -validity 365 -genkeypair -v -alias java-client -keyalg RSA -storetype PKCS12 -keystore D:/wngn/cert/wngn/java-client.p12 -dname &quot;CN=client,OU=client,O=client,L=BJ,ST=BJ,c=CH&quot; -storepass wanggang -keypass wanggang&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;4.导出客户端证书：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -export -v -alias java-client -keystore D:/wngn/cert/wngn/java-client.p12 -storetype PKCS12 -storepass wanggang -rfc -file D:/wngn/cert/wngn/java-client.cer&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;5.服务端信任客户端：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -import -v -alias java-client -file  /home/java/cert/java/java-client.cer -keystore /home/java/cert/java/java-server.keystore -storepass wanggang&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;6.客户端信任服务端：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -import -v -alias java-server -file D:/wngn/cert/wngn/java-server.cer -keystore D:/wngn/cert/wngn/java-server.truststore -storepass wanggang&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;7.服务器tomcat配置：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;Connector port=&quot;8086&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot;
+               maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;
+               keystoreFile=&quot;/home/java/cert/java/java-server.keystore&quot; keystorePass=&quot;wanggang&quot;
+               truststoreFile=&quot;/home/java/cert/java/java-server.keystore&quot; truststorePass=&quot;wanggang&quot;
+               clientAuth=&quot;true&quot; sslProtocol=&quot;TLS&quot; /&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;clientAuth:设置是否双向验证，默认为false，设置为true代表双向验证
+keystoreFile:服务器证书文件路径
+keystorePass:服务器证书密码
+truststoreFile:用来验证客户端证书的根证书，此例中就是服务器证书
+truststorePass:根证书密码&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;8.让服务器信任客户端证书&lt;/h6&gt;
+&lt;p&gt;由于是双向SSL认证，服务器必须要信任客户端证书，因此，必须把客户端证书添加为服务器的信任认证。由于不能直接将PKCS12格式的证书库导入，必须先把客户端证书导出为一个单独的CER文件,然后再将CER文件导入到服务端证书库。&lt;/p&gt;
+&lt;h6&gt;9.让客户端信任服务器证书&lt;/h6&gt;
+&lt;p&gt;由于是双向SSL认证，客户端也要验证服务器证书，因此，必须把服务器证书添加到浏览的“受信任的根证书颁发机构”。由于不能直接将keystore格式的证书库导入，必须先把服务器证书导出为一个单独的CER文件，然后再将CER文件导入到客户端证书库（windows双击证书安装）。双击tomcat.cer文件，按照提示安装证书，将证书填入到“受信任的根证书颁发机构”。&lt;/p&gt;
+&lt;h6&gt;10.让客户端安装客户端（P12）证书&lt;/h6&gt;
+&lt;p&gt;浏览器访问必须安装客户端证书，必须将P12的证书库安装到，客户端不是只包含公钥的证书，必须是一个p12库导入才行，证书必须包含私钥才行&lt;/p&gt;
+&lt;h6&gt;11.JVM证书导入&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -import -keystore D:/dev/jdk/jdk1.7.0_79/jre/lib/security/cacerts -file D:/wngn/cert/wngn/java-server.crt -alias java-server -storepass changeit&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-28 15:32:00</pubDate>
+            <link>//blog/https-double-cert.html</link>
+            <guid isPermaLink="true">//blog/https-double-cert.html</guid>
+                                               <category>HTTPS</category>
+                                    </item>
+                <item>
+            <title>HTTPS 服务端证书</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: HTTPS 服务端证书
+tags: keytool https
+category: HTTPS
+status: publish
+summary: HTTPS 服务端证书实现配置
+--&gt;
+&lt;h2&gt;服务端证书&lt;/h2&gt;
+&lt;p&gt;服务器(centos)：172.16.1.10 &lt;/p&gt;
+&lt;p&gt;127.0.0.1 localhost&lt;/p&gt;
+&lt;p&gt;127.0.0.1 java.vfou.com&lt;/p&gt;
+&lt;p&gt;本地主机(window)：172.16.1.101&lt;/p&gt;
+&lt;p&gt;127.0.0.1 localhost&lt;/p&gt;
+&lt;p&gt;172.16.1.10 java.vfou.com&lt;/p&gt;
+&lt;h6&gt;1.生成服务端证书：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -genkey -v -alias java-server -keyalg RSA -keystore /home/java/cert/java/java-server.keystore -dname &quot;CN=java.vfou.com,OU=vfou.com,O=vfou,L=BJ,ST=BJ,C=CH&quot; -storepass wanggang -keypass wanggang &lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;2.导出服务端证书：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -export -v -alias java-server -keystore /home/java/cert/java/java-server.keystore -storepass wanggang -rfc -file /home/java/cert/java/java-server.cer&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;3.客户端信任服务端：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;keytool -import -v -alias java-server -file D:/wngn/cert/wngn/java-server.cer -keystore D:/wngn/cert/wngn/java-server.truststore -storepass wanggang&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;4.服务器tomcat配置：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;Connector port=&quot;8086&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot;
+               maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;
+               keystoreFile=&quot;/home/java/cert/java/java-server.keystore&quot; keystorePass=&quot;wanggang&quot;
+               truststoreFile=&quot;/home/java/cert/java/java-server.keystore&quot; truststorePass=&quot;wanggang&quot;
+               clientAuth=&quot;false&quot; sslProtocol=&quot;TLS&quot; /&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;clientAuth:设置是否双向验证，默认为false，设置为true代表双向验证
+keystoreFile:服务器证书文件路径
+keystorePass:服务器证书密码
+truststoreFile:用来验证客户端证书的根证书，此例中就是服务器证书
+truststorePass:根证书密码&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;5.让客户端信任服务器证书&lt;/h6&gt;
+&lt;p&gt;由于是服务端认证，客户端要验证服务器证书，因此，必须把服务器证书添加到浏览的“受信任的根证书颁发机构”。由于不能直接将keystore格式的证书库导入，必须先把服务器证书导出为一个单独的CER文件，然后再将CER文件导入到客户端证书库（windows双击证书安装）。双击java-server.cer文件，按照提示安装证书，将证书填入到“受信任的根证书颁发机构”。&lt;/p&gt;            </description>
+            <pubDate>2016-08-28 15:32:01</pubDate>
+            <link>//blog/https-single-cert.html</link>
+            <guid isPermaLink="true">//blog/https-single-cert.html</guid>
+                                               <category>HTTPS</category>
+                                    </item>
+                <item>
+            <title>php5.6.25安装</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: php5.6.25安装
+tags: php php5
+category: PHP
+status: publish
+summary: php5.6.25安装,centos7源码安装php5.6.25.
+--&gt;
+&lt;h2&gt;php5.6.25安装&lt;/h2&gt;
+&lt;h4&gt;进入Linux源码目录下载源码并安装&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src
+tar -zxvf php-php-5.6.25.tar.gz
+cd php-php-5.6.25
+
+./configure --prefix=/usr/local/php5 --with-config-file-path=/usr/local/php5/etc --enable-mb --enable-bcmath --enable-mbstring --enable-sockets --with-curl --enable-ftp --enable-sockets --disable-ipv6 --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --enable-gd-native-ttf --with-iconv-t --with-zlib --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --with-mysql=mysqlnd --enable-dom --enable-xml --enable-fpm 
+
+make &amp;amp;&amp;amp;  make install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;配置&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cp php.ini-production /usr/local/php5/etc/php.ini
+cp /usr/local/php5/etc/php-fpm.conf.default /usr/local/php5/etc/php-fpm.conf
+cp /src/local/php5/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+#添加启动服务
+chmod 755 /etc/init.d/php-fpm 或 chmod +x /etc/init.d/php-fpm
+chkconfig --add php-fpm &amp;amp;&amp;amp; chkconfig php-fpm on
+chkconfig --level 35 php-fpm on
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;启动&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#验证配置文件
+/usr/local/php5/sbin/php-fpm -t
+/usr/local/php5/sbin/php-fpm -c /usr/local/php5/etc/php.ini -y /usr/local/php5/etc/php-fpm.conf -t
+
+#服务启动
+Usage: /etc/init.d/php-fpm {start|stop|force-quit|restart|reload|status}
+service php-fpm start
+service php-fpm stop
+service php-fpm restart
+service php-fpm reload
+service php-fpm status
+
+#命令启动
+/usr/local/ph5/sbin/php-fpm
+/usr/local/php5/bin/php-cgi -b 127.0.0.1:9000 -c /usr/local/php5/etc/php.ini
+netstat -tnlp &lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-28 15:03:04</pubDate>
+            <link>//blog/php5-install.html</link>
+            <guid isPermaLink="true">//blog/php5-install.html</guid>
+                                               <category>PHP</category>
+                                    </item>
+                <item>
+            <title>php7.0.10安装</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: php7.0.10安装
+tags: php php7
+category: PHP
+status: publish
+summary: php7.0.10安装,centos7源码安装php7.0.10.
+--&gt;
+&lt;h2&gt;php7.0.10安装&lt;/h2&gt;
+&lt;h4&gt;依赖安装&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;yum -y install libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel pcre-devel
+yum -y install curl-devel libmcrypt libmcrypt-devel mcrypt mhash libxslt-devel&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;进入Linux源码目录下载源码并安装&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src
+wget  http://cn2.php.net/distributions/php-7.0.10.tar.gz
+tar -zxvf php-7.0.10.tar.gz
+cd php-7.0.10
+
+./configure --prefix=/usr/local/php7 --exec-prefix=/usr/local/php7 --bindir=/usr/local/php7/bin --sbindir=/usr/local/php7/sbin --includedir=/usr/local/php7/include --libdir=/usr/local/php7/lib/php --mandir=/usr/local/php7/php/man --with-config-file-path=/usr/local/php7/etc --with-mysql-sock=/var/run/mysql/mysql.sock --with-mcrypt=/usr/include --with-mhash --with-openssl --with-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --with-pdo-mysql=shared,mysqlnd --with-gd --with-iconv --with-zlib --enable-zip --enable-inline-optimization --disable-debug --disable-rpath --enable-shared --enable-xml --enable-bcmath --enable-shmop --enable-sysvsem --enable-mbregex --enable-mbstring --enable-ftp --enable-gd-native-ttf --enable-pcntl --enable-sockets --with-xmlrpc --enable-soap --without-pear --with-gettext --enable-session --with-curl --with-jpeg-dir --with-freetype-dir --enable-opcache --enable-fpm --enable-fastcgi --with-fpm-user=work --with-fpm-group=work --without-gdbm --disable-fileinfo
+
+make &amp;amp;&amp;amp;  make install&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;配置&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#php配置
+cp php.ini-production /usr/local/php/etc/php.ini  
+cp /usr/local/php7/etc/php-fpm.conf.default /usr/local/php7/etc/php-fpm.conf
+cp /usr/local/php7/etc/php-fpm.d/www.conf.default /usr/local/php7/etc/php-fpm.d/www.conf
+cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+#查看配置文件
+sed -e &quot;s/;.*//g&quot;  /usr/local/php7/etc/php.ini | awk '{if (length !=0) print \$0}'
+sed -e &quot;s/;.*//g&quot;  /usr/local/php7/etc/php-fpm.d/www.conf   | awk '{if (length !=0) print \$0}'
+
+#添加启动服务
+chmod 755 /etc/init.d/php-fpm 或 chmod +x /etc/init.d/php-fpm
+chkconfig --add php-fpm &amp;amp;&amp;amp; chkconfig php-fpm on
+chkconfig --level 35 php-fpm on
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;启动&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#验证配置文件
+/usr/local/php7/sbin/php-fpm -t
+/usr/local/php7/sbin/php-fpm -c /usr/local/php7/etc/php.ini -y /usr/local/php7/etc/php-fpm.conf -t
+
+#服务启动
+Usage: /etc/init.d/php-fpm {start|stop|force-quit|restart|reload|status}
+service php-fpm start
+service php-fpm stop
+service php-fpm restart
+service php-fpm reload
+service php-fpm status
+
+#命令启动
+/usr/local/ph7/sbin/php-fpm
+/usr/local/php7/bin/php-cgi -b 127.0.0.1:9000 -c /usr/local/php7/etc/php.ini
+netstat -tnlp 
+
+启动
+/etc/init.d/php-fpm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;添加php的环境变量&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;echo -e '\nexport PATH=/usr/local/php7/bin:/usr/local/php7/sbin:\$PATH\n' &amp;gt;&amp;gt; /etc/profile &amp;amp;&amp;amp; source /etc/profile&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-28 15:01:56</pubDate>
+            <link>//blog/php7-install.html</link>
+            <guid isPermaLink="true">//blog/php7-install.html</guid>
+                                               <category>PHP</category>
+                                    </item>
+                <item>
+            <title>nginx lua 环境搭建</title>
+            <description>
+            &lt;!--
+author: wngn123
+date: 2015-08-24
+title: nginx lua 环境搭建
+tags: lua
+category: Lua
+status: publish
+summary: nginx lua 环境搭建
+--&gt;
+&lt;h2&gt;nginx lua 环境搭建&lt;/h2&gt;
+&lt;h6&gt;目录结构：&lt;/h6&gt;
+&lt;pre&gt;&lt;code&gt;drwxr-xr-x. 6 wang wang     93 May 15  2015 LuaJIT-2.0.4
+-rw-r--r--. 1 root root 847615 Jun  6 21:16 LuaJIT-2.0.4.tar.gz
+drwxrwxr-x. 9 root root   4096 May 26 10:41 lua-nginx-module-0.10.5
+-rw-r--r--. 1 root root 579793 Jun  6 21:35 lua-nginx-module-0.10.5.tar.gz
+drwxr-xr-x. 9 work work   4096 Jun  6 21:25 nginx-1.10.1
+-rw-r--r--. 1 root root 909077 Jun  6 21:17 nginx-1.10.1.tar.gz
+drwxrwxr-x. 9 root root   4096 May 10 05:28 ngx_devel_kit-0.3.0
+-rw-r--r--. 1 root root  66455 Jun  6 21:34 ngx_devel_kit-0.3.0.tar.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;安装依赖&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#使用root用户登录
+yum -y install gcc gcc-c++ autoconf automake
+yum -y install zlib zlib-devel openssl openssl-devel pcre-devel&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;下载解压安装文件&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src
+wget http://nginx.org/download/nginx-1.10.1.tar.gz
+wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+wget https://github.com/chaoslawful/lua-nginx-module/archive/v1.10.5.tar.gz
+wget https://github.com/simpl/ngx_devel_kit/releases/tag/v0.3.0
+tar -zxvf LuaJIT-2.0.4.tar.gz
+tar -zxvf nginx-1.10.1.tar.gz
+
+tar -zxvf lua-nginx-module-0.10.5.tar.gz
+tar -zxvf ngx_devel_kit-0.3.0.tar.gz
+tar -zxvf echo-nginx-module-0.59
+
+tar -zxvf v0.59
+tar -zxvf v1.10.5.tar.gz
+tar -zxvf v0.3.0.tar.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;安装LuaJIT&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src/LuaJIT-2.0.4
+make
+make install
+export LUAJIT_LIB=/usr/local/lib
+export LUAJIT_INC=/usr/local/include/luajit-2.0
+ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;安装NGINX&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src/nginx-1.10.1
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0 --add-module=/usr/local/src/echo-nginx-module-0.59 
+make -j2
+make install&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;配置NGINX&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak
+vi /usr/local/nginx/conf/nginx.conf
+
+location ~* ^/2328(/.*) {
+    default_type 'text/plain';
+    content_by_lua 'ngx.say(&quot;hello, ttlsa lua&quot;)';
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;启动NGINX&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;/usr/local/nginx/sbin/nginx -v
+/usr/local/nginx/sbin/nginx&lt;/code&gt;&lt;/pre&gt;
+&lt;h6&gt;测试NGINX&lt;/h6&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;curl http://localhost/2328/&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;注&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;echo命令只能放在url请求中，如果放在url请求外，会报错 如果报[emerg]: &amp;quot;echo&amp;quot; directive is not allowed here in  ，请检查echo放置的位置&lt;/li&gt;
+&lt;li&gt;一次url请求，echo 只能打印一行，如果有逻辑判断，且判断成功，则echo会执行判断成功里边的echo，否则执行最后一句echo（此处不一定正确，在测试中发现是此现象）&lt;/li&gt;
+&lt;li&gt;如果echo后边有配置return 或者配置 proxy_pass，则echo的输出会被覆盖，即浏览器无法看到echo的内容&lt;/li&gt;
+&lt;li&gt;echo的内容不是写在nginx的配置文件中，而是输出到浏览器中，所以echo的打印字符的查看请在浏览器中查看&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5&gt;参考：&lt;/h5&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/&quot;&gt;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/&lt;/a&gt;&lt;/p&gt;            </description>
+            <pubDate>2016-08-27 12:14:36</pubDate>
+            <link>//blog/install.html</link>
+            <guid isPermaLink="true">//blog/install.html</guid>
+                                               <category>Lua</category>
+                                    </item>
                 <item>
             <title>OpenResty</title>
             <description>
@@ -32,7 +733,7 @@ summary: OpenResty
     sudo cp -rf /home/work/openresty/nginx/nginx.conf /home/local/openresty/nginx/conf/
     sh /home/work/openresty/nginx/nginx_start.sh
 &lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-24 14:00:33</pubDate>
+            <pubDate>2016-08-27 12:14:36</pubDate>
             <link>//blog/openresty.html</link>
             <guid isPermaLink="true">//blog/openresty.html</guid>
                                                <category>Lua</category>
@@ -591,7 +1292,7 @@ i = 11111 - (11111 &amp;gt;&amp;gt;&amp;gt; 1) = 11111 - 1111 = 10000&lt;/p&gt;
         // HD, Section 2-1
         return i &amp;amp; -i;
     }&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-24 13:59:14</pubDate>
+            <pubDate>2016-08-27 12:14:36</pubDate>
             <link>//blog/integer.html</link>
             <guid isPermaLink="true">//blog/integer.html</guid>
                                                <category>Java</category>
@@ -644,7 +1345,7 @@ location /test {
     ';
 }
 # 在网址中输入&quot;yourURL/test&quot;，即会在网页中显示 1234 。&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-24 13:54:48</pubDate>
+            <pubDate>2016-08-27 12:14:36</pubDate>
             <link>//blog/lua_regex_cache_max_entries.html</link>
             <guid isPermaLink="true">//blog/lua_regex_cache_max_entries.html</guid>
                                                <category>Lua</category>
@@ -677,7 +1378,7 @@ summary: 指定是否使用MIME类型（default_type指令指定的类型）作�
 &lt;p&gt;这个指令默认是开启状态（on）&lt;/p&gt;
 &lt;p&gt;这个指令第一次出现是在 v0.9.1 稳定版中。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;wngn123@163.com on 206-07-12&lt;/code&gt;&lt;/p&gt;            </description>
-            <pubDate>2016-08-24 13:54:00</pubDate>
+            <pubDate>2016-08-27 12:14:36</pubDate>
             <link>//blog/lua_use_default_type.html</link>
             <guid isPermaLink="true">//blog/lua_use_default_type.html</guid>
                                                <category>Lua</category>
@@ -729,7 +1430,7 @@ development as it has a significant negative impact on overall performance. For 
 &lt;p&gt;甚至当lua代码缓存被开启的时候，这些在*_by_lua_file中通过dofile或者loadfile被加载的lua文件也不能被缓存（除非你自己去缓存他）。通常你能用init_by_lua或者init-by_lua_file指令加载所以这样的文件，或者编译这些lua文件到lua模块通过require加载。&lt;/p&gt;
 &lt;p&gt;ngx_lua模块任然不支持stat模式。&lt;/p&gt;
 &lt;p&gt;强烈的不建议在生成环境中关闭lua代码缓存，仅仅在开发期间关闭，因为关闭缓存对整体性能有很大的负面影响。例如在一个hello world的lua示例中关闭代码缓存，性能将下降一个数量级。&lt;/p&gt;            </description>
-            <pubDate>2016-08-24 13:52:19</pubDate>
+            <pubDate>2016-08-27 12:14:36</pubDate>
             <link>//blog/lua_code_cache.html</link>
             <guid isPermaLink="true">//blog/lua_code_cache.html</guid>
                                                <category>Lua</category>
@@ -738,8 +1439,8 @@ development as it has a significant negative impact on overall performance. For 
             <title>欢迎使用GitBlog</title>
             <description>
             &lt;!--
-author: jockchou
-head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+author: wangn123
+head: head.png
 date: 2015-07-31
 title: 欢迎使用GitBlog
 tags: git blog
@@ -771,7 +1472,8 @@ summary: GitBlog是一个简单易用的Markdown博客系统，它不需要数�
 &lt;li&gt;博客，分类，标签，归档  &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2&gt;四. 环境要求&lt;/h2&gt;
-&lt;p&gt;PHP 5.2.4+&lt;/p&gt;
+&lt;p&gt;PHP 5.2.4+ &lt;/p&gt;
+&lt;p&gt;不支持PHP7&lt;/p&gt;
 &lt;h2&gt;五. 安装步骤&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;下载GitBlog源代码  &lt;/li&gt;
@@ -780,20 +1482,20 @@ summary: GitBlog是一个简单易用的Markdown博客系统，它不需要数�
 &lt;li&gt;上传Markdown文件到&lt;code&gt;posts&lt;/code&gt;文件夹  &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2&gt;六. 详细说明&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/install.html&quot;&gt;1. 安装&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/struct.html&quot;&gt;2. 目录结构&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/config.html&quot;&gt;3. 配置说明&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/edit.html&quot;&gt;4. 编写博客&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/other-func.html&quot;&gt;5. 评论，订阅，统计等&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/cache.html&quot;&gt;6. 缓存机制&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/export.html&quot;&gt;7. 全站静态导出&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/theme.html&quot;&gt;8. 主题制作&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/nginx.html&quot;&gt;9. 在Nginx上运行GitBlog&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/apache.html&quot;&gt;10. 在Apache上运行GitBlog&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/sae.html&quot;&gt;11. 在SAE上运行GitBlog&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/github-pages.html&quot;&gt;12. 使用GitBlog和Github Pages搭建博客&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/update.html&quot;&gt;13. Gitblog升级&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://gitblogdoc.sinaapp.com/blog/gitblog/wordpress.html&quot;&gt;14. 从wordpress导入&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/install.html&quot;&gt;1. 安装&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/struct.html&quot;&gt;2. 目录结构&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/config.html&quot;&gt;3. 配置说明&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/gitblog/edit.html&quot;&gt;4. 编写博客&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/other-func.html&quot;&gt;5. 评论，订阅，统计等&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/cache.html&quot;&gt;6. 缓存机制&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/export.html&quot;&gt;7. 全站静态导出&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/theme.html&quot;&gt;8. 主题制作&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/nginx.html&quot;&gt;9. 在Nginx上运行GitBlog&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/apache.html&quot;&gt;10. 在Apache上运行GitBlog&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/sae.html&quot;&gt;11. 在SAE上运行GitBlog&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/github-pages.html&quot;&gt;12. 使用GitBlog和Github Pages搭建博客&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/update.html&quot;&gt;13. Gitblog升级&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://gitblogdoc.gitblog.cn/blog/gitblog/wordpress.html&quot;&gt;14. 从wordpress导入&lt;/a&gt;&lt;/p&gt;
 &lt;h2&gt;七. 问题及bug反馈&lt;/h2&gt;
 &lt;p&gt;如果在实际使用过程中对GitBlog有新的功能需求，或者在使用GitBlog的过程中发现了Bug，欢迎反馈给我。可以直接在Github上提交，也可以发邮件至&lt;code&gt;164068300[AT]qq.com&lt;/code&gt;与我取得联系，我将及时回复。如果你自己制作了漂亮好用的主题，也非常欢迎你提交给我，我会在这里展示你的主题链接。如果你正在使用GitBlog，也可以告诉我，我将也会在这里列出使用者名单。如果你想和其他GitBlog使用者讨论交流，欢迎加入QQ群&lt;code&gt;84692078&lt;/code&gt;。&lt;/p&gt;
 &lt;h2&gt;八. 使用者列表&lt;/h2&gt;
@@ -808,7 +1510,7 @@ summary: GitBlog是一个简单易用的Markdown博客系统，它不需要数�
 &lt;p&gt;GitBlog的成长需要喜欢Markdown，喜欢写博客的各位亲们支持！感谢你们使用GitBlog，感激你们对Gitblog的良好建议与Bug反馈。&lt;/p&gt;
 &lt;p&gt;QQ群：&lt;code&gt;84692078&lt;/code&gt;&lt;br /&gt;
 作者邮箱：&lt;code&gt;164068300[AT]qq.com&lt;/code&gt;    &lt;/p&gt;            </description>
-            <pubDate>2016-08-24 13:59:43</pubDate>
+            <pubDate>2016-08-28 16:06:34</pubDate>
             <link>//blog/welcome.html</link>
             <guid isPermaLink="true">//blog/welcome.html</guid>
                                                <category>GitBlog</category>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>HTTPS带证书java访问|wngn123-GitBlog</title>
+	<meta name="keywords" content="java,ssl,client,HTTPS,wngn123-GitBlog">
+	<meta name="description" content="HTTPS 带证书java访问，Java需要验证客户端证书和服务端证书，客户端证书为P12库，服务端为keystore库，如果服务端证书已经添加到JVM证书库中，则代码可省略服务端的证书验证。">
+	
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/style.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/customizer.css?ver=2.1" type="text/css" media="all" />
+	<link rel="alternate" type="application/rss+xml" title="wngn123-GitBlog" href="//feed.xml" />
+	
+	</head>
+
+<body class="home blog wide">
+	<div id="page" class="hfeed site">
+		<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+		    <header id="masthead" class="main-header" role="banner">
+<div class="container">
+	<div class="row">
+		<div class="site-branding col-md-4">
+			<h1 class="site-title"><a href="/" rel="home">wngn123-GitBlog</a></h1>
+				<span class="site-description">GitBlog</span>
+		</div>
+		<!-- .site-branding -->
+	</div>
+</div>
+</header>		    <div id="content">
+	<div class="quest-row site-content">
+		<div class="container">
+			<div class="row">
+				<div id="primary" class="content-area single col-md-9">
+					<div id="main" class="site-main" role="main">
+						<article class="post hentry">
+	<header class="entry-header">
+	<h1 class="post-title"><a href="/blog/https-java-cert.html" rel="bookmark">HTTPS带证书java访问</a></h1>
+	<div class="entry-meta">
+		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-28</time>
+				<span class="seperator">/</span>
+	    <span><i class="fa fa-user"></i> wngn123</span>
+	    	</div><!-- .entry-meta -->
+</header><!-- .entry-header -->	<div class="entry-content">
+	<p>
+		<!--
+author: wngn123
+head: head.png
+date: 2016-08-28
+title: HTTPS带证书java访问
+tags: java ssl client
+category: HTTPS
+status: publish
+summary: HTTPS 带证书java访问，Java需要验证客户端证书和服务端证书，客户端证书为P12库，服务端为keystore库，如果服务端证书已经添加到JVM证书库中，则代码可省略服务端的证书验证。
+-->
+<h2>HTTPS带证书java访问</h2>
+<p>1.Java需要验证客户端证书和服务端证书，客户端证书为P12库，服务端为keystore库，客户端库需要密码，服务端库不需要密码。</p>
+<p>2.如果服务端证书已经添加到JVM证书库中，则代码可省略服务端的证书验证。</p>
+<h4>JAVA SSL</h4>
+<pre><code class="language-java">package com.dianru.analysis.module.weixin;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+public class HttpsPost {
+    /** 获得KeyStore.
+     * 
+     * @param keyStorePath
+     *                        密钥库路径
+     * @param password
+     *                        密码
+     * @return 密钥库
+     * @throws Exception */
+    public static KeyStore getKeyStore(String password, String keyStorePath) throws Exception {
+        // 实例化密钥库
+        KeyStore ks = KeyStore.getInstance("JKS");
+        // 获得密钥库文件流
+        FileInputStream is = new FileInputStream(keyStorePath);
+        // 加载密钥库
+        ks.load(is, password.toCharArray());
+        // 关闭密钥库文件流
+        is.close();
+        return ks;
+    }
+
+    /** 获得SSLSocketFactory.
+     * 
+     * @param password
+     *                        密码
+     * @param keyStorePath
+     *                        密钥库路径
+     * @param trustStorePath
+     *                        信任库路径
+     * @return SSLSocketFactory
+     * @throws Exception */
+    public static SSLContext getSSLContext(String password, String keyStorePath, String trustStorePath)
+            throws Exception {
+        // 实例化密钥库
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        // 获得密钥库
+        KeyStore keyStore = getKeyStore(password, keyStorePath);
+        // 初始化密钥工厂
+        keyManagerFactory.init(keyStore, password.toCharArray());
+
+        // 实例化信任库
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory
+                .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        // 获得信任库
+        KeyStore trustStore = getKeyStore(password, trustStorePath);
+        // 初始化信任库
+        trustManagerFactory.init(trustStore);
+        // 实例化SSL上下文
+        SSLContext ctx = SSLContext.getInstance("TLS");
+        // 初始化SSL上下文
+        ctx.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+        // 获得SSLSocketFactory
+        return ctx;
+    }
+
+    /** 初始化HttpsURLConnection.
+     * 
+     * @param password
+     *                        密码
+     * @param keyStorePath
+     *                        密钥库路径
+     * @param trustStorePath
+     *                        信任库路径
+     * @throws Exception */
+    public static void initHttpsURLConnection(String password, String keyStorePath, String trustStorePath)
+            throws Exception {
+        // 声明SSL上下文
+        SSLContext sslContext = null;
+        // 实例化主机名验证接口
+        HostnameVerifier hnv = new MyHostnameVerifier();
+        try {
+            sslContext = getSSLContext(password, keyStorePath, trustStorePath);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        if (sslContext != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+        }
+        HttpsURLConnection.setDefaultHostnameVerifier(hnv);
+    }
+
+    /** 发送请求.
+     * 
+     * @param httpsUrl
+     *                        请求的地址
+     * @param xmlStr
+     *                        请求的数据 */
+    public static void post(String httpsUrl, String xmlStr) {
+        HttpsURLConnection urlCon = null;
+        try {
+            urlCon = (HttpsURLConnection) (new URL(httpsUrl)).openConnection();
+            urlCon.setDoInput(true);
+            urlCon.setDoOutput(true);
+            urlCon.setRequestMethod("POST");
+            urlCon.setRequestProperty("Content-Length", String.valueOf(xmlStr.getBytes().length));
+            urlCon.setUseCaches(false);
+            //设置为gbk可以解决服务器接收时读取的数据中文乱码问题
+            urlCon.getOutputStream().write(xmlStr.getBytes("gbk"));
+            urlCon.getOutputStream().flush();
+            urlCon.getOutputStream().close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlCon.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** 测试方法.
+     * 
+     * @param args
+     * @throws Exception */
+    public static void main(String[] args) throws Exception {
+        // 密码
+        String password = "wanggang";
+        // 密钥库
+        String keyStorePath = "D:/wngn/cert/wngn/java-client.p12";
+        // 信任库
+        String trustStorePath = "D:/wngn/cert/wngn/java-server.truststore";
+        // 本地起的https服务
+        String httpsUrl = "https://java.vfou.com:8086/data/active/getLatest";
+        // 传输文本
+        String xmlStr = "";
+        HttpsPost.initHttpsURLConnection(password, keyStorePath, trustStorePath);
+        // 发起请求
+        HttpsPost.post(httpsUrl, xmlStr);
+    }
+}
+</code></pre>
+<pre><code class="language-java">package com.dianru.analysis.module.weixin;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+/**
+ * 实现用于主机名验证的基接口。 
+ * 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，则验证机制可以回调此接口的实现程序来确定是否应该允许此连接。
+ */
+public class MyHostnameVerifier implements HostnameVerifier {
+    @Override
+    public boolean verify(String hostname, SSLSession session) {
+        if("localhost".equals(hostname)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+</code></pre>
+<h4>HTTP CLIENT</h4>
+<pre><code class="language-java">package com.dianru.analysis.module.weixin;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/** User: rizenguo Date: 2014/10/29 Time: 14:36 */
+public class HttpsRequest {
+
+    public static Logger LOG = LogManager.getLogger(HttpsRequest.class);
+
+    public interface ResultListener {
+        public void onConnectionPoolTimeoutError();
+    }
+
+    // 表示请求器是否已经做了初始化工作
+    private boolean hasInit = false;
+    // 请求器的配置
+    private RequestConfig requestConfig;
+
+    // HTTP请求器
+    private CloseableHttpClient httpClient;
+
+    public HttpsRequest() {
+        try {
+            init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void init() throws IOException, KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException,
+            KeyManagementException {
+
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        FileInputStream instream = new FileInputStream(new File("D:/wngn/cert/wngn/java-client.p12"));
+
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        FileInputStream instream2 = new FileInputStream(new File("D:/wngn/cert/wngn/java-server.truststore"));
+
+        try {
+            keyStore.load(instream, "wanggang".toCharArray());// 设置证书密码
+            trustStore.load(instream2, "wanggang".toCharArray());// 设置证书密码
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } finally {
+            instream.close();
+        }
+        // Trust own CA and all self-signed certs 相信自己的CA和所有自签名的证书 
+        SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, "wanggang".toCharArray())
+                .loadTrustMaterial(trustStore).build();
+        // Allow TLSv1 protocol only  只允许使用TLSv1协议 
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null,
+                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+        // 根据默认超时限制初始化requestConfig
+        requestConfig = RequestConfig.custom().setSocketTimeout(10 * 1000).setConnectTimeout(30 * 1000).build();
+        hasInit = true;
+    }
+
+    public String sendPost(String url) throws UnrecoverableKeyException, KeyManagementException,
+            NoSuchAlgorithmException, KeyStoreException, IOException {
+        if (!hasInit) {
+            init();
+        }
+        String result = null;
+        HttpPost httpPost = new HttpPost(url);
+        System.out.println("API，POST过去的数据是：");
+        // 得指明使用UTF-8编码，否则到API服务器XML的中文不能被成功识别
+        StringEntity postEntity = new StringEntity("", "UTF-8");
+        httpPost.addHeader("Content-Type", "text/xml");
+        httpPost.setEntity(postEntity);
+        // 设置请求器的配置
+        httpPost.setConfig(requestConfig);
+
+        try {
+            HttpResponse response = httpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            result = EntityUtils.toString(entity, "UTF-8");
+            System.out.println(result);
+        } catch (Exception e) {
+            LOG.error(url + "-" + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            httpPost.abort();
+        }
+        return result;
+    }
+
+    private static final String HTTPS_URL = "https://java.vfou.com:8086/data/active/getLatest";
+
+    public static void main(String[] args) throws UnrecoverableKeyException, KeyManagementException,
+            NoSuchAlgorithmException, KeyStoreException, IOException {
+        HttpsRequest CLIENT = new HttpsRequest();
+        String response = CLIENT.sendPost(HTTPS_URL);
+        System.out.println(response);
+    }
+}
+</code></pre>
+		</p>
+</div><!-- .entry-content -->	<footer class="entry-footer">
+		<ul class="post-categories">
+          
+          <li><a href="/category/1769324555.html" rel="category">HTTPS</a></li>
+        	</ul>
+		
+		<ul class="post-tags">
+                   <li><a href="/tags/3692263176.html" rel="tag">java</a></li>
+                   <li><a href="/tags/3943951533.html" rel="tag">ssl</a></li>
+                   <li><a href="/tags/915562279.html" rel="tag">client</a></li>
+        	</ul>
+		
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
+					<!-- #main -->
+				</div>
+				<!-- #primary -->
+				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
+	<aside class="widget widget_categories sidebar-widget clearfix">
+	<h3 class="widget-title">分类目录</h3>
+	<ul>
+		        <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
+                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
+                <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
+                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
+                <li class="cat-item"><a href="/category/1769324555.html" >HTTPS</a></li>
+        	</ul>
+</aside>
+	<aside class="widget widget_archive sidebar-widget clearfix">
+	<h3 class="widget-title">文章归档</h3>
+	<ul>
+		<li><a href="/archive/201508.html">2015-08</a></li>
+		<li><a href="/archive/201507.html">2015-07</a></li>
+		<li><a href="/archive/201608.html">2016-08</a></li>
+		</ul>
+</aside>	<aside class="widget widget_recent_entries sidebar-widget clearfix">
+	<h3 class="widget-title">近期文章</h3>
+	<ul>
+	    <li><a href="/blog/https-java-cert.html">HTTPS带证书java访问</a></li>
+        <li><a href="/blog/https-keytool-cert.html">HTTPS 证书keytool</a></li>
+        <li><a href="/blog/https-double-cert.html">HTTPS 双向证书</a></li>
+        <li><a href="/blog/https-single-cert.html">HTTPS 服务端证书</a></li>
+        <li><a href="/blog/php5-install.html">php5.6.25安装</a></li>
+    	</ul>
+</aside>
+	<aside class="widget widget_tag_cloud sidebar-widget clearfix">
+	<h3 class="widget-title">标签</h3>
+	<div class="tagcloud">
+		<a href="/tags/1386710576.html"  title="lua" >lua</a>
+		<a href="/tags/3692263176.html"  title="java" >java</a>
+		<a href="/tags/2511338272.html"  title="git" >git</a>
+		<a href="/tags/2013555047.html"  title="blog" >blog</a>
+		<a href="/tags/1783669539.html"  title="php" >php</a>
+		<a href="/tags/367908174.html"  title="php7" >php7</a>
+		<a href="/tags/1845431629.html"  title="php5" >php5</a>
+		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
+		<a href="/tags/3635419366.html"  title="https" >https</a>
+		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
+		<a href="/tags/915562279.html"  title="client" >client</a>
+		</div>
+</aside>
+	<aside class="widget widget_text sidebar-widget clearfix">
+	<h3 class="widget-title">介绍</h3>
+	<div class="textwidget">
+		<p>本博客使用Gitblog搭建，欢迎你!</p>
+	</div>
+</aside>
+</div><!-- #secondary -->			</div>
+			<!-- .row -->
+		</div>
+		<!-- .container -->
+	</div>
+	<!-- .quest-row -->
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 copyright-text">
+				<a href="https://github.com/jockchou/gitblog">Proudly powered by Gitblog</a>
+			</div>
+			<div class="col-md-6 social-icon-container clearfix">
+				<ul></ul>
+			</div>
+		</div>
+		<!-- end row -->
+	</div>
+	<!-- end container -->
+</footer>	</div><!-- #page -->
+	<a href="#0" class="cd-top"><i class="fa fa-angle-up"></i></a>
+
+
+<script type="text/javascript" src="/theme/quest/assets/plugins/modernizr/modernizr.custom.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery.js?ver=1.11.2"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/bootstrap/js/bootstrap.min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/wow/wow.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/colorbox/jquery.colorbox-min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/js/quest.js?ver=2.1"></script>
+	
+<link rel="stylesheet" href="http://cdn.bootcss.com/highlight.js/8.6/styles/default.min.css">
+<script src="http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
