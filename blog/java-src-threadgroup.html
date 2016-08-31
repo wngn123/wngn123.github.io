@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>java源码 ThreadGroup|wngn123-GitBlog</title>
+	<meta name="keywords" content="java,Java,wngn123-GitBlog">
+	<meta name="description" content="阅读Java的源码，ThreadGroup源码">
+	
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/style.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/customizer.css?ver=2.1" type="text/css" media="all" />
+	<link rel="alternate" type="application/rss+xml" title="wngn123-GitBlog" href="//feed.xml" />
+	
+	</head>
+
+<body class="home blog wide">
+	<div id="page" class="hfeed site">
+		<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+		    <header id="masthead" class="main-header" role="banner">
+<div class="container">
+	<div class="row">
+		<div class="site-branding col-md-4">
+			<h1 class="site-title"><a href="/" rel="home">wngn123-GitBlog</a></h1>
+				<span class="site-description">GitBlog</span>
+		</div>
+		<!-- .site-branding -->
+	</div>
+</div>
+</header>		    <div id="content">
+	<div class="quest-row site-content">
+		<div class="container">
+			<div class="row">
+				<div id="primary" class="content-area single col-md-9">
+					<div id="main" class="site-main" role="main">
+						<article class="post hentry">
+	<header class="entry-header">
+	<h1 class="post-title"><a href="/blog/java-src-threadgroup.html" rel="bookmark">java源码 ThreadGroup</a></h1>
+	<div class="entry-meta">
+		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-30</time>
+				<span class="seperator">/</span>
+	    <span><i class="fa fa-user"></i> wngn123</span>
+	    	</div><!-- .entry-meta -->
+</header><!-- .entry-header -->	<div class="entry-content">
+	<p>
+		<!--
+author: wngn123
+head: head.png
+date: 2016-08-30
+title: java源码 ThreadGroup
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，ThreadGroup源码
+-->
+<h2>ThreadGroup继承体系</h2>
+<pre><code>public class ThreadGroup implements Thread.UncaughtExceptionHandler</code></pre>
+<p>Thread的run方法是不抛出任何检查型异常(checked exception)的,但是它自身却可能因为一个异常而被终止，导致这个线程的终结。最麻烦的是，在线程中抛出的异常即使使用try...catch也无法截获，因此可能导致一些问题出现，比如异常的时候无法回收一些系统资源，或者没有关闭当前的连接等等。 </p>
+<pre><code>public interface UncaughtExceptionHandler {
+    void uncaughtException(Thread t, Throwable e);
+}</code></pre>
+<pre><code>    public void uncaughtException(Thread t, Throwable e) {
+        if (parent != null) {
+            parent.uncaughtException(t, e);
+        } else {
+            Thread.UncaughtExceptionHandler ueh =
+                Thread.getDefaultUncaughtExceptionHandler();
+            if (ueh != null) {
+                ueh.uncaughtException(t, e);
+            } else if (!(e instanceof ThreadDeath)) {
+                System.err.print("Exception in thread \""
+                                 + t.getName() + "\" ");
+                e.printStackTrace(System.err);
+            }
+        }
+    }</code></pre>
+<h2>ThreadGroup基本属性</h2>
+<p>线程组表示一个线程的集合。此外，线程组也可以包含其他线程组。线程组构成一棵树，在树中，除了初始线程组外，每个线程组都有一个父线程组。 </p>
+<p>允许线程访问有关自己的线程组的信息，但是不允许它访问有关其线程组的父线程组或其他任何线程组的信息。 </p>
+<pre><code>    //父线程组
+    private final ThreadGroup parent;
+    线程组名称
+    String name;
+    //线程最大优先级
+    int maxPriority;
+    //是否被销毁
+    boolean destroyed;
+    //是否是守护线程组
+    boolean daemon;
+    //虚拟机是否允许暂停
+    boolean vmAllowSuspension;
+    //未启动线程数量
+    int nUnstartedThreads = 0;
+    //启动线程数量
+    int nthreads;
+    //所有线程快照
+    Thread threads[];
+    //所有子线程组数量
+    int ngroups;
+    //所有子线程组快照
+    ThreadGroup groups[];</code></pre>
+<pre><code>public String toString() {
+        return getClass().getName() + "[name=" + getName() + ",maxpri=" + maxPriority + "]";
+    }</code></pre>
+<h2>ThreadGroup构造函数</h2>
+<p>构造函数需要父线程组和线程组名称，子线程组会继承父线程的一些属性。</p>
+<pre><code>     //创建一个空的线程组且没有父线程组，创建系统线程组时使用，
+    private ThreadGroup() {     // called from C code
+        this.name = "system";
+        this.maxPriority = Thread.MAX_PRIORITY;
+        this.parent = null;
+    }
+
+    public ThreadGroup(String name) {
+        this(Thread.currentThread().getThreadGroup(), name);
+    }
+
+    public ThreadGroup(ThreadGroup parent, String name) {
+        this(checkParentAccess(parent), parent, name);
+    }
+
+    //Void unused没有使用，提供一种函数调用位，在对象创建之前执行。
+    private ThreadGroup(Void unused, ThreadGroup parent, String name) {
+        this.name = name;
+        this.maxPriority = parent.maxPriority;
+        this.daemon = parent.daemon;
+        this.vmAllowSuspension = parent.vmAllowSuspension;
+        this.parent = parent;
+        parent.add(this);//添加到父线程组
+    }</code></pre>
+<pre><code>    public final String getName() {
+        return name;
+    }
+    public final int getMaxPriority() {
+        return maxPriority;
+    }
+    public final boolean isDaemon() {
+        return daemon;
+    }
+    public synchronized boolean isDestroyed() {
+        return destroyed;
+    }
+    public final ThreadGroup getParent() {
+        if (parent != null)
+            parent.checkAccess();
+        return parent;
+    }
+
+    public final void setDaemon(boolean daemon) {
+        checkAccess();
+        this.daemon = daemon;
+    }
+
+    public final void setMaxPriority(int pri) {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            checkAccess();
+            if (pri &lt; Thread.MIN_PRIORITY || pri &gt; Thread.MAX_PRIORITY) {
+                return;
+            }
+            maxPriority = (parent != null) ? Math.min(pri, parent.maxPriority) : pri;
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        for (int i = 0 ; i &lt; ngroupsSnapshot ; i++) {
+            groupsSnapshot[i].setMaxPriority(pri);
+        }
+    }
+    //测试此线程组是否为线程组参数或其祖先线程组之一
+    public final boolean parentOf(ThreadGroup g) {
+        for (; g != null ; g = g.parent) {
+            if (g == this) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //返回当前线程组及其所有子线程组中活动线程的总数
+     public int activeCount() {
+        int result;
+        int ngroupsSnapshot;//活跃子线程数量快照
+        ThreadGroup[] groupsSnapshot;//子线程组快照
+        synchronized (this) {
+            if (destroyed) {
+                return 0;
+            }
+            result = nthreads;
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                //活跃线程组复制一份到线程组快照
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        for (int i = 0 ; i &lt; ngroupsSnapshot ; i++) {
+            result += groupsSnapshot[i].activeCount();
+        }
+        return result;
+    }
+    //返回当前线程组及其所有子线程组中活动线程组的总数
+    public int activeGroupCount() {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            if (destroyed) {
+                return 0;
+            }
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        int n = ngroupsSnapshot;
+        for (int i = 0 ; i &lt; ngroupsSnapshot ; i++) {
+            n += groupsSnapshot[i].activeGroupCount();
+        }
+        return n;
+    } 
+    //中断线程组及子线程组中所有线程
+    public final void interrupt() {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            checkAccess();
+            for (int i = 0 ; i &lt; nthreads ; i++) {
+                threads[i].interrupt();
+            }
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        for (int i = 0 ; i &lt; ngroupsSnapshot ; i++) {
+            groupsSnapshot[i].interrupt();
+        }
+    }
+    //销毁线程组及其所有子线程组
+    public final void destroy() {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            checkAccess();
+            if (destroyed || (nthreads &gt; 0)) {
+                throw new IllegalThreadStateException();
+            }
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+            if (parent != null) {
+                destroyed = true;
+                ngroups = 0;
+                groups = null;
+                nthreads = 0;
+                threads = null;
+            }
+        }
+        for (int i = 0 ; i &lt; ngroupsSnapshot ; i += 1) {
+            groupsSnapshot[i].destroy();
+        }
+        if (parent != null) {
+            parent.remove(this);
+        }
+    }
+
+  //添加一个指定的线程组到当前线程组（添加子线程组）
+  private final void add(ThreadGroup g){
+        synchronized (this) {
+            if (destroyed) {
+                throw new IllegalThreadStateException();
+            }
+            if (groups == null) {
+                groups = new ThreadGroup[4];
+            } else if (ngroups == groups.length) {
+                groups = Arrays.copyOf(groups, ngroups * 2);
+            }
+            groups[ngroups] = g;
+            // This is done last so it doesn't matter in case the
+            // thread is killed
+            ngroups++;
+        }
+    }
+    //从当前线程组中移除一个指定的子线程组
+    private void remove(ThreadGroup g) {
+        synchronized (this) {
+            if (destroyed) {
+                return;
+            }
+            for (int i = 0 ; i &lt; ngroups ; i++) {
+                if (groups[i] == g) {
+                    ngroups -= 1;
+                    System.arraycopy(groups, i + 1, groups, i, ngroups - i);
+                    // Zap dangling reference to the dead group so that
+                    // the garbage collector will collect it.
+                    groups[ngroups] = null;
+                    break;
+                }
+            }
+            if (nthreads == 0) {
+                notifyAll();
+            }
+            if (daemon &amp;&amp; (nthreads == 0) &amp;&amp;
+                (nUnstartedThreads == 0) &amp;&amp; (ngroups == 0))
+            {
+                destroy();
+            }
+        }
+    }
+    //未启动线程加一，创建线程是被调用
+    void addUnstarted() {
+        synchronized(this) {
+            if (destroyed) {
+                throw new IllegalThreadStateException();
+            }
+            nUnstartedThreads++;
+        }
+    }
+    //添加一个线程到当前线程组中，线程启动时调用
+    void add(Thread t) {
+        synchronized (this) {
+            if (destroyed) {
+                throw new IllegalThreadStateException();
+            }
+            if (threads == null) {
+                threads = new Thread[4];
+            } else if (nthreads == threads.length) {
+                threads = Arrays.copyOf(threads, nthreads * 2);
+            }
+            //添加启动的线程到线程数组
+            threads[nthreads] = t;
+
+            // This is done last so it doesn't matter in case the
+            // thread is killed
+            nthreads++;
+
+            // The thread is now a fully fledged member of the group, even
+            // though it may, or may not, have been started yet. It will prevent
+            // the group from being destroyed so the unstarted Threads count is
+            // decremented.
+            nUnstartedThreads--;
+        }
+    }
+    //线程启动失败
+    void threadStartFailed(Thread t) {
+        synchronized(this) {
+            remove(t);
+            nUnstartedThreads++;
+        }
+    }
+    //线程结束操作
+    void threadTerminated(Thread t) {
+        synchronized (this) {
+            remove(t);
+            if (nthreads == 0) {
+                notifyAll();
+            }
+            if (daemon &amp;&amp; (nthreads == 0) &amp;&amp;
+                (nUnstartedThreads == 0) &amp;&amp; (ngroups == 0))
+            {
+                destroy();
+            }
+        }
+    }
+   //从当前线程组中移除一个指定的子线程，未启动线程数量加一，活动线程数量减一
+    private void remove(Thread t) {
+        synchronized (this) {
+            if (destroyed) {
+                return;
+            }
+            for (int i = 0 ; i &lt; nthreads ; i++) {
+                if (threads[i] == t) {
+                    System.arraycopy(threads, i + 1, threads, i, --nthreads - i);
+                    // Zap dangling reference to the dead thread so that
+                    // the garbage collector will collect it.
+                    threads[nthreads] = null;
+                    break;
+                }
+            }
+        }
+    }</code></pre>
+<pre><code>    //检测当前运行的线程是否有权修改此线程组
+    public final void checkAccess() {
+        SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            security.checkAccess(this);
+        }
+    }
+    //检测当前运行的线程是否有权修改此线程组的父线程组
+    private static Void checkParentAccess(ThreadGroup parent) {
+        parent.checkAccess();
+        return null;
+    }
+    private int enumerate(Thread list[], int n, boolean recurse) {
+        int ngroupsSnapshot = 0;
+        ThreadGroup[] groupsSnapshot = null;
+        synchronized (this) {
+            if (destroyed) {
+                return 0;
+            }
+            int nt = nthreads;
+            if (nt &gt; list.length - n) {
+                nt = list.length - n;
+            }
+            for (int i = 0; i &lt; nt; i++) {
+                if (threads[i].isAlive()) {
+                    list[n++] = threads[i];
+                }
+            }
+            if (recurse) {
+                ngroupsSnapshot = ngroups;
+                if (groups != null) {
+                    groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+                } else {
+                    groupsSnapshot = null;
+                }
+            }
+        }
+        if (recurse) {
+            for (int i = 0 ; i &lt; ngroupsSnapshot ; i++) {
+                n = groupsSnapshot[i].enumerate(list, n, true);
+            }
+        }
+        return n;
+    }</code></pre>
+		</p>
+</div><!-- .entry-content -->	<footer class="entry-footer">
+		<ul class="post-categories">
+          
+          <li><a href="/category/3803722005.html" rel="category">Java</a></li>
+        	</ul>
+		
+		<ul class="post-tags">
+                   <li><a href="/tags/3692263176.html" rel="tag">java</a></li>
+        	</ul>
+		
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
+					<!-- #main -->
+				</div>
+				<!-- #primary -->
+				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
+	<aside class="widget widget_categories sidebar-widget clearfix">
+	<h3 class="widget-title">分类目录</h3>
+	<ul>
+		        <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
+                <li class="cat-item"><a href="/category/1769324555.html" >HTTPS</a></li>
+                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
+                <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
+                <li class="cat-item"><a href="/category/505585837.html" >Other</a></li>
+                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
+        	</ul>
+</aside>
+	<aside class="widget widget_archive sidebar-widget clearfix">
+	<h3 class="widget-title">文章归档</h3>
+	<ul>
+		<li><a href="/archive/201608.html">2016-08</a></li>
+		<li><a href="/archive/201507.html">2015-07</a></li>
+		</ul>
+</aside>	<aside class="widget widget_recent_entries sidebar-widget clearfix">
+	<h3 class="widget-title">近期文章</h3>
+	<ul>
+	    <li><a href="/blog/other-git.html">git使用</a></li>
+        <li><a href="/blog/other-markdown.html">Markdown学习</a></li>
+        <li><a href="/blog/java-thread-interface.html">Java线程 Runnable和Callable</a></li>
+        <li><a href="/blog/java-src-thread.html">java源码 Thread</a></li>
+        <li><a href="/blog/java-src-threadgroup.html">java源码 ThreadGroup</a></li>
+    	</ul>
+</aside>
+	<aside class="widget widget_tag_cloud sidebar-widget clearfix">
+	<h3 class="widget-title">标签</h3>
+	<div class="tagcloud">
+		<a href="/tags/2511338272.html"  title="git" >git</a>
+		<a href="/tags/2013555047.html"  title="blog" >blog</a>
+		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
+		<a href="/tags/3635419366.html"  title="https" >https</a>
+		<a href="/tags/3692263176.html"  title="java" >java</a>
+		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
+		<a href="/tags/915562279.html"  title="client" >client</a>
+		<a href="/tags/1386710576.html"  title="lua" >lua</a>
+		<a href="/tags/474222454.html"  title="markdown" >markdown</a>
+		<a href="/tags/1783669539.html"  title="php" >php</a>
+		<a href="/tags/1845431629.html"  title="php5" >php5</a>
+		<a href="/tags/367908174.html"  title="php7" >php7</a>
+		</div>
+</aside>
+	<aside class="widget widget_text sidebar-widget clearfix">
+	<h3 class="widget-title">介绍</h3>
+	<div class="textwidget">
+		<p>本博客使用Gitblog搭建，欢迎你!</p>
+	</div>
+</aside>
+</div><!-- #secondary -->			</div>
+			<!-- .row -->
+		</div>
+		<!-- .container -->
+	</div>
+	<!-- .quest-row -->
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 copyright-text">
+				<a href="https://github.com/jockchou/gitblog">Proudly powered by Gitblog</a>
+			</div>
+			<div class="col-md-6 social-icon-container clearfix">
+				<ul></ul>
+			</div>
+		</div>
+		<!-- end row -->
+	</div>
+	<!-- end container -->
+</footer>	</div><!-- #page -->
+	<a href="#0" class="cd-top"><i class="fa fa-angle-up"></i></a>
+
+
+<script type="text/javascript" src="/theme/quest/assets/plugins/modernizr/modernizr.custom.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery.js?ver=1.11.2"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/bootstrap/js/bootstrap.min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/wow/wow.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/colorbox/jquery.colorbox-min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/js/quest.js?ver=2.1"></script>
+	
+<link rel="stylesheet" href="http://cdn.bootcss.com/highlight.js/8.6/styles/default.min.css">
+<script src="http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

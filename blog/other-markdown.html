@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>wngn123-GitBlog</title>
-	<meta name="keywords" content="php5,PHP,GitBlog,博客,Markdown博客,wngn123,wngn123-GitBlog">
-	<meta name="description" content="GitBlog是一个简单易用的Markdown博客系统">
+	<title>Markdown学习|wngn123-GitBlog</title>
+	<meta name="keywords" content="markdown,Other,wngn123-GitBlog">
+	<meta name="description" content="Markdown学习，Markdown基础语法。">
 	
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
@@ -29,54 +29,144 @@
 	</div>
 </div>
 </header>		    <div id="content">
-					    	    	
-    	    		<div class="quest-row" id="title-container">
-	<div class="container title-container">
-		<div class="row">
-			<div class="col-md-6">
-				<h3>PHP</h3>
-			</div>
-			<div class="col-md-6">
-				<ul class="breadcrumbs">
-					<li><a href="/">Home</a></li>
-					<li><a href="/category/26890208.html">PHP</a></li></ul>
-				</div>
-		</div>
-	</div>
-</div>    		<div class="quest-row site-content">
+	<div class="quest-row site-content">
 		<div class="container">
 			<div class="row">
-				<div id="primary" class="content-area col-md-9">
+				<div id="primary" class="content-area single col-md-9">
 					<div id="main" class="site-main" role="main">
-																	        	<article class="post hentry">
+						<article class="post hentry">
 	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/php-php5-install.html" rel="bookmark">php5.6.25安装</a></h1>
+	<h1 class="post-title"><a href="/blog/other-markdown.html" rel="bookmark">Markdown学习</a></h1>
 	<div class="entry-meta">
-		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-28</time>
+		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-31</time>
 				<span class="seperator">/</span>
 	    <span><i class="fa fa-user"></i> wngn123</span>
 	    	</div><!-- .entry-meta -->
 </header><!-- .entry-header -->	<div class="entry-content">
 	<p>
-		<p>php5.6.25安装,centos7源码安装php5.6.25.</p>
+		<!--
+author: wngn123
+head: head.png
+date: 2016-08-31
+title: Markdown学习
+tags: markdown
+category: Other
+status: publish
+summary:Markdown学习，Markdown基础语法。
+-->
+<h2>标题</h2>
+<pre><code># 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题`
+##### 五级标题
+###### 六级标题</code></pre>
+<h2>列表</h2>
+<p>熟悉 HTML 的同学肯定知道有序列表与无序列表的区别，在 Markdown 下，列表的显示只需要在文字前加上 - 或 * 即可变为无序列表，有序列表则直接在文字前加 1. 2. 3. 符号要和文字之间加上一个字符的空格。</p>
+<h4>无序列表</h4>
+<pre><code>    - 无序列表
+    - 无序列表
+    * 无序列表
+    * 无序列表</code></pre>
+<ul>
+<li>无序列表</li>
+<li>无序列表</li>
+<li>无序列表</li>
+<li>无序列表
+<h4>有序列表</h4>
+<pre><code>1. 无序列表
+2. 无序列表
+3. 无序列表</code></pre>
+<ol>
+<li>无序列表</li>
+<li>无序列表</li>
+<li>无序列表</li>
+</ol></li>
+</ul>
+<h2>引用</h2>
+<p>如果你需要引用一小段别处的句子，那么就要用引用的格式。只需要在文本前加入 <code>&gt;</code> 这种尖括号（大于号）即可</p>
+<pre><code>&gt; 例如这样</code></pre>
+<blockquote>
+<p>例如这样</p>
+</blockquote>
+<h2>图片与链接</h2>
+<p>插入链接与插入图片的语法很像，区别在一个 <code>!</code>号</p>
+<pre><code>[baidu](www.baidu.com)</code></pre>
+<p><a href="www.baidu.com">baidu</a></p>
+<pre><code>![image](https://raw.githubusercontent.com/wngn123/test/master/img/head.png)</code></pre>
+<p><img src="https://raw.githubusercontent.com/wngn123/test/master/img/head.png" alt="image" /></p>
+<h2>粗体与斜体</h2>
+<p>Markdown 的粗体和斜体也非常简单，用两个 <code>*</code> 包含一段文本就是粗体的语法，用一个 <code>*</code> 包含一段文本就是斜体的语法。</p>
+<pre><code>** 粗体 **
+* 斜体 *</code></pre>
+<p><strong>粗体</strong>
+<em>斜体</em></p>
+<h2>表格</h2>
+<pre><code>| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | 1600 |
+| col 2 is      | centered      |   12 |
+| zebra stripes | are neat      |    1 |</code></pre>
+<table>
+<thead>
+<tr>
+<th>Tables</th>
+<th style="text-align: center;">Are</th>
+<th style="text-align: right;">Cool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>col 3 is</td>
+<td style="text-align: center;">right-aligned</td>
+<td style="text-align: right;">1600</td>
+</tr>
+<tr>
+<td>col 2 is</td>
+<td style="text-align: center;">centered</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>zebra stripes</td>
+<td style="text-align: center;">are neat</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<h3>代码框</h3>
+<p>如果你是个程序猿，需要在文章里优雅的引用代码框，在 Markdown 下实现也非常简单，只需要用两个 ` 把中间的代码包裹起来，如 `code`。</p>
+<pre><code>``` python
+
+code
+</code></pre>
+<pre><code class="language-python">@requires_authorization
+def somefunc(param1='', param2=0):
+    '''A docstring'''
+    if param1 &gt; param2: # interesting
+        print 'Greater'
+    return (param2 - param1 + 1) or None
+class SomeClass:
+    pass
+&gt;&gt;&gt; message = '''interpreter
+... prompt'''</code></pre>
+<h2>分割线</h2>
+<p>分割线的语法只需要另起一行，连续输入三个星号 *** 即可。</p>
+<hr />
 		</p>
 </div><!-- .entry-content -->	<footer class="entry-footer">
 		<ul class="post-categories">
           
-          <li><a href="/category/26890208.html" rel="category">PHP</a></li>
+          <li><a href="/category/505585837.html" rel="category">Other</a></li>
         	</ul>
 		
 		<ul class="post-tags">
-                   <li><a href="/tags/1783669539.html" rel="tag">php</a></li>
-                   <li><a href="/tags/1845431629.html" rel="tag">php5</a></li>
+                   <li><a href="/tags/474222454.html" rel="tag">markdown</a></li>
         	</ul>
 		
-		<div class="read-more">
-		<a href="/blog/php-php5-install.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											</div>
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
 					<!-- #main -->
 				</div>
+				<!-- #primary -->
 				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
 	<aside class="widget widget_categories sidebar-widget clearfix">
 	<h3 class="widget-title">分类目录</h3>
@@ -134,7 +224,7 @@
 		<!-- .container -->
 	</div>
 	<!-- .quest-row -->
-</div><!-- #content -->		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 copyright-text">

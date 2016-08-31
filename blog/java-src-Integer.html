@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Java源码 Integer|wngn123-GitBlog</title>
 	<meta name="keywords" content="java,Java,wngn123-GitBlog">
-	<meta name="description" content="public final class Integer extends Number implements Comparable">
+	<meta name="description" content="阅读Java的源码，Integer源码">
 	
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
@@ -36,7 +36,7 @@
 					<div id="main" class="site-main" role="main">
 						<article class="post hentry">
 	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/integer.html" rel="bookmark">Java源码 Integer</a></h1>
+	<h1 class="post-title"><a href="/blog/java-src-Integer.html" rel="bookmark">Java源码 Integer</a></h1>
 	<div class="entry-meta">
 		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-24</time>
 				<span class="seperator">/</span>
@@ -46,15 +46,15 @@
 	<p>
 		<!--
 author: wngn123
-head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+head: head.png
 date: 2016-08-24
 title: Java源码 Integer
 tags: java
 category: Java
 status: publish
-summary: public final class Integer extends Number implements Comparable<Integer>
+summary: 阅读Java的源码，Integer源码
 -->
-<h1>Java源码 Integer</h1>
+<h2>Integer继承体系</h2>
 <p>Integer的签名如下，继承了Number类并实现Comparable接口</p>
 <pre><code class="language-java">public final class Integer extends Number implements Comparable&lt;Integer&gt;</code></pre>
 <p>Comparable接口强行对实现它的每个类的对象进行整体排序。此排序被称为该类的自然排序，类的 compareTo 方法被称为它的自然比较方法。实现此接口的对象列表（和数组）可以通过Collections.sort（和Arrays.sort）进行自动排序。实现此接口的对象可以用作有序映射表中的键或有序集合中的元素，无需指定比较器。强烈推荐（虽然不是必需的）使自然排序与 equals 一致。所谓与equals一致是指对于类C的每一个e1和e2来说，当且仅当 (e1.compareTo((Object)e2) == 0) 与e1.equals((Object)e2) 具有相同的布尔值时，类C的自然排序才叫做与equals一致 </p>
@@ -77,17 +77,16 @@ Number的基本实现类有java.lang.Byte，java.lang.Double，java.lang.Float�
     private static final long serialVersionUID = -8742448824652078965L;
 }
 </code></pre>
-<p>Integer类包装了int基本类型,所有Integer的实际值是存储在一个int类型的熟悉value上的，int存储占用4字节32位内存，第一位是符号位，所以int的最大值是2的31次幂减1，最小值是负2的31次幂，因此int的最大值是：0111 1111 1111 1111 1111 1111 1111 1111=0x7fffffff,int的最小值为负值，负数的表示为正值二进制的补码：
-```负数：正值的补码
+<h2>Integer基本概念</h2>
+<p>Integer类包装了int基本类型,所有Integer的实际值是存储在一个int类型的熟悉value上的，int存储占用4字节32位内存，第一位是符号位，所以int的最大值是2的31次幂减1，最小值是负2的31次幂，因此int的最大值是：0111 1111 1111 1111 1111 1111 1111 1111=0x7fffffff,int的最小值为负值，负数的表示为正值二进制的补码：</p>
+<pre><code>负数：正值的补码
 补码：反码加一
 源码：绝对值二进制
-反码：二进制按位取反</p>
-<pre><code>负数最小值的正值为2的31次幂，正值的二进制为：1000 0000 0000 0000 00000 0000 0000 0000，二进制取反之后为：0111 1111 1111 1111 1111 1111 1111 1111，则正值的补码为：1000 0000 0000 0000 00000 0000 0000 0000，即int的最小值为：0x80000000
-
-Integer有2个构造函数，可以传递一个int数字或者一个数字字符串，数字字符串会被转换成十进制的int数字。
-
-```java
-    private final int value;
+反码：二进制按位取反</code></pre>
+<p>负数最小值的正值为2的31次幂，正值的二进制为：1000 0000 0000 0000 00000 0000 0000 0000，二进制取反之后为：0111 1111 1111 1111 1111 1111 1111 1111，则正值的补码为：1000 0000 0000 0000 00000 0000 0000 0000，即int的最小值为：0x80000000</p>
+<h2>Integer构造函数</h2>
+<p>Integer有2个构造函数，可以传递一个int数字或者一个数字字符串，数字字符串会被转换成十进制的int数字。</p>
+<pre><code class="language-java">    private final int value;
     public static final int MIN_VALUE = 0x80000000;
     public static final int MAX_VALUE = 0x7fffffff;
     public static final int SIZE = 32;//int存储位数
@@ -98,6 +97,7 @@ Integer有2个构造函数，可以传递一个int数字或者一个数字字符
     public Integer(String s) throws NumberFormatException {
         this.value = parseInt(s, 10);
     }</code></pre>
+<h2>Integer实例方法</h2>
 <p>Integer的实例方法，Integer实现了从Number类和Comparable接口以及Object继承的方法。</p>
 <pre><code class="language-java">    public byte byteValue() {
         return (byte)value;
@@ -138,7 +138,7 @@ Integer有2个构造函数，可以传递一个int数字或者一个数字字符
     public static int compare(int x, int y) {
         return (x &lt; y) ? -1 : ((x == y) ? 0 : 1);
     }</code></pre>
-<h4>IntegerCache</h4>
+<h2>IntegerCache</h2>
 <p>Integer类内部有一个私有的静态内部类IntegerCache，该类缓存了一些常用的int值到缓存中，从而保证这些int可以直接获取而不用构造。最大值可以通过虚拟机参数java.lang.Integer.IntegerCache.high类配置，但是最小的为127.</p>
 <pre><code class="language-java">    private static class IntegerCache {
         static final int low = -128;//最小缓存int值
@@ -167,7 +167,7 @@ Integer有2个构造函数，可以传递一个int数字或者一个数字字符
         private IntegerCache() {}
     }
 </code></pre>
-<h4>bitCount</h4>
+<h2>bitCount</h2>
 <p>Integer中的类方法：bitCount(int i),返回int数字的二进制原码中1出现的次数
 如<code>Integer.bitCount(10)==2</code>,10的二进制源码为1010,1出现2次。</p>
 <h6>原理：二分法，两两一组相加，之后四个四个一组相加，接着八个八个，最后就得到各位之和了。</h6>
@@ -267,7 +267,7 @@ i &amp; 0x3f:最后计算的结果只有后6位二进制是有效结果：100000
         i = i + (i &gt;&gt;&gt; 16);
         return i &amp; 0x3f;
     }</code></pre>
-<h4>String转换成Integer</h4>
+<h2>String转换成Integer</h2>
 <p>Integer的valueOf方法：如果缓存中有值，则读取缓存中的数字</p>
 <p>Integer的parseInt方法：将字符串解析成Integer</p>
 <p>Integer的decode方法： 字符串解码位数字。</p>
@@ -413,7 +413,7 @@ System.out.println(Integer.decode("-100"));//负数</code></pre>
         }
         return result;
     }</code></pre>
-<h4>Integer转换成String</h4>
+<h2>Integer转换成String</h2>
 <p>toString(int i, int radix) 转换成指定进制的字符串</p>
 <p>toString(int i) 转换成十进制的字符串</p>
 <p>toHexString(int i) 转换成十六进制的字符串</p>
@@ -614,11 +614,12 @@ i = 11111 - (11111 &gt;&gt;&gt; 1) = 11111 - 1111 = 10000</p>
 	<aside class="widget widget_categories sidebar-widget clearfix">
 	<h3 class="widget-title">分类目录</h3>
 	<ul>
-		        <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
-                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
-                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
+		        <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
                 <li class="cat-item"><a href="/category/1769324555.html" >HTTPS</a></li>
-                <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
+                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
+                <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
+                <li class="cat-item"><a href="/category/505585837.html" >Other</a></li>
+                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
         	</ul>
 </aside>
 	<aside class="widget widget_archive sidebar-widget clearfix">
@@ -630,27 +631,28 @@ i = 11111 - (11111 &gt;&gt;&gt; 1) = 11111 - 1111 = 10000</p>
 </aside>	<aside class="widget widget_recent_entries sidebar-widget clearfix">
 	<h3 class="widget-title">近期文章</h3>
 	<ul>
-	    <li><a href="/blog/gitblog-github.html">GitBlog和GitHub同步</a></li>
-        <li><a href="/blog/https-java-cert.html">HTTPS带证书java访问</a></li>
-        <li><a href="/blog/https-keytool-cert.html">HTTPS 证书keytool</a></li>
-        <li><a href="/blog/https-double-cert.html">HTTPS 双向证书</a></li>
-        <li><a href="/blog/https-single-cert.html">HTTPS 服务端证书</a></li>
+	    <li><a href="/blog/other-git.html">git使用</a></li>
+        <li><a href="/blog/other-markdown.html">Markdown学习</a></li>
+        <li><a href="/blog/java-thread-interface.html">Java线程 Runnable和Callable</a></li>
+        <li><a href="/blog/java-src-thread.html">java源码 Thread</a></li>
+        <li><a href="/blog/java-src-threadgroup.html">java源码 ThreadGroup</a></li>
     	</ul>
 </aside>
 	<aside class="widget widget_tag_cloud sidebar-widget clearfix">
 	<h3 class="widget-title">标签</h3>
 	<div class="tagcloud">
-		<a href="/tags/1386710576.html"  title="lua" >lua</a>
-		<a href="/tags/3692263176.html"  title="java" >java</a>
-		<a href="/tags/1783669539.html"  title="php" >php</a>
-		<a href="/tags/367908174.html"  title="php7" >php7</a>
-		<a href="/tags/1845431629.html"  title="php5" >php5</a>
-		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
-		<a href="/tags/3635419366.html"  title="https" >https</a>
-		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
-		<a href="/tags/915562279.html"  title="client" >client</a>
 		<a href="/tags/2511338272.html"  title="git" >git</a>
 		<a href="/tags/2013555047.html"  title="blog" >blog</a>
+		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
+		<a href="/tags/3635419366.html"  title="https" >https</a>
+		<a href="/tags/3692263176.html"  title="java" >java</a>
+		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
+		<a href="/tags/915562279.html"  title="client" >client</a>
+		<a href="/tags/1386710576.html"  title="lua" >lua</a>
+		<a href="/tags/474222454.html"  title="markdown" >markdown</a>
+		<a href="/tags/1783669539.html"  title="php" >php</a>
+		<a href="/tags/1845431629.html"  title="php5" >php5</a>
+		<a href="/tags/367908174.html"  title="php7" >php7</a>
 		</div>
 </aside>
 	<aside class="widget widget_text sidebar-widget clearfix">

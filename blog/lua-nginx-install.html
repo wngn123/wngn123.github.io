@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>wngn123-GitBlog</title>
-	<meta name="keywords" content="lua,PHP,GitBlog,博客,Markdown博客,wngn123,wngn123-GitBlog">
-	<meta name="description" content="GitBlog是一个简单易用的Markdown博客系统">
+	<title>nginx lua 环境搭建|wngn123-GitBlog</title>
+	<meta name="keywords" content="lua,Lua,wngn123-GitBlog">
+	<meta name="description" content="nginx lua 环境搭建">
 	
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
 	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
@@ -29,51 +29,12 @@
 	</div>
 </div>
 </header>		    <div id="content">
-					    	    	
-    	    		<div class="quest-row" id="title-container">
-	<div class="container title-container">
-		<div class="row">
-			<div class="col-md-6">
-				<h3>PHP</h3>
-			</div>
-			<div class="col-md-6">
-				<ul class="breadcrumbs">
-					<li><a href="/">Home</a></li>
-					<li><a href="/category/26890208.html">PHP</a></li></ul>
-				</div>
-		</div>
-	</div>
-</div>    		<div class="quest-row site-content">
+	<div class="quest-row site-content">
 		<div class="container">
 			<div class="row">
-				<div id="primary" class="content-area col-md-9">
+				<div id="primary" class="content-area single col-md-9">
 					<div id="main" class="site-main" role="main">
-																	        	<article class="post hentry">
-	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/lua-openresty-install.html" rel="bookmark">OpenResty 安装</a></h1>
-	<div class="entry-meta">
-		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-24</time>
-				<span class="seperator">/</span>
-	    <span><i class="fa fa-user"></i> wngn123</span>
-	    	</div><!-- .entry-meta -->
-</header><!-- .entry-header -->	<div class="entry-content">
-	<p>
-		<p>OpenResty 安装</p>
-		</p>
-</div><!-- .entry-content -->	<footer class="entry-footer">
-		<ul class="post-categories">
-          
-          <li><a href="/category/1914056710.html" rel="category">Lua</a></li>
-        	</ul>
-		
-		<ul class="post-tags">
-                   <li><a href="/tags/1386710576.html" rel="tag">lua</a></li>
-        	</ul>
-		
-		<div class="read-more">
-		<a href="/blog/lua-openresty-install.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											        	<article class="post hentry">
+						<article class="post hentry">
 	<header class="entry-header">
 	<h1 class="post-title"><a href="/blog/lua-nginx-install.html" rel="bookmark">nginx lua 环境搭建</a></h1>
 	<div class="entry-meta">
@@ -83,7 +44,79 @@
 	    	</div><!-- .entry-meta -->
 </header><!-- .entry-header -->	<div class="entry-content">
 	<p>
-		<p>nginx lua 环境搭建</p>
+		<!--
+author: wngn123
+date: 2016-08-24
+title: nginx lua 环境搭建
+tags: lua
+category: Lua
+status: publish
+summary: nginx lua 环境搭建
+-->
+<h2>目录结构</h2>
+<pre><code>drwxr-xr-x. 6 wang wang     93 May 15  2015 LuaJIT-2.0.4
+-rw-r--r--. 1 root root 847615 Jun  6 21:16 LuaJIT-2.0.4.tar.gz
+drwxrwxr-x. 9 root root   4096 May 26 10:41 lua-nginx-module-0.10.5
+-rw-r--r--. 1 root root 579793 Jun  6 21:35 lua-nginx-module-0.10.5.tar.gz
+drwxr-xr-x. 9 work work   4096 Jun  6 21:25 nginx-1.10.1
+-rw-r--r--. 1 root root 909077 Jun  6 21:17 nginx-1.10.1.tar.gz
+drwxrwxr-x. 9 root root   4096 May 10 05:28 ngx_devel_kit-0.3.0
+-rw-r--r--. 1 root root  66455 Jun  6 21:34 ngx_devel_kit-0.3.0.tar.gz</code></pre>
+<h2>安装依赖</h2>
+<pre><code class="language-shell">#使用root用户登录
+yum -y install gcc gcc-c++ autoconf automake
+yum -y install zlib zlib-devel openssl openssl-devel pcre-devel</code></pre>
+<h2>下载解压安装文件</h2>
+<pre><code class="language-shell">cd /usr/local/src
+wget http://nginx.org/download/nginx-1.10.1.tar.gz
+wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+wget https://github.com/chaoslawful/lua-nginx-module/archive/v1.10.5.tar.gz
+wget https://github.com/simpl/ngx_devel_kit/releases/tag/v0.3.0
+tar -zxvf LuaJIT-2.0.4.tar.gz
+tar -zxvf nginx-1.10.1.tar.gz
+
+tar -zxvf lua-nginx-module-0.10.5.tar.gz
+tar -zxvf ngx_devel_kit-0.3.0.tar.gz
+tar -zxvf echo-nginx-module-0.59
+
+tar -zxvf v0.59
+tar -zxvf v1.10.5.tar.gz
+tar -zxvf v0.3.0.tar.gz</code></pre>
+<h2>安装LuaJIT</h2>
+<pre><code class="language-shell">cd /usr/local/src/LuaJIT-2.0.4
+make
+make install
+export LUAJIT_LIB=/usr/local/lib
+export LUAJIT_INC=/usr/local/include/luajit-2.0
+ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2</code></pre>
+<h2>安装NGINX</h2>
+<pre><code class="language-shell">cd /usr/local/src/nginx-1.10.1
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0 --add-module=/usr/local/src/echo-nginx-module-0.59 
+make -j2
+make install</code></pre>
+<h2>配置NGINX</h2>
+<pre><code class="language-shell">cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak
+vi /usr/local/nginx/conf/nginx.conf
+
+location ~* ^/2328(/.*) {
+    default_type 'text/plain';
+    content_by_lua 'ngx.say("hello, ttlsa lua")';
+}</code></pre>
+<h2>启动NGINX</h2>
+<pre><code class="language-shell">/usr/local/nginx/sbin/nginx -v
+/usr/local/nginx/sbin/nginx</code></pre>
+<h2>测试NGINX</h2>
+<pre><code class="language-shell">curl http://localhost/2328/</code></pre>
+<h2>注</h2>
+<ol>
+<li>echo命令只能放在url请求中，如果放在url请求外，会报错 如果报[emerg]: &quot;echo&quot; directive is not allowed here in  ，请检查echo放置的位置</li>
+<li>一次url请求，echo 只能打印一行，如果有逻辑判断，且判断成功，则echo会执行判断成功里边的echo，否则执行最后一句echo（此处不一定正确，在测试中发现是此现象）</li>
+<li>如果echo后边有配置return 或者配置 proxy_pass，则echo的输出会被覆盖，即浏览器无法看到echo的内容</li>
+<li>echo的内容不是写在nginx的配置文件中，而是输出到浏览器中，所以echo的打印字符的查看请在浏览器中查看</li>
+</ol>
+<h2>参考</h2>
+<p><a href="http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/"><a href="http://www.ttlsa.com/nginx/nginx-modules-ngx_lua">http://www.ttlsa.com/nginx/nginx-modules-ngx_lua</a></a></p>
 		</p>
 </div><!-- .entry-content -->	<footer class="entry-footer">
 		<ul class="post-categories">
@@ -95,87 +128,10 @@
                    <li><a href="/tags/1386710576.html" rel="tag">lua</a></li>
         	</ul>
 		
-		<div class="read-more">
-		<a href="/blog/lua-nginx-install.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											        	<article class="post hentry">
-	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/lua-directive-lua_code_cache.html" rel="bookmark">lua_code_cache</a></h1>
-	<div class="entry-meta">
-		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-24</time>
-				<span class="seperator">/</span>
-	    <span><i class="fa fa-user"></i> wngn123</span>
-	    	</div><!-- .entry-meta -->
-</header><!-- .entry-header -->	<div class="entry-content">
-	<p>
-		<p>开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效</p>
-		</p>
-</div><!-- .entry-content -->	<footer class="entry-footer">
-		<ul class="post-categories">
-          
-          <li><a href="/category/1914056710.html" rel="category">Lua</a></li>
-        	</ul>
-		
-		<ul class="post-tags">
-                   <li><a href="/tags/1386710576.html" rel="tag">lua</a></li>
-        	</ul>
-		
-		<div class="read-more">
-		<a href="/blog/lua-directive-lua_code_cache.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											        	<article class="post hentry">
-	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/lua-directive-lua_use_default_type.html" rel="bookmark">lua_use_default_type</a></h1>
-	<div class="entry-meta">
-		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-24</time>
-				<span class="seperator">/</span>
-	    <span><i class="fa fa-user"></i> wngn123</span>
-	    	</div><!-- .entry-meta -->
-</header><!-- .entry-header -->	<div class="entry-content">
-	<p>
-		<p>指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态&gt;（off）。</p>
-		</p>
-</div><!-- .entry-content -->	<footer class="entry-footer">
-		<ul class="post-categories">
-          
-          <li><a href="/category/1914056710.html" rel="category">Lua</a></li>
-        	</ul>
-		
-		<ul class="post-tags">
-                   <li><a href="/tags/1386710576.html" rel="tag">lua</a></li>
-        	</ul>
-		
-		<div class="read-more">
-		<a href="/blog/lua-directive-lua_use_default_type.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											        	<article class="post hentry">
-	<header class="entry-header">
-	<h1 class="post-title"><a href="/blog/lua-directive-lua_regex_cache_max_entries.html" rel="bookmark">lua_regex_cache_max_entries</a></h1>
-	<div class="entry-meta">
-		<time class="post-date"><i class="fa fa-clock-o"></i>2016-08-24</time>
-				<span class="seperator">/</span>
-	    <span><i class="fa fa-user"></i> wngn123</span>
-	    	</div><!-- .entry-meta -->
-</header><!-- .entry-header -->	<div class="entry-content">
-	<p>
-		<p>指定在worker进程级别编译的正则表达式缓存结果的最大数量</p>
-		</p>
-</div><!-- .entry-content -->	<footer class="entry-footer">
-		<ul class="post-categories">
-          
-          <li><a href="/category/1914056710.html" rel="category">Lua</a></li>
-        	</ul>
-		
-		<ul class="post-tags">
-                   <li><a href="/tags/1386710576.html" rel="tag">lua</a></li>
-        	</ul>
-		
-		<div class="read-more">
-		<a href="/blog/lua-directive-lua_regex_cache_max_entries.html">阅读全文<i class="fa fa-angle-double-right "></i></a>
-	</div>
-	</footer><!-- .entry-footer --></article><!-- #post-## -->				        					        											</div>
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
 					<!-- #main -->
 				</div>
+				<!-- #primary -->
 				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
 	<aside class="widget widget_categories sidebar-widget clearfix">
 	<h3 class="widget-title">分类目录</h3>
@@ -233,7 +189,7 @@
 		<!-- .container -->
 	</div>
 	<!-- .quest-row -->
-</div><!-- #content -->		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 copyright-text">

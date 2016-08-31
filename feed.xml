@@ -4,9 +4,1473 @@
         <description>GitBlog是一个简单易用的Markdown博客系统</description>
         <link>/</link>
         <atom:link href="//feed.xml" rel="self" type="application/rss+xml" />
-        <pubDate>2016-08-28 16:08:47</pubDate>
-        <lastBuildDate>2016-08-28 16:08:47</lastBuildDate>
+        <pubDate>2016-08-31 15:08:24</pubDate>
+        <lastBuildDate>2016-08-31 15:08:24</lastBuildDate>
         <generator>Gitblog v1.0</generator>
+                <item>
+            <title>git使用</title>
+            <description>
+            &lt;!--
+author: wangn123
+head: head.png
+date: 2016-08-31
+title: git使用
+tags: git
+category: Other
+status: publish
+summary:git使用，常用命令
+--&gt;
+&lt;h2&gt;git config&lt;/h2&gt;
+&lt;p&gt;使用Git的第一件事就是设置你的名字和email,这些就是你在提交commit时的签名&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git config --global user.name &quot;wngn123&quot;
+git config --global user.email &quot;wngn123@163.com&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;执行了上面的命令后,会在你的主目录(home directory)建立一个叫~/.gitconfig 的文件. 内容一般像下面这样:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[user]
+name = wngn123
+email = wngn123@163.com&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;git config 文档&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git config -h
+git config --help &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Git使用一系列的配置文件来存储你定义的偏好，它首先会查找/etc/gitconfig文件，该文件含有对系统上所有用户及他们所拥有的仓库都生效的配置值，如果传递--system选项给git config命令， Git 会读写这个文件。&lt;/p&gt;
+&lt;p&gt;接下来Git会查找每个用户的~/.gitconfig文件，你能传递--global选项让Git读写该文件。&lt;/p&gt;
+&lt;p&gt;最后Git会查找由用户定义的各个库中Git目录下的配置文件（.git/config），该文件中的值只对该git库有效。如果传递 --local选项给git config命令，Git会读写这个文件。 --local  选项是默认选项&lt;/p&gt;
+&lt;p&gt;以上阐述的三层配置从一般到特殊层层推进，如果定义的值有冲突，以后面层中定义的为准，例如：在.git/config和/etc/gitconfig的较量中，.git/config取得了胜利。虽然你也可以直接手动编辑这些配置文件，但是运行git config命令将会来得简单些。&lt;/p&gt;
+&lt;p&gt;-l, --list 用于列出我们已经设置了的git的配置信息。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git config --global -l
+
+name = wngn123
+email = wngn123@163.com&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;git config --global color.ui true  打开所有的默认终端着色
+git config --global core.autocrlf true 如果是在Windows系统上，把它设置成true，这样当签出代码时，LF会被转换成CRLF
+git config --global core.autocrlf false  仅运行在Windows上的项目，可以设置false取消此功能
+git config --global core.autocrlf input Linux或Mac CRLF转换成LF，签出时不转换&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;git clone&lt;/h2&gt;
+&lt;p&gt;克隆git项目到本地，（第一次创建项目可现在github上创建一个空的项目，任何克隆到本地，在提交）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/wngn123/test.git&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在某些场合，Git会自动在本地分支与远程分支之间，建立一种追踪关系(tracking)。比如，在git clone的时候，所有本地分支默认与远程主机的同名分支，建立追踪关系，也就是说，本地的master分支自动”追踪”origin/master分支。&lt;/p&gt;
+&lt;h2&gt;git add&lt;/h2&gt;
+&lt;p&gt;克隆到本地的项目被修改后要添加到索引区（index）,使用git add命令&lt;/p&gt;
+&lt;p&gt;主要用于把我们要提交的文件的信息添加到索引库中&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git add file  添加指定变动文件
+git add --all 添加所有变动文件&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;git commit&lt;/h2&gt;
+&lt;p&gt;提交改的代码到本地git仓库，必须填写注释，&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git commit -m 'git study 2016-07-20'&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;我的注释：descripe date 如果 git study 2016-07-20&lt;/p&gt;
+&lt;h2&gt;git push&lt;/h2&gt;
+&lt;p&gt;将当前分推送到github服务器。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;git push remote_host localbranch:remotebranch&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;git pull &amp;lt;远程主机名&amp;gt; &amp;lt;远程分支名&amp;gt;:&amp;lt;本地分支名&amp;gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git push origin master:master
+git push origin develop:develop&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;如果省略远程分支名，则表示将本地分支推送与之存在”追踪关系”的远程分支(通常两者同名)，如果该远程分支不存在，则会被新建。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push origin master&lt;/code&gt;
+将本地的master分支推送到origin主机的master分支。如果后者不存在，则会被新建。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push origin :master&lt;/code&gt;
+如果省略本地分支名，则表示删除指定的远程分支，因为这等同于推送一个空的本地分支到远程分支。等同于&lt;code&gt;git push origin --delete master&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push origin&lt;/code&gt;
+如果当前分支与远程分支之间存在追踪关系，则本地分支和远程分支都可以省略。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push&lt;/code&gt;
+如果当前分支只有一个追踪分支，那么主机名都可以省略。&lt;/p&gt;
+&lt;h2&gt;git pull&lt;/h2&gt;
+&lt;p&gt;取回远程主机某个分支的更新，再与本地的指定分支合并&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;git pull &amp;lt;远程主机名&amp;gt; &amp;lt;远程分支名&amp;gt;:&amp;lt;本地分支名&amp;gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git pull origin next:master&lt;/code&gt;
+取回origin主机的next分支，与本地的master分支合并&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git pull origin next&lt;/code&gt;
+取回origin主机的next分支，与本地的当前分支合并,相当于&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git fetch origin
+git merge origin/next&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;git pull origin&lt;/code&gt;
+本地的当前分支自动与对应的origin主机”追踪分支”(remote-tracking branch)进行合并。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git pull&lt;/code&gt;
+前分支自动与唯一一个追踪分支进行合并。&lt;/p&gt;
+&lt;h2&gt;git fetch&lt;/h2&gt;
+&lt;p&gt;从远程获取最新版本到本地，不会自动merge&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git fetch origin master
+git log -p master..origin/master
+git merge origin/master&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;首先从远程的origin的master主分支下载最新的版本到origin/master分支上,然后比较本地的master分支和origin/master分支的差别,最后进行合并&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git fetch origin master:tmp
+git diff tmp 
+git merge tmp&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;从远程获取最新的版本到本地的test分支上,之后再进行比较合并&lt;/p&gt;
+&lt;h2&gt;git branch&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;git branch new_branch&lt;/code&gt;
+创建分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git checkout new_branch&lt;/code&gt;
+切换分支
+&lt;code&gt;git checkout -b test_branch&lt;/code&gt;
+创建和切换分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -D test_branch&lt;/code&gt;
+删除分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -m new_branch wchar_support&lt;/code&gt;
+重命名分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -r&lt;/code&gt;
+显示分支的远程追踪关系&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -a&lt;/code&gt;
+显示当前分支和分支的远程追踪关系&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch --track feature1 origin/master&lt;/code&gt;
+设置分支的远程追踪关系&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch --set-upstream temp origin/xxx&lt;/code&gt;
+设置分支的远程追踪关系&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git checkout -b temp --track origin/xxx&lt;/code&gt;
+设置分支的远程追踪关系&lt;/p&gt;
+&lt;h2&gt;git tag&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;git tag -l&lt;/code&gt;
+查看标签&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git show Release_1_0&lt;/code&gt;
+查看标签详细信息&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git tag -d Release_1_0&lt;/code&gt;
+删除标签&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git tag -a 'Release_1_0' -m 'Tagged basic string operation code' HEAD&lt;/code&gt;
+创建标签&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push origin tag Release_1_0&lt;/code&gt;
+创建标签 &lt;/p&gt;
+&lt;h4&gt;git status&lt;/h4&gt;
+&lt;p&gt;列出当前目录所有还没有被git管理的文件和被git管理且被修改但还未提交(git commit)的文件&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git status -s&lt;/code&gt;
+-s表示short, -s的输出标记会有两列,第一列是对staging区域而言,第二列是对working目录而言.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git status -uno&lt;/code&gt;
+可以只列出所有已经被git管理的且被修改但没提交的文件。&lt;/p&gt;
+&lt;h2&gt;git diff&lt;/h2&gt;
+&lt;p&gt;比较working tree(工作目录)同git index(Git索引)之间，git index和git directory(GIT库目录)之间，working tree和git directory之间，git directory中不同commit之间的差异&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;本地:&lt;/strong&gt; 没有执行git add之前，代码在本地存在  &lt;strong&gt;&lt;em&gt;working tree(工作目录)&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;暂存区：&lt;/strong&gt; 执行git add后但是没有执行git commit，代码存在于暂存区，本地 &lt;strong&gt;&lt;em&gt;git index(Git索引)&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;提交列表：&lt;/strong&gt; 执行git commit后，代码存在于提交列表，暂存区，本地 &lt;strong&gt;&lt;em&gt;git directory(GIT库目录)&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git diff  本地和暂存区相比
+git dif HEAD 本地和提交列表相比
+git dif --cache/--staged 暂存区和提交列表相比&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;git diff [&amp;lt;path&amp;gt;...]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个命令最常用，在每次add进入index前会运行这个命令，查看即将add进入index时所做的内容修改，即working directory和index的差异。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git diff --cached [&amp;lt;path&amp;gt;...]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个命令初学者不太常用，却非常有用，它表示查看已经add进入index但是尚未commit的内容同最后一次commit时的内容的差异。即index和git directory的差异。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git diff --cached [&amp;lt;commit&amp;gt;] [&amp;lt;path&amp;gt;...]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个命令初学者用的更少，也非常有用，它表示查看已经add进入index但是尚未commit的内容同指定的&lt;commit&gt;之间的差异，和上面一条很相似，差别仅仅&lt;commit&gt;，即index和git directory中指定版本的差异。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git diff &amp;lt;commit&amp;gt; [&amp;lt;path&amp;gt;...]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个命令用来查看工作目录和指定&lt;commit&gt;的commit之间的差别，如果要和Git directory中最新版比较差别，则&lt;commit&gt;=HEAD。如果要和某一个branch比较差别，&lt;commit&gt;=分支名字&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git diff &amp;lt;commit&amp;gt; &amp;lt;commit&amp;gt; [&amp;lt;path&amp;gt;...]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个命令用来比较git directory中任意两个&lt;commit&gt;之间的差别，如果想比较任意一个&lt;commit&gt;和最新版的差别，把其中一个&lt;commit&gt;换成HEAD即可。&lt;/p&gt;
+&lt;h2&gt;git merge&lt;/h2&gt;
+&lt;p&gt;把一个分支或或某个commit的修改合并现在的分支上  &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git merge [options] &amp;lt;msg&amp;gt; HEAD &amp;lt;commit&amp;gt; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这里的HEAD其实就是分支名，用于说明把HEAD分支合并到当前分支。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git merge -h
+git merge --help
+
+git merge develop   develop分支合并到当前分支
+git merge --no-ff develop develop分支快速合并到当前分支（当前分支直接链接到develop分支）&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;git log&lt;/h2&gt;
+&lt;p&gt;用于查看提交记录&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-n 查看最近n次的提交信息&lt;/strong&gt; &lt;/p&gt;
+&lt;p&gt;n是一个正整数&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log -2    查看最近2次的提交历史记录&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;-- fileName查看指定文件的提交信息&lt;/strong&gt; &lt;/p&gt;
+&lt;p&gt;fileName为任意文件名 (注：文件名应该放到参数的最后位置，通常在前面加上--并用空格隔开表示是文件。)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log file1 file2   查看file1文件file2文件的提交记录
+git log file/         查看file文件夹下所有文件的提交记录&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;--branchName查看莫个分支上的提交记录&lt;/strong&gt; &lt;/p&gt;
+&lt;p&gt;branchName为任意一个分支名字，同上，需要放到参数中的最后位置处。(注：如果分支名与文件名相同，系统会提示错误，可通过--选项来指定给定的参数是分支名还是文件名。)例：在当前分支中有一个名为v1的文件，同时还存在一个名为v1的分支,则：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log v1 -- 此时的v1代表的是分支名字
+git log -- v1 此时的v1代表的是名为v1的文件
+git log v1 -- v1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;tagName或branchame查询指定标签/分支中的提交记录信息&lt;/strong&gt;  &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log v1.0..        查询从v1.0以后的提交历史记录(不包含v1.0)
+git log test..master  查询master分支中的提交记录但不包含test分支记录
+git log master..test  查询test分支中的提交记录但不办含master分支记录
+git log master...test 查询master或test分支中的提交记录。
+git log test --not master　　屏蔽master分支&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;根据commit查询日志&lt;/strong&gt; &lt;/p&gt;
+&lt;p&gt;其中，commit可以是提交哈希值的简写模式，也可以使用HEAD代替。HEAD代表最后一次提交，HEAD^为最后一个提交的父提交，等同于HEAD～1，HEAD～2代表倒数第二次提交&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log commit  　　查询commit之前的记录，包含commit
+git log commit1 commit2 查询commit1与commit2之间的记录，包括commit1和commit2
+git log commit1..commit2 同上，但是不包括commit1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;--pretty按指定格式显示日志信息&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;可选项有：oneline,short,medium,full,fuller,email,raw以及format:&lt;string&gt;,默认为medium，可以通过修改配置文件来指定默认的方式。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log (--pretty=)oneline
+常见的format选项：
+选项     说明
+%H      提交对象（commit）的完整哈希字串 
+%h      提交对象的简短哈希字串 
+%T      树对象（tree）的完整哈希字串 
+%t      树对象的简短哈希字串 
+%P      父对象（parent）的完整哈希字串 
+%p      父对象的简短哈希字串 
+%an     作者（author）的名字 
+%ae     作者的电子邮件地址 
+%ad     作者修订日期（可以用 -date= 选项定制格式） 
+%ar     作者修订日期，按多久以前的方式显示 
+%cn     提交者(committer)的名字 
+%ce     提交者的电子邮件地址 
+%cd     提交日期 
+%cr     提交日期，按多久以前的方式显示 
+%s      提交说明 
+注：作者是指最后一次修改文件的人；而提交者是指提交该文件的人。
+git log --pretty=format:&quot;%an %ae %ad %cn %ce %cd %cr %s&quot; --graph&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;--mergs 查看所有合并过的提交历史记录&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--no-merges     查看所有未被合并过的提交信息&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--author=someonet       查询指定作者的提交记录&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log --author=gbyukg&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;--since，--affter       仅显示指定时间之后的提交(不包含当前日期)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--until，--before       仅显示指定时间之前的提交(包含当前日期)&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log --before={3,weeks,ago} --after={2010-04-18}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;--grep  通过提交说明信息过滤提交日志&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log --grep=hotfix 该命令会列出所有包含hotfix字样的提交信息说明的提交记录
+注意：如果想同时使用--grep和--author，必须在附加一个--all-match参数。&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;-S      通过查询文件的变更内容来检索出指定提交日志&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;注：-S后没有&amp;quot;=&amp;quot;，与查询内容之间也没有空格符&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log --Snew&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;-p      查看提交时的补丁信息&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log -p --no-merges -2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;--stat  列出文件的修改行数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--sortstat      只显示--stat中最后行数修改添加移除的统计&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--graph 以简单的图形方式列出提交记录&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--abbrev-commit 仅显示 SHA-1 的前几个字符，而非所有的 40 个字符。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--relative-date 使用较短的相对时间显示（比如，“2 weeks ago”）。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--name-only 仅在提交信息后显示已修改的文件清单。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;--name-status 显示新增、修改、删除的文件清单。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;git rm&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;git rm file&lt;/code&gt;
+从staging区移除文件,同时也移除出工作目录.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git rm --cached&lt;/code&gt;
+从staging区移除文件,但留在工作目录中.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git rm --cached&lt;/code&gt;
+从功能上等同于git reset HEAD,清除了缓存区,但不动工作目录树.&lt;/p&gt;
+&lt;h2&gt;git远程追踪&lt;/h2&gt;
+&lt;p&gt;在Git中‘追踪分支’是用与联系本地分支和远程分支的. 如果你在’追踪分支'(Tracking Branches)上执行推送(push)或拉取(pull)时,　它会自动推送(push)或拉取(pull)到关联的远程分支上.
+如果你经常要从远程仓库里拉取(pull)分支到本地,并且不想很麻烦的使用&amp;quot;git pull &amp;quot;这种格式; 那么就应当使用‘追踪分支'(Tracking Branches).
+‘git clone‘命令会自动在本地建立一个'master'分支，它是'origin/master'的‘追踪分支’. 而'origin/master'就是被克隆(clone)仓库的'master'分支.
+译者注: origin一般是指原始仓库地址的别名.
+你可以在使用'git branch'命令时加上'--track'参数, 来手动创建一个'追踪分支'.
+git branch --track experimental origin/experimental
+当你运行下命令时:
+$ git pull experimental
+它会自动从‘origin'抓取(fetch)内容，再把远程的'origin/experimental'分支合并进(merge)本地的'experimental'分支.
+当要把修改推送(push)到origin时, 它会将你本地的'experimental'分支中的修改推送到origin的‘experimental'分支里,　而无需指定它(origin).&lt;/p&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/other-git.html</link>
+            <guid isPermaLink="true">//blog/other-git.html</guid>
+                                               <category>Other</category>
+                                    </item>
+                <item>
+            <title>Markdown学习</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-31
+title: Markdown学习
+tags: markdown
+category: Other
+status: publish
+summary:Markdown学习，Markdown基础语法。
+--&gt;
+&lt;h2&gt;标题&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题`
+##### 五级标题
+###### 六级标题&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;列表&lt;/h2&gt;
+&lt;p&gt;熟悉 HTML 的同学肯定知道有序列表与无序列表的区别，在 Markdown 下，列表的显示只需要在文字前加上 - 或 * 即可变为无序列表，有序列表则直接在文字前加 1. 2. 3. 符号要和文字之间加上一个字符的空格。&lt;/p&gt;
+&lt;h4&gt;无序列表&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;    - 无序列表
+    - 无序列表
+    * 无序列表
+    * 无序列表&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表
+&lt;h4&gt;有序列表&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;1. 无序列表
+2. 无序列表
+3. 无序列表&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;引用&lt;/h2&gt;
+&lt;p&gt;如果你需要引用一小段别处的句子，那么就要用引用的格式。只需要在文本前加入 &lt;code&gt;&amp;gt;&lt;/code&gt; 这种尖括号（大于号）即可&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt; 例如这样&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;例如这样&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;图片与链接&lt;/h2&gt;
+&lt;p&gt;插入链接与插入图片的语法很像，区别在一个 &lt;code&gt;!&lt;/code&gt;号&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[baidu](www.baidu.com)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href=&quot;www.baidu.com&quot;&gt;baidu&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;![image](https://raw.githubusercontent.com/wngn123/test/master/img/head.png)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/wngn123/test/master/img/head.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;粗体与斜体&lt;/h2&gt;
+&lt;p&gt;Markdown 的粗体和斜体也非常简单，用两个 &lt;code&gt;*&lt;/code&gt; 包含一段文本就是粗体的语法，用一个 &lt;code&gt;*&lt;/code&gt; 包含一段文本就是斜体的语法。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;** 粗体 **
+* 斜体 *&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;粗体&lt;/strong&gt;
+&lt;em&gt;斜体&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;表格&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | 1600 |
+| col 2 is      | centered      |   12 |
+| zebra stripes | are neat      |    1 |&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Tables&lt;/th&gt;
+&lt;th style=&quot;text-align: center;&quot;&gt;Are&lt;/th&gt;
+&lt;th style=&quot;text-align: right;&quot;&gt;Cool&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;col 3 is&lt;/td&gt;
+&lt;td style=&quot;text-align: center;&quot;&gt;right-aligned&lt;/td&gt;
+&lt;td style=&quot;text-align: right;&quot;&gt;1600&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;col 2 is&lt;/td&gt;
+&lt;td style=&quot;text-align: center;&quot;&gt;centered&lt;/td&gt;
+&lt;td style=&quot;text-align: right;&quot;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;zebra stripes&lt;/td&gt;
+&lt;td style=&quot;text-align: center;&quot;&gt;are neat&lt;/td&gt;
+&lt;td style=&quot;text-align: right;&quot;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;代码框&lt;/h3&gt;
+&lt;p&gt;如果你是个程序猿，需要在文章里优雅的引用代码框，在 Markdown 下实现也非常简单，只需要用两个 ` 把中间的代码包裹起来，如 `code`。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;``` python
+
+code
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;@requires_authorization
+def somefunc(param1='', param2=0):
+    '''A docstring'''
+    if param1 &amp;gt; param2: # interesting
+        print 'Greater'
+    return (param2 - param1 + 1) or None
+class SomeClass:
+    pass
+&amp;gt;&amp;gt;&amp;gt; message = '''interpreter
+... prompt'''&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;分割线&lt;/h2&gt;
+&lt;p&gt;分割线的语法只需要另起一行，连续输入三个星号 *** 即可。&lt;/p&gt;
+&lt;hr /&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/other-markdown.html</link>
+            <guid isPermaLink="true">//blog/other-markdown.html</guid>
+                                               <category>Other</category>
+                                    </item>
+                <item>
+            <title>Java线程 Runnable和Callable</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-31
+title: Java线程 Runnable和Callable
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，Java线程
+--&gt;
+&lt;h2&gt;Java线程&lt;/h2&gt;
+&lt;p&gt;在Java中，开启一个线程的唯一方式是，是通过Thread的start方法，并且在线程中执行的Runnable的run方法。无论是线程池还是Callable，Future,最核心最根本的还是调用到&lt;code&gt;Thread.start()–&amp;gt;Runnable.run()&lt;/code&gt;，其他的类的出现可以认为是更方便的使用Thread和Runnable，以此为核心会更容易理解Java的并发框架。&lt;/p&gt;
+&lt;p&gt;虽然Thread和Runnable类使得多线程编程简单直接，但有一个缺陷就是：在执行完任务之后无法获取执行结果。如果需要获取执行结果，就必须通过共享变量或者使用线程通信的方式来达到效果，这样使用起来就比较麻烦。&lt;/p&gt;
+&lt;h2&gt;线程接口Runnable和Callable&lt;/h2&gt;
+&lt;p&gt;Callable接口和Runnable接口相似，区别就是Callable需要实现call方法，而Runnable需要实现run方法；并且，call方法还可以返回任何对象，无论是什么对象，JVM都会当作Object来处理。但是如果使用了泛型，我们就不用每次都对Object进行转换了，Callable能够抛出exception,而Runnable不可以。&lt;/p&gt;
+&lt;p&gt;Runnable&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public interface Runnable {
+    public abstract void run();
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Callable&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public interface Callable&amp;lt;V&amp;gt; {
+    V call() throws Exception;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Runnable和Thread&lt;/h2&gt;
+&lt;p&gt;Thread实现了Runnable接口（可以认为Thread是Runnable的子类）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public class Thread implements Runnable &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    public static void main(String[] args) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(&quot;--------&quot;);
+            }
+        });
+        t.start();
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Callable和Future&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;    public static void main(String[] args) {
+        ExecutorService executor = Executors.newCachedThreadPool();
+        Future&amp;lt;Integer&amp;gt; result = executor.submit(new Callable&amp;lt;Integer&amp;gt;() {
+            @Override
+            public Integer call() throws Exception {
+                System.out.println(&quot;--------&quot;);
+                Thread.sleep(3000);
+                int sum = 0;
+                for (int i = 0; i &amp;lt; 100; i++)
+                    sum += i;
+                return sum;
+            }
+        });
+        executor.shutdown();
+        try {
+            System.out.println(&quot;task运行结果&quot; + result.get());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(&quot;所有任务执行完毕&quot;);
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;//执行已提交的 Runnable 任务的对象。此接口提供一种将任务提交与每个任务将如何运行的机制（包括线程使用的细节、调度等）分离开来的方法
+public interface Executor {
+    //在未来某个时间执行给定的命令。该命令可能在新的线程、已入池的线程或者正调用的线程中执行，这由 Executor 实现决定。
+    void execute(Runnable command);
+}&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/java-thread-interface.html</link>
+            <guid isPermaLink="true">//blog/java-thread-interface.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>java源码 Thread</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-30
+title: java源码 Thread
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，Thread源码
+--&gt;
+&lt;h2&gt;Thread继承体系&lt;/h2&gt;
+&lt;p&gt;Thread的签名如下，继承了实现Runnable接口&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public class Thread implements Runnable&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread基本概念&lt;/h2&gt;
+&lt;p&gt;线程 是程序中的执行线程。Java 虚拟机允许应用程序并发地运行多个执行线程。
+每个线程都有一个优先级，高优先级线程的执行优先于低优先级线程。每个线程都可以或不可以标记为一个守护程序。当某个线程中运行的代码创建一个新 Thread 对象时，该新线程的初始优先级被设定为创建线程的优先级，并且当且仅当创建线程是守护线程时，新线程才是守护程序。 &lt;/p&gt;
+&lt;p&gt;当 Java 虚拟机启动时，通常都会有单个非守护线程（它通常会调用某个指定类的 main 方法）。Java 虚拟机会继续执行线程，直到下列任一情况出现时为止： &lt;/p&gt;
+&lt;p&gt;调用了 Runtime 类的 exit 方法，并且安全管理器允许退出操作发生。
+非守护线程的所有线程都已停止运行，无论是通过从对 run 方法的调用中返回，还是通过抛出一个传播到 run 方法之外的异常。 &lt;/p&gt;
+&lt;p&gt;每个线程都有一个标识名，多个线程可以同名。如果线程创建时没有指定标识名，就会为其生成一个新名称&lt;/p&gt;
+&lt;h2&gt;Thread的属性&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;    //线程名
+    private char name[];
+    //线程优先级
+    private int priority;
+    /* Whether or not to single_step this thread. */
+    private boolean single_step;
+    //是否是守护线程
+    private boolean daemon = false;
+    //虚拟机状态
+    private boolean stillborn = false;
+    //实际运行的对象，Runnable实例
+    private Runnable target;
+    //线程组对象
+    private ThreadGroup group;
+    //上下文类加载器
+    private ClassLoader contextClassLoader;
+    /* The inherited AccessControlContext of this thread */
+    private AccessControlContext inheritedAccessControlContext;
+    ThreadLocal.ThreadLocalMap threadLocals = null;
+    ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
+    private long stackSize;
+    private long nativeParkEventPointer;
+    private long tid;
+    private static long threadSeqNumber;
+    private volatile int threadStatus = 0;
+    //interrupt status(中断状态)
+    volatile Object parkBlocker;
+    private volatile Interruptible blocker;
+    private final Object blockerLock = new Object();
+    //最小优先级
+    public final static int MIN_PRIORITY = 1;
+   //默认优先级
+    public final static int NORM_PRIORITY = 5;
+    //最大优先级
+    public final static int MAX_PRIORITY = 10;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread构造函数&lt;/h2&gt;
+&lt;p&gt;构造线程需要:ThreadGroup线程组, Runnable线程实例, name线程名, stackSize线程栈大小 AccessControlContext acc&lt;/p&gt;
+&lt;p&gt;如果没有设置线程组，则使用父线程线程组&lt;/p&gt;
+&lt;p&gt;如果没有设置线程实例，则为null&lt;/p&gt;
+&lt;p&gt;如果没有设置线程名称，则默认为：Thread-nextThreadNum&lt;/p&gt;
+&lt;p&gt;如果没有设置线程栈大小，则为0&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    public Thread() {
+        init(null, null, &quot;Thread-&quot; + nextThreadNum(), 0);
+    }
+
+    public Thread(Runnable target) {
+        init(null, target, &quot;Thread-&quot; + nextThreadNum(), 0);
+    }
+
+    Thread(Runnable target, AccessControlContext acc) {
+        init(null, target, &quot;Thread-&quot; + nextThreadNum(), 0, acc);
+    }
+
+    public Thread(ThreadGroup group, Runnable target) {
+        init(group, target, &quot;Thread-&quot; + nextThreadNum(), 0);
+    }
+
+    public Thread(String name) {
+        init(null, null, name, 0);
+    }
+
+    public Thread(ThreadGroup group, String name) {
+        init(group, null, name, 0);
+    }
+
+    public Thread(Runnable target, String name) {
+        init(null, target, name, 0);
+    }
+
+    public Thread(ThreadGroup group, Runnable target, String name) {
+        init(group, target, name, 0);
+    }
+
+    public Thread(ThreadGroup group, Runnable target, String name,
+                  long stackSize) {
+        init(group, target, name, stackSize);
+    }
+
+    private void init(ThreadGroup g, Runnable target, String name,
+                      long stackSize) {
+        init(g, target, name, stackSize, null);
+    }
+
+    private void init(ThreadGroup g, Runnable target, String name,
+                      long stackSize, AccessControlContext acc) {
+        //线程名称不能为空
+        if (name == null) {
+            throw new NullPointerException(&quot;name cannot be null&quot;);
+        }
+        this.name = name.toCharArray();
+        //设置父线程为当前线程
+        Thread parent = currentThread();
+        //获取JVM安全管理器
+        SecurityManager security = System.getSecurityManager();
+        if (g == null) {
+            /* Determine if it's an applet or not */
+            /* If there is a security manager, ask the security manager
+               what to do. */
+            if (security != null) {
+                //返回一个新的线程被实例化的ThreadGroup
+                g = security.getThreadGroup();
+            }
+            /* If the security doesn't have a strong opinion of the matter
+               use the parent thread group. */
+            if (g == null) {
+                g = parent.getThreadGroup();
+            }
+        }
+        //检测当前线程是否有操作线程组的权限
+        g.checkAccess();
+        /*
+         * Do we have the required permissions?
+         */
+        if (security != null) {
+            if (isCCLOverridden(getClass())) {
+                security.checkPermission(SUBCLASS_IMPLEMENTATION_PERMISSION);
+            }
+        }
+        //线程组添加一个未启动线程，线程组中未启动线程数量加一
+        g.addUnstarted();
+        this.group = g;
+        //继承父线程的守护线程和优先级，类加载器属性
+        this.daemon = parent.isDaemon();
+        this.priority = parent.getPriority();
+        if (security == null || isCCLOverridden(parent.getClass()))
+            this.contextClassLoader = parent.getContextClassLoader();
+        else
+            this.contextClassLoader = parent.contextClassLoader;
+        this.inheritedAccessControlContext =
+                acc != null ? acc : AccessController.getContext();
+        this.target = target;
+        setPriority(priority);
+        if (parent.inheritableThreadLocals != null)
+            this.inheritableThreadLocals =
+                ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
+        /* Stash the specified stack size in case the VM cares */
+        this.stackSize = stackSize;
+
+        /* Set thread ID */
+        tid = nextThreadID();
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;private static int threadInitNumber;
+    private static synchronized int nextThreadNum() {
+        return threadInitNumber++;
+    }
+    private static synchronized long nextThreadID() {
+        return ++threadSeqNumber;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread的native方法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;     //返回当前线程执行对象
+    public static native Thread currentThread();
+    //使当前执行线程暂停一会，让其它线程得以执行。只是临时让出时间片，不会释放拥有的锁。
+    public static native void yield();
+    //使当前执行线程休眠指定的时间，不释放持有的锁
+    public static native void sleep(long millis) throws InterruptedException;
+    //测试线程是否被中断，中断状态是否被重置依赖于传入的ClearInterrupted参数值
+    private native boolean isInterrupted(boolean ClearInterrupted);
+    //测试线程是否活着，如果线程启动且没有死亡，那么线程是活跃状态
+    public final native boolean isAlive();
+    //计算该线程中的堆栈帧数。线程必须挂起。
+    public native int countStackFrames();
+    //当且仅当当前线程在指定的对象上保持监视器锁时，才返回true。该方法旨在使程序能够断言当前线程已经保持一个指定的锁
+    public static native boolean holdsLock(Object obj);
+    //导出线程栈数据
+    private native static StackTraceElement[][] dumpThreads(Thread[] threads);
+    //获取所有的线程快照
+    private native static Thread[] getThreads();
+    //设置线程优先级
+    private native void setPriority0(int newPriority);
+    //线程启动
+    private native void start0();
+    //停止线程
+    private native void stop0(Object o);
+    //状态当前线程
+    private native void suspend0();
+    //继续执行当前线程
+    private native void resume0();
+    //这种当前线程的中断标识（没有中断）
+    private native void interrupt0();&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread的ID&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;    //默认线程名的自增
+    private static int threadInitNumber;
+    private static synchronized int nextThreadNum() {
+        return threadInitNumber++;
+    }
+    //线程ID的自增
+    private static long threadSeqNumber;
+    private static synchronized long nextThreadID() {
+        return ++threadSeqNumber;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread启动&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;    public synchronized void start() {
+        if (threadStatus != 0)
+            throw new IllegalThreadStateException();
+        //通知线程组线程启动，该线程会被添加到线程组活跃线程数组中，并且活跃线程数加一，未启动线程数量减一
+        group.add(this);
+        boolean started = false;
+        try {
+            start0();
+            started = true;
+        } finally {
+            try {
+                if (!started) {
+                    //启动失败，线程组中未启动线程数量加一，活跃线程数减一，并且从线程组中移除该线程
+                    group.threadStartFailed(this);
+                }
+            } catch (Throwable ignore) {
+                /* do nothing. If start0 threw a Throwable then
+                  it will be passed up the call stack */
+            }
+        }
+    }
+    private native void start0();&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread睡眠&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;    //睡眠：毫米，纳秒
+    public static void sleep(long millis, int nanos) throws InterruptedException {
+        if (millis &amp;lt; 0) {
+            throw new IllegalArgumentException(&quot;timeout value is negative&quot;);
+        }
+        if (nanos &amp;lt; 0 || nanos &amp;gt; 999999) {
+            throw new IllegalArgumentException(
+                                &quot;nanosecond timeout value out of range&quot;);
+        }
+        if (nanos &amp;gt;= 500000 || (nanos != 0 &amp;amp;&amp;amp; millis == 0)) {
+            millis++;
+        }
+
+        sleep(millis);
+    }
+    public static native void sleep(long millis) throws InterruptedException;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread的中断&lt;/h2&gt;
+&lt;p&gt;线程的thread.interrupt()方法是中断线程，将会设置该线程的中断状态位，即设置为true，中断的结果线程是死亡、还是等待新的任务或是继续运行至下一步，就取决于这个程序本身。线程会不时地检测这个中断标示位，以判断线程是否应该被中断（中断标示值是否为true）。它并不像stop方法那样会中断一个正在运行的线程。&lt;/p&gt;
+&lt;p&gt;判断某个线程是否已被发送过中断请求，请使用Thread.currentThread().isInterrupted()方法（因为它将线程中断标示位设置为true后，不会立刻清除中断标示位，即不会将中断标设置为false），而不要使用thread.interrupted()（该方法调用后会将中断标示位清除，即重新设置为false）方法来判断。&lt;/p&gt;
+&lt;p&gt;如果一个线程处于了阻塞状态（如线程调用了thread.sleep、thread.join、thread.wait、1.5中的condition.await、以及可中断的通道上的 I/O 操作方法后可进入阻塞状态），则在线程在检查中断标示时如果发现中断标示为true，则会在这些阻塞方法（sleep、join、wait、1.5中的condition.await及可中断的通道上的 I/O 操作方法）调用处抛出InterruptedException异常，并且在抛出异常后立即将线程的中断标示位清除，即重新设置为false。抛出异常是为了线程从阻塞状态醒过来，并在结束线程前让程序员有足够的时间来处理中断请求。&lt;/p&gt;
+&lt;p&gt;没有任何语言方面的需求一个被中断的线程应该终止。中断一个线程只是为了引起该线程的注意，被中断线程可以决定如何应对中断。某些线程非常重要，以至于它们应该不理会中断，而是在处理完抛出的异常之后继续执行，但是更普遍的情况是，一个线程将把中断看作一个终止请求&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    //interrupt status(中断状态)
+    volatile Object parkBlocker;
+    //测试线程中断但不清除中断状态
+    public boolean isInterrupted() {
+        return isInterrupted(false);
+    }
+    //测试线程中断并清除中断状态，parkBlocker会被置为空
+    public static boolean interrupted() {
+        return currentThread().isInterrupted(true);
+    }
+    public void interrupt() {
+        if (this != Thread.currentThread())
+            checkAccess();
+        synchronized (blockerLock) {
+            Interruptible b = blocker;
+            if (b != null) {
+                interrupt0();           // Just to set the interrupt flag
+                b.interrupt(this);
+                return;
+            }
+        }
+        interrupt0();
+    }
+    private native void interrupt0();
+    private native boolean isInterrupted(boolean ClearInterrupted);&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Thread的join&lt;/h2&gt;
+&lt;p&gt;join() 方法是让调用该方法的主线程执行run()时暂时卡住，等run()执行完成后， 主线程再调用执行join()后面的代码。
+join()方法会是当前线程等待，&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    public static void main(String[] args) throws InterruptedException {  
+        Thread t1 = new Thread(new ThreadTesterA());  
+        Thread t2 = new Thread(new ThreadTesterB());  
+        t1.start();  
+        t1.join(); // wait t1 to be finished  
+        t2.start();  
+        t2.join(); // in this program, this may be removed  
+    }  &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;t1.join()会是当前线程（即main线程处于等待状态，器等待t1线程结束才会继续执行）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    //让当前线程一直等待，知道线程结束
+    public final void join() throws InterruptedException {
+        join(0);
+    }
+    //让当前线程等待一段时间执行，如果参数为0则永远等待
+    public final synchronized void join(long millis) throws InterruptedException {
+        long base = System.currentTimeMillis();
+        long now = 0;
+        if (millis &amp;lt; 0) {
+            throw new IllegalArgumentException(&quot;timeout value is negative&quot;);
+        }
+        //如果millis=0，则一直等待，知道线程结束
+        if (millis == 0) {
+            while (isAlive()) {
+                wait(0);
+            }
+        } else {
+            while (isAlive()) {
+                long delay = millis - now;
+                if (delay &amp;lt;= 0) {
+                    break;
+                }
+                // 在其他线程调用此对象的 notify() 方法或 notifyAll() 方法，或者超过指定的时间量前，导致当前线程等待。
+                wait(delay);
+                now = System.currentTimeMillis() - base;
+            }
+        }
+    }
+    public final synchronized void join(long millis, int nanos） throws InterruptedException {
+        if (millis &amp;lt; 0) {
+            throw new IllegalArgumentException(&quot;timeout value is negative&quot;);
+        }
+        if (nanos &amp;lt; 0 || nanos &amp;gt; 999999) {
+            throw new IllegalArgumentException(&quot;nanosecond timeout value out of range&quot;);
+        }
+        if (nanos &amp;gt;= 500000 || (nanos != 0 &amp;amp;&amp;amp; millis == 0)) {
+            millis++;
+        }
+        join(millis);
+    }&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/java-src-thread.html</link>
+            <guid isPermaLink="true">//blog/java-src-thread.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>java源码 ThreadGroup</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-30
+title: java源码 ThreadGroup
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，ThreadGroup源码
+--&gt;
+&lt;h2&gt;ThreadGroup继承体系&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;public class ThreadGroup implements Thread.UncaughtExceptionHandler&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Thread的run方法是不抛出任何检查型异常(checked exception)的,但是它自身却可能因为一个异常而被终止，导致这个线程的终结。最麻烦的是，在线程中抛出的异常即使使用try...catch也无法截获，因此可能导致一些问题出现，比如异常的时候无法回收一些系统资源，或者没有关闭当前的连接等等。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public interface UncaughtExceptionHandler {
+    void uncaughtException(Thread t, Throwable e);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    public void uncaughtException(Thread t, Throwable e) {
+        if (parent != null) {
+            parent.uncaughtException(t, e);
+        } else {
+            Thread.UncaughtExceptionHandler ueh =
+                Thread.getDefaultUncaughtExceptionHandler();
+            if (ueh != null) {
+                ueh.uncaughtException(t, e);
+            } else if (!(e instanceof ThreadDeath)) {
+                System.err.print(&quot;Exception in thread \&quot;&quot;
+                                 + t.getName() + &quot;\&quot; &quot;);
+                e.printStackTrace(System.err);
+            }
+        }
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ThreadGroup基本属性&lt;/h2&gt;
+&lt;p&gt;线程组表示一个线程的集合。此外，线程组也可以包含其他线程组。线程组构成一棵树，在树中，除了初始线程组外，每个线程组都有一个父线程组。 &lt;/p&gt;
+&lt;p&gt;允许线程访问有关自己的线程组的信息，但是不允许它访问有关其线程组的父线程组或其他任何线程组的信息。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    //父线程组
+    private final ThreadGroup parent;
+    线程组名称
+    String name;
+    //线程最大优先级
+    int maxPriority;
+    //是否被销毁
+    boolean destroyed;
+    //是否是守护线程组
+    boolean daemon;
+    //虚拟机是否允许暂停
+    boolean vmAllowSuspension;
+    //未启动线程数量
+    int nUnstartedThreads = 0;
+    //启动线程数量
+    int nthreads;
+    //所有线程快照
+    Thread threads[];
+    //所有子线程组数量
+    int ngroups;
+    //所有子线程组快照
+    ThreadGroup groups[];&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;public String toString() {
+        return getClass().getName() + &quot;[name=&quot; + getName() + &quot;,maxpri=&quot; + maxPriority + &quot;]&quot;;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ThreadGroup构造函数&lt;/h2&gt;
+&lt;p&gt;构造函数需要父线程组和线程组名称，子线程组会继承父线程的一些属性。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;     //创建一个空的线程组且没有父线程组，创建系统线程组时使用，
+    private ThreadGroup() {     // called from C code
+        this.name = &quot;system&quot;;
+        this.maxPriority = Thread.MAX_PRIORITY;
+        this.parent = null;
+    }
+
+    public ThreadGroup(String name) {
+        this(Thread.currentThread().getThreadGroup(), name);
+    }
+
+    public ThreadGroup(ThreadGroup parent, String name) {
+        this(checkParentAccess(parent), parent, name);
+    }
+
+    //Void unused没有使用，提供一种函数调用位，在对象创建之前执行。
+    private ThreadGroup(Void unused, ThreadGroup parent, String name) {
+        this.name = name;
+        this.maxPriority = parent.maxPriority;
+        this.daemon = parent.daemon;
+        this.vmAllowSuspension = parent.vmAllowSuspension;
+        this.parent = parent;
+        parent.add(this);//添加到父线程组
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    public final String getName() {
+        return name;
+    }
+    public final int getMaxPriority() {
+        return maxPriority;
+    }
+    public final boolean isDaemon() {
+        return daemon;
+    }
+    public synchronized boolean isDestroyed() {
+        return destroyed;
+    }
+    public final ThreadGroup getParent() {
+        if (parent != null)
+            parent.checkAccess();
+        return parent;
+    }
+
+    public final void setDaemon(boolean daemon) {
+        checkAccess();
+        this.daemon = daemon;
+    }
+
+    public final void setMaxPriority(int pri) {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            checkAccess();
+            if (pri &amp;lt; Thread.MIN_PRIORITY || pri &amp;gt; Thread.MAX_PRIORITY) {
+                return;
+            }
+            maxPriority = (parent != null) ? Math.min(pri, parent.maxPriority) : pri;
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        for (int i = 0 ; i &amp;lt; ngroupsSnapshot ; i++) {
+            groupsSnapshot[i].setMaxPriority(pri);
+        }
+    }
+    //测试此线程组是否为线程组参数或其祖先线程组之一
+    public final boolean parentOf(ThreadGroup g) {
+        for (; g != null ; g = g.parent) {
+            if (g == this) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //返回当前线程组及其所有子线程组中活动线程的总数
+     public int activeCount() {
+        int result;
+        int ngroupsSnapshot;//活跃子线程数量快照
+        ThreadGroup[] groupsSnapshot;//子线程组快照
+        synchronized (this) {
+            if (destroyed) {
+                return 0;
+            }
+            result = nthreads;
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                //活跃线程组复制一份到线程组快照
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        for (int i = 0 ; i &amp;lt; ngroupsSnapshot ; i++) {
+            result += groupsSnapshot[i].activeCount();
+        }
+        return result;
+    }
+    //返回当前线程组及其所有子线程组中活动线程组的总数
+    public int activeGroupCount() {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            if (destroyed) {
+                return 0;
+            }
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        int n = ngroupsSnapshot;
+        for (int i = 0 ; i &amp;lt; ngroupsSnapshot ; i++) {
+            n += groupsSnapshot[i].activeGroupCount();
+        }
+        return n;
+    } 
+    //中断线程组及子线程组中所有线程
+    public final void interrupt() {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            checkAccess();
+            for (int i = 0 ; i &amp;lt; nthreads ; i++) {
+                threads[i].interrupt();
+            }
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+        }
+        for (int i = 0 ; i &amp;lt; ngroupsSnapshot ; i++) {
+            groupsSnapshot[i].interrupt();
+        }
+    }
+    //销毁线程组及其所有子线程组
+    public final void destroy() {
+        int ngroupsSnapshot;
+        ThreadGroup[] groupsSnapshot;
+        synchronized (this) {
+            checkAccess();
+            if (destroyed || (nthreads &amp;gt; 0)) {
+                throw new IllegalThreadStateException();
+            }
+            ngroupsSnapshot = ngroups;
+            if (groups != null) {
+                groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+            } else {
+                groupsSnapshot = null;
+            }
+            if (parent != null) {
+                destroyed = true;
+                ngroups = 0;
+                groups = null;
+                nthreads = 0;
+                threads = null;
+            }
+        }
+        for (int i = 0 ; i &amp;lt; ngroupsSnapshot ; i += 1) {
+            groupsSnapshot[i].destroy();
+        }
+        if (parent != null) {
+            parent.remove(this);
+        }
+    }
+
+  //添加一个指定的线程组到当前线程组（添加子线程组）
+  private final void add(ThreadGroup g){
+        synchronized (this) {
+            if (destroyed) {
+                throw new IllegalThreadStateException();
+            }
+            if (groups == null) {
+                groups = new ThreadGroup[4];
+            } else if (ngroups == groups.length) {
+                groups = Arrays.copyOf(groups, ngroups * 2);
+            }
+            groups[ngroups] = g;
+            // This is done last so it doesn't matter in case the
+            // thread is killed
+            ngroups++;
+        }
+    }
+    //从当前线程组中移除一个指定的子线程组
+    private void remove(ThreadGroup g) {
+        synchronized (this) {
+            if (destroyed) {
+                return;
+            }
+            for (int i = 0 ; i &amp;lt; ngroups ; i++) {
+                if (groups[i] == g) {
+                    ngroups -= 1;
+                    System.arraycopy(groups, i + 1, groups, i, ngroups - i);
+                    // Zap dangling reference to the dead group so that
+                    // the garbage collector will collect it.
+                    groups[ngroups] = null;
+                    break;
+                }
+            }
+            if (nthreads == 0) {
+                notifyAll();
+            }
+            if (daemon &amp;amp;&amp;amp; (nthreads == 0) &amp;amp;&amp;amp;
+                (nUnstartedThreads == 0) &amp;amp;&amp;amp; (ngroups == 0))
+            {
+                destroy();
+            }
+        }
+    }
+    //未启动线程加一，创建线程是被调用
+    void addUnstarted() {
+        synchronized(this) {
+            if (destroyed) {
+                throw new IllegalThreadStateException();
+            }
+            nUnstartedThreads++;
+        }
+    }
+    //添加一个线程到当前线程组中，线程启动时调用
+    void add(Thread t) {
+        synchronized (this) {
+            if (destroyed) {
+                throw new IllegalThreadStateException();
+            }
+            if (threads == null) {
+                threads = new Thread[4];
+            } else if (nthreads == threads.length) {
+                threads = Arrays.copyOf(threads, nthreads * 2);
+            }
+            //添加启动的线程到线程数组
+            threads[nthreads] = t;
+
+            // This is done last so it doesn't matter in case the
+            // thread is killed
+            nthreads++;
+
+            // The thread is now a fully fledged member of the group, even
+            // though it may, or may not, have been started yet. It will prevent
+            // the group from being destroyed so the unstarted Threads count is
+            // decremented.
+            nUnstartedThreads--;
+        }
+    }
+    //线程启动失败
+    void threadStartFailed(Thread t) {
+        synchronized(this) {
+            remove(t);
+            nUnstartedThreads++;
+        }
+    }
+    //线程结束操作
+    void threadTerminated(Thread t) {
+        synchronized (this) {
+            remove(t);
+            if (nthreads == 0) {
+                notifyAll();
+            }
+            if (daemon &amp;amp;&amp;amp; (nthreads == 0) &amp;amp;&amp;amp;
+                (nUnstartedThreads == 0) &amp;amp;&amp;amp; (ngroups == 0))
+            {
+                destroy();
+            }
+        }
+    }
+   //从当前线程组中移除一个指定的子线程，未启动线程数量加一，活动线程数量减一
+    private void remove(Thread t) {
+        synchronized (this) {
+            if (destroyed) {
+                return;
+            }
+            for (int i = 0 ; i &amp;lt; nthreads ; i++) {
+                if (threads[i] == t) {
+                    System.arraycopy(threads, i + 1, threads, i, --nthreads - i);
+                    // Zap dangling reference to the dead thread so that
+                    // the garbage collector will collect it.
+                    threads[nthreads] = null;
+                    break;
+                }
+            }
+        }
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    //检测当前运行的线程是否有权修改此线程组
+    public final void checkAccess() {
+        SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            security.checkAccess(this);
+        }
+    }
+    //检测当前运行的线程是否有权修改此线程组的父线程组
+    private static Void checkParentAccess(ThreadGroup parent) {
+        parent.checkAccess();
+        return null;
+    }
+    private int enumerate(Thread list[], int n, boolean recurse) {
+        int ngroupsSnapshot = 0;
+        ThreadGroup[] groupsSnapshot = null;
+        synchronized (this) {
+            if (destroyed) {
+                return 0;
+            }
+            int nt = nthreads;
+            if (nt &amp;gt; list.length - n) {
+                nt = list.length - n;
+            }
+            for (int i = 0; i &amp;lt; nt; i++) {
+                if (threads[i].isAlive()) {
+                    list[n++] = threads[i];
+                }
+            }
+            if (recurse) {
+                ngroupsSnapshot = ngroups;
+                if (groups != null) {
+                    groupsSnapshot = Arrays.copyOf(groups, ngroupsSnapshot);
+                } else {
+                    groupsSnapshot = null;
+                }
+            }
+        }
+        if (recurse) {
+            for (int i = 0 ; i &amp;lt; ngroupsSnapshot ; i++) {
+                n = groupsSnapshot[i].enumerate(list, n, true);
+            }
+        }
+        return n;
+    }&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/java-src-threadgroup.html</link>
+            <guid isPermaLink="true">//blog/java-src-threadgroup.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>Java源码 Short</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-29
+title: Java源码 Short
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，Short源码
+--&gt;
+&lt;h2&gt;Short继承体系&lt;/h2&gt;
+&lt;p&gt;Short的签名如下，继承了Number类并实现Comparable接口&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public final class Short extends Number implements Comparable&amp;lt;Short&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Comparable接口强行对实现它的每个类的对象进行整体排序。此排序被称为该类的自然排序，类的 compareTo 方法被称为它的自然比较方法。实现此接口的对象列表（和数组）可以通过Collections.sort（和Arrays.sort）进行自动排序。实现此接口的对象可以用作有序映射表中的键或有序集合中的元素，无需指定比较器。强烈推荐（虽然不是必需的）使自然排序与 equals 一致。所谓与equals一致是指对于类C的每一个e1和e2来说，当且仅当 (e1.compareTo((Object)e2) == 0) 与e1.equals((Object)e2) 具有相同的布尔值时，类C的自然排序才叫做与equals一致 &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public interface Comparable&amp;lt;T&amp;gt; {
+    public int compareTo(T o);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Number为抽象类，提供了实数基本类型的互相转换方法：int,long,short,byte,float,double
+Number的基本实现类有java.lang.Byte，java.lang.Double，java.lang.Float，java.lang.Integer，java.lang.Long，java.lang.Short等&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public abstract class Number implements java.io.Serializable {
+    public abstract int intValue();
+    public abstract long longValue();
+    public abstract float floatValue();
+    public abstract double doubleValue();
+    public byte byteValue() {
+        return (byte)intValue();
+    }
+    public short shortValue() {
+        return (short)intValue();
+    }
+    private static final long serialVersionUID = -8742448824652078965L;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Short基本概念&lt;/h2&gt;
+&lt;p&gt;Short类包装了short基本类型,所有Short的实际值是存储在一个short类型的属性value上的，short存储占用2字节16位内存，第一位是符号位，所以short的最大值是2的15次幂减1，最小值是负2的15次幂，因此short的最大值是：0111 1111 1111 1111 = 0x7fff = 32767,short的最小值为负值，负数的表示为正值二进制的补码：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;负数：正值的补码
+补码：反码加一
+源码：绝对值二进制
+反码：二进制按位取反&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;负数最小值的正值为2的15次幂，正值的二进制为：1000 0000 0000 0000，二进制取反之后为：0111 1111 1111 1111,则正值的补码为：1000 0000 0000 0000，即byte的最小值为：0x8000 = -32768&lt;/p&gt;
+&lt;h2&gt;Short构造函数&lt;/h2&gt;
+&lt;p&gt;Short有2个构造函数，可以传递一个short数字或者一个数字字符串，数字字符串会被转换成十进制的short数字。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private final short value;
+    public static final short   MIN_VALUE = -32768;
+    public static final short   MAX_VALUE = 32767;
+    public Short(short value) {
+        this.value = value;
+    }
+    public Short(String s) throws NumberFormatException {
+        this.value = parseShort(s, 10);
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Short的实例方法&lt;/h2&gt;
+&lt;p&gt;Byte实现了从Number类和Comparable接口以及Object继承的方法。Byte提供了可以直接转换成Byte,Short,Integer,Long,Float,Double等基本数值类型。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public byte byteValue() {
+        return (byte)value;
+    }
+    public short shortValue() {
+        return value;
+    }
+    public int intValue() {
+        return (int)value;
+    }
+    public long longValue() {
+        return (long)value;
+    }
+    public float floatValue() {
+        return (float)value;
+    }
+    public double doubleValue() {
+        return (double)value;
+    }
+    public String toString() {
+        return Integer.toString((int)value);
+    }
+    public int hashCode() {
+        return (int)value;
+    }
+    public boolean equals(Object obj) {
+        if (obj instanceof Short) {
+            return value == ((Short)obj).shortValue();
+        }
+        return false;
+    }
+    public int compareTo(Short anotherShort) {
+        return compare(this.value, anotherShort.value);
+    }
+    public static int compare(short x, short y) {
+        return x - y;
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ShortCache&lt;/h2&gt;
+&lt;p&gt;Short类内部有一个私有的静态内部类ShortCache，该类缓存了部分的的short值到缓存中，从而保证这些byte可以直接获取而不用构造。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private static class ShortCache {
+        private ShortCache(){}
+        static final Short cache[] = new Short[-(-128) + 127 + 1];
+        static {
+            for(int i = 0; i &amp;lt; cache.length; i++)
+                cache[i] = new Short((short)(i - 128));
+        }
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;short转换成Short&lt;/h2&gt;
+&lt;p&gt;short转换成Short使用valueOf(short b)方法，该方法会判断short值是否在缓存数值范围之内，如果在缓存中存在，则从ShortCache中获取该值得内存缓存，而不会创建新的Short对象。否则使用构造函数创建新的对象。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static Short valueOf(short s) {
+        final int offset = 128;
+        int sAsInt = s;
+        if (sAsInt &amp;gt;= -128 &amp;amp;&amp;amp; sAsInt &amp;lt;= 127) { // must cache
+            return ShortCache.cache[sAsInt + offset];
+        }
+        return new Short(s);
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;String转换成Short&lt;/h2&gt;
+&lt;p&gt;String字符串转换成byte使用parseShort(String s, int radix)方法，第一个参数是要转换成short类型的字符串，第二个参数是该字符串的进制数。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;System.out.println(Short.parseShort(&quot;11&quot;,10)); //11,10进制数11,转换成byte是11
+System.out.println(Short.parseShort(&quot;11&quot;,16)); //17,16进制数11,转换成byte是17
+System.out.println(Short.parseShort(&quot;11&quot;,8)); //9,8进制数11,转换成byte是9
+System.out.println(Short.parseShort(&quot;11&quot;,2)); //3,2进制数11,转换成byte是3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;parseShort方法中会调用Integer中的parseInteger方法处理，如果结果在Short的取值范围之内，这直接转换成short，否则抛出异常。&lt;/p&gt;
+&lt;p&gt;parseShort(String s)方法默认10进制解析成shor&lt;/p&gt;
+&lt;p&gt;valueOf(String s, int radix)方法首先调用parseShort(String s, int radix)方法将字符串转换成shor类型数值，然后通过valueOf(shor b)方法将shor转换成Short类型的对象。&lt;/p&gt;
+&lt;p&gt;valueOf(String s)方法默认10进制解析成Short&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static Short valueOf(String s) throws NumberFormatException {
+        return valueOf(s, 10);
+    }
+    public static Short valueOf(String s, int radix)
+        throws NumberFormatException {
+        return valueOf(parseShort(s, radix));
+    }
+    public static short parseShort(String s) throws NumberFormatException {
+        return parseShort(s, 10);
+    }
+    public static short parseShort(String s, int radix)
+        throws NumberFormatException {
+        int i = Integer.parseInt(s, radix);
+        if (i &amp;lt; MIN_VALUE || i &amp;gt; MAX_VALUE)
+            throw new NumberFormatException(
+                &quot;Value out of range. Value:\&quot;&quot; + s + &quot;\&quot; Radix:&quot; + radix);
+        return (short)i;
+    }
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/java-src-Short.html</link>
+            <guid isPermaLink="true">//blog/java-src-Short.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>Java源码 Byte</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-29
+title: Java源码 Byte
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，Byte源码
+--&gt;
+&lt;h2&gt;Byte继承体系&lt;/h2&gt;
+&lt;p&gt;Byte的签名如下，继承了Number类并实现Comparable接口&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public final class Byte extends Number implements Comparable&amp;lt;Byte&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Comparable接口强行对实现它的每个类的对象进行整体排序。此排序被称为该类的自然排序，类的 compareTo 方法被称为它的自然比较方法。实现此接口的对象列表（和数组）可以通过Collections.sort（和Arrays.sort）进行自动排序。实现此接口的对象可以用作有序映射表中的键或有序集合中的元素，无需指定比较器。强烈推荐（虽然不是必需的）使自然排序与 equals 一致。所谓与equals一致是指对于类C的每一个e1和e2来说，当且仅当 (e1.compareTo((Object)e2) == 0) 与e1.equals((Object)e2) 具有相同的布尔值时，类C的自然排序才叫做与equals一致 &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public interface Comparable&amp;lt;T&amp;gt; {
+    public int compareTo(T o);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Number为抽象类，提供了实数基本类型的互相转换方法：int,long,short,byte,float,double
+Number的基本实现类有java.lang.Byte，java.lang.Double，java.lang.Float，java.lang.Integer，java.lang.Long，java.lang.Short等&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public abstract class Number implements java.io.Serializable {
+    public abstract int intValue();
+    public abstract long longValue();
+    public abstract float floatValue();
+    public abstract double doubleValue();
+    public byte byteValue() {
+        return (byte)intValue();
+    }
+    public short shortValue() {
+        return (short)intValue();
+    }
+    private static final long serialVersionUID = -8742448824652078965L;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Byte基本概念&lt;/h2&gt;
+&lt;p&gt;Byte类包装了byte基本类型,所有Byte的实际值是存储在一个byte类型的属性value上的，byte存储占用1字节8位内存，第一位是符号位，所以byte的最大值是2的7次幂减1，最小值是负2的7次幂，因此byte的最大值是：0111 1111 = 0x7f = 127,byte的最小值为负值，负数的表示为正值二进制的补码：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;负数：正值的补码
+补码：反码加一
+源码：绝对值二进制
+反码：二进制按位取反&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;负数最小值的正值为2的7次幂，正值的二进制为：1000 0000，二进制取反之后为：0111 1111,则正值的补码为：1000 0000，即byte的最小值为：0x80&lt;/p&gt;
+&lt;h2&gt;Byte构造函数&lt;/h2&gt;
+&lt;p&gt;Byte有2个构造函数，可以传递一个byte数字或者一个数字字符串，数字字符串会被转换成十进制的byte数字。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private final byte value;
+    public static final byte MIN_VALUE = -128;
+    public static final byte MAX_VALUE = 127;
+    public Byte(byte value) {
+        this.value = value;
+    }
+    public Byte(String s) throws NumberFormatException {
+        this.value = parseByte(s, 10);
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Byte的实例方法&lt;/h2&gt;
+&lt;p&gt;Byte实现了从Number类和Comparable接口以及Object继承的方法。Byte提供了可以直接转换成Short,Integer,Long,Float,Double等数值类型。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public byte byteValue() {
+        return value;
+    }
+    public short shortValue() {
+        return (short)value;
+    }
+    public int intValue() {
+        return (int)value;
+    }
+    public long longValue() {
+        return (long)value;
+    }
+    public float floatValue() {
+        return (float)value;
+    }
+    public double doubleValue() {
+        return (double)value;
+    }
+    public String toString() {
+        return Integer.toString((int)value);
+    }
+    public int hashCode() {
+        return (int)value;
+    }
+    public boolean equals(Object obj) {
+        if (obj instanceof Byte) {
+            return value == ((Byte)obj).byteValue();
+        }
+        return false;
+    }
+    public int compareTo(Byte anotherByte) {
+        return compare(this.value, anotherByte.value);
+    }
+    public static int compare(byte x, byte y) {
+        return x - y;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ByteCache&lt;/h2&gt;
+&lt;p&gt;Byte类内部有一个私有的静态内部类ByteCache，该类缓存了全部的的byte值到缓存中，从而保证这些byte可以直接获取而不用构造。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private static class ByteCache {
+        private ByteCache(){}
+        static final Byte cache[] = new Byte[-(-128) + 127 + 1];
+        static {
+            for(int i = 0; i &amp;lt; cache.length; i++)
+                cache[i] = new Byte((byte)(i - 128));
+        }
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;byte转换成Byte&lt;/h2&gt;
+&lt;p&gt;byte转换成Byte使用valueOf(byte b)方法，该方法会从ByteCache中获取该值得内存缓存，而不会创建新的Byte对象。如果使用构造函数则会创建新的对象。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static Byte valueOf(byte b) {
+        final int offset = 128;
+        return ByteCache.cache[(int)b + offset];
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;String转换成Byte&lt;/h2&gt;
+&lt;p&gt;String字符串转换成byte使用parseByte(String s, int radix)方法，第一个参数是要转换成byte类型的字符串，第二个参数是该字符串的进制数。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;System.out.println(Byte.parseByte(&quot;11&quot;,10)); //11,10进制数11,转换成byte是11
+System.out.println(Byte.parseByte(&quot;11&quot;,16)); //17,16进制数11,转换成byte是17
+System.out.println(Byte.parseByte(&quot;11&quot;,8)); //9,8进制数11,转换成byte是9
+System.out.println(Byte.parseByte(&quot;11&quot;,2)); //3,2进制数11,转换成byte是3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;parseByte方法中会调用Integer中的parseInteger方法处理，如果结果在Byte的取值范围之内，这直接转换成byte，否则抛出异常。&lt;/p&gt;
+&lt;p&gt;parseByte(String s)方法默认10进制解析成byte&lt;/p&gt;
+&lt;p&gt;valueOf(String s, int radix)方法首先调用parseByte(String s, int radix)方法将字符串转换成byte类型数值，然后通过valueOf(byte b)方法将byte转换成Byte类型的对象。&lt;/p&gt;
+&lt;p&gt;valueOf(String s)方法默认10进制解析成Byte&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public static Byte valueOf(String s) throws NumberFormatException {
+        return valueOf(s, 10);
+    }
+    public static Byte valueOf(String s, int radix)
+        throws NumberFormatException {
+        return valueOf(parseByte(s, radix));
+    }
+    public static byte parseByte(String s) throws NumberFormatException {
+        return parseByte(s, 10);
+    }
+    public static byte parseByte(String s, int radix)
+        throws NumberFormatException {
+        int i = Integer.parseInt(s, radix);
+        if (i &amp;lt; MIN_VALUE || i &amp;gt; MAX_VALUE)
+            throw new NumberFormatException(
+                &quot;Value out of range. Value:\&quot;&quot; + s + &quot;\&quot; Radix:&quot; + radix);
+        return (byte)i;
+    }
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/java-src-Byte.html</link>
+            <guid isPermaLink="true">//blog/java-src-Byte.html</guid>
+                                               <category>Java</category>
+                                    </item>
                 <item>
             <title>GitBlog和GitHub同步</title>
             <description>
@@ -43,7 +1507,7 @@ git push origin master&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /home/work
 rm -rf /home/work/wngn123.github.io
 rm -rf /home/work/prod/php/gitblog/_site&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:39:50</pubDate>
+            <pubDate>2016-08-31 15:50:24</pubDate>
             <link>//blog/gitblog-github.html</link>
             <guid isPermaLink="true">//blog/gitblog-github.html</guid>
                                                <category>GitBlog</category>
@@ -360,7 +1824,7 @@ public class HttpsRequest {
     }
 }
 &lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
+            <pubDate>2016-08-31 15:50:24</pubDate>
             <link>//blog/https-java-cert.html</link>
             <guid isPermaLink="true">//blog/https-java-cert.html</guid>
                                                <category>HTTPS</category>
@@ -439,7 +1903,7 @@ keytool -genkey -alias wngn-server -keyalg RSA -keysize 1024 -keypass wanggang -
 &lt;p&gt;输入keystore密码：&lt;/p&gt;
 &lt;p&gt;keytool错误： java.io.IOException: Keystore was tampered with, or password was incorrect &lt;/p&gt;
 &lt;p&gt;对于很多服务器比如glassfish或者tomcat之类的，在证书过期，我们需要删除时，需要输入保护密码，默认的就是changeit，输入这个密码就可以了。 &lt;/p&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
+            <pubDate>2016-08-31 15:50:24</pubDate>
             <link>//blog/https-keytool-cert.html</link>
             <guid isPermaLink="true">//blog/https-keytool-cert.html</guid>
                                                <category>HTTPS</category>
@@ -495,7 +1959,7 @@ truststorePass:根证书密码&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;浏览器访问必须安装客户端证书，必须将P12的证书库安装到，客户端不是只包含公钥的证书，必须是一个p12库导入才行，证书必须包含私钥才行&lt;/p&gt;
 &lt;h6&gt;11.JVM证书导入&lt;/h6&gt;
 &lt;pre&gt;&lt;code&gt;keytool -import -keystore D:/dev/jdk/jdk1.7.0_79/jre/lib/security/cacerts -file D:/wngn/cert/wngn/java-server.crt -alias java-server -storepass changeit&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
+            <pubDate>2016-08-31 15:50:24</pubDate>
             <link>//blog/https-double-cert.html</link>
             <guid isPermaLink="true">//blog/https-double-cert.html</guid>
                                                <category>HTTPS</category>
@@ -539,7 +2003,7 @@ truststoreFile:用来验证客户端证书的根证书，此例中就是服务�
 truststorePass:根证书密码&lt;/code&gt;&lt;/pre&gt;
 &lt;h6&gt;5.让客户端信任服务器证书&lt;/h6&gt;
 &lt;p&gt;由于是服务端认证，客户端要验证服务器证书，因此，必须把服务器证书添加到浏览的“受信任的根证书颁发机构”。由于不能直接将keystore格式的证书库导入，必须先把服务器证书导出为一个单独的CER文件，然后再将CER文件导入到客户端证书库（windows双击证书安装）。双击java-server.cer文件，按照提示安装证书，将证书填入到“受信任的根证书颁发机构”。&lt;/p&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
+            <pubDate>2016-08-31 15:50:24</pubDate>
             <link>//blog/https-single-cert.html</link>
             <guid isPermaLink="true">//blog/https-single-cert.html</guid>
                                                <category>HTTPS</category>
@@ -593,9 +2057,9 @@ service php-fpm status
 /usr/local/ph5/sbin/php-fpm
 /usr/local/php5/bin/php-cgi -b 127.0.0.1:9000 -c /usr/local/php5/etc/php.ini
 netstat -tnlp &lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/php5-install.html</link>
-            <guid isPermaLink="true">//blog/php5-install.html</guid>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/php-php5-install.html</link>
+            <guid isPermaLink="true">//blog/php-php5-install.html</guid>
                                                <category>PHP</category>
                                     </item>
                 <item>
@@ -662,147 +2126,118 @@ netstat -tnlp
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h4&gt;添加php的环境变量&lt;/h4&gt;
 &lt;pre&gt;&lt;code&gt;echo -e '\nexport PATH=/usr/local/php7/bin:/usr/local/php7/sbin:\$PATH\n' &amp;gt;&amp;gt; /etc/profile &amp;amp;&amp;amp; source /etc/profile&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/php7-install.html</link>
-            <guid isPermaLink="true">//blog/php7-install.html</guid>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/php-php7-install.html</link>
+            <guid isPermaLink="true">//blog/php-php7-install.html</guid>
                                                <category>PHP</category>
                                     </item>
                 <item>
-            <title>lua_code_cache</title>
+            <title>OpenResty 安装</title>
             <description>
             &lt;!--
 author: wngn123
 head: head.png
 date: 2016-08-24
-title: lua_code_cache
+title: OpenResty 安装
 tags: lua
 category: Lua
 status: publish
-summary: 开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效
+summary: OpenResty 安装
 --&gt;
-&lt;h2&gt;lua_code_cache&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_code_cache on | off&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_code_cache on&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Enables or disables the Lua code cache for Lua code in &lt;code&gt;*_by_lua_file&lt;/code&gt; directives (like &lt;a href=&quot;#set_by_lua_file&quot;&gt;set_by_lua_file&lt;/a&gt; and
-&lt;a href=&quot;#content_by_lua_file)&quot;&gt;content_by_lua_file&lt;/a&gt; and Lua modules.&lt;/p&gt;
-&lt;p&gt;When turning off, every request served by ngx_lua will run in a separate Lua VM instance, starting from the &lt;code&gt;0.9.3&lt;/code&gt; release. So the Lua files referenced in &lt;a href=&quot;#set_by_lua_file&quot;&gt;set_by_lua_file&lt;/a&gt;,
-&lt;a href=&quot;#content_by_lua_file&quot;&gt;content_by_lua_file&lt;/a&gt;, &lt;a href=&quot;#access_by_lua_file&quot;&gt;access_by_lua_file&lt;/a&gt;,
-and etc will not be cached
-and all Lua modules used will be loaded from scratch. With this in place, developers can adopt an edit-and-refresh approach.&lt;/p&gt;
-&lt;p&gt;Please note however, that Lua code written inlined within nginx.conf
-such as those specified by &lt;a href=&quot;#set_by_lua&quot;&gt;set_by_lua&lt;/a&gt;, &lt;a href=&quot;#content_by_lua&quot;&gt;content_by_lua&lt;/a&gt;,
-&lt;a href=&quot;#access_by_lua&quot;&gt;access_by_lua&lt;/a&gt;, and &lt;a href=&quot;#rewrite_by_lua&quot;&gt;rewrite_by_lua&lt;/a&gt; will not be updated when you edit the inlined Lua code in your &lt;code&gt;nginx.conf&lt;/code&gt; file because only the Nginx config file parser can correctly parse the &lt;code&gt;nginx.conf&lt;/code&gt;
-file and the only way is to reload the config file
-by sending a &lt;code&gt;HUP&lt;/code&gt; signal or just to restart Nginx.&lt;/p&gt;
-&lt;p&gt;Even when the code cache is enabled, Lua files which are loaded by &lt;code&gt;dofile&lt;/code&gt; or &lt;code&gt;loadfile&lt;/code&gt;
-in *_by_lua_file cannot be cached (unless you cache the results yourself). Usually you can either use the &lt;a href=&quot;#init_by_lua&quot;&gt;init_by_lua&lt;/a&gt;
-or &lt;a href=&quot;#init-by_lua_file&quot;&gt;init_by_lua_file&lt;/a&gt; directives to load all such files or just make these Lua files true Lua modules
-and load them via &lt;code&gt;require&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The ngx_lua module does not support the &lt;code&gt;stat&lt;/code&gt; mode available with the
-Apache &lt;code&gt;mod_lua&lt;/code&gt; module (yet).&lt;/p&gt;
-&lt;p&gt;Disabling the Lua code cache is strongly
-discouraged for production use and should only be used during
-development as it has a significant negative impact on overall performance. For example, the performance a &amp;quot;hello world&amp;quot; Lua example can drop by an order of magnitude after disabling the Lua code cache.&lt;/p&gt;
-&lt;h2&gt;中文&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;语法:&lt;/strong&gt; &lt;em&gt;lua_code_cache on | off&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_code_cache on&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效。
-从0.9.3稳定版开始，当lua_code_cache指令关闭时，所以被ngx_lua解析的请求都将运行在单独的虚拟机实例中。因此，被set_by_lua_file，content_by_lua_file，access_by_lua_file等等引用的Lua文件将不会被缓存，所有lua模块在被使用时都将会被重新读取加载，在这里，开发人员可以编辑刷新即可显示，不需要重启nginx服务。&lt;/p&gt;
-&lt;p&gt;然而,请注意,当你编辑lua脚本时，那些被写在nginx.conf内部的lua脚本（如set_by_lua，content_by_lua，access_by_lua和rewrite_by_lua引用的脚本）将不会被重新加载，因为只有Nginx配置文件解析器能正确解析nginx.conf配置文件，而且能够重新加载配置文件的方式只有发送HUP信号量和重启Nginx。&lt;/p&gt;
-&lt;p&gt;甚至当lua代码缓存被开启的时候，这些在*_by_lua_file中通过dofile或者loadfile被加载的lua文件也不能被缓存（除非你自己去缓存他）。通常你能用init_by_lua或者init-by_lua_file指令加载所以这样的文件，或者编译这些lua文件到lua模块通过require加载。&lt;/p&gt;
-&lt;p&gt;ngx_lua模块任然不支持stat模式。&lt;/p&gt;
-&lt;p&gt;强烈的不建议在生成环境中关闭lua代码缓存，仅仅在开发期间关闭，因为关闭缓存对整体性能有很大的负面影响。例如在一个hello world的lua示例中关闭代码缓存，性能将下降一个数量级。&lt;/p&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/lua_code_cache.html</link>
-            <guid isPermaLink="true">//blog/lua_code_cache.html</guid>
+&lt;h2&gt;相关shell脚本&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;    mkdir /home/work/openresty
+    cd /home/work/openresty
+    git clone https://github.com/wngn123/wngn-luastudy.git
+    cd wngn-luastudy
+    cp -rf /home/work/openresty/wngn-luastudy/src/openresty/lua /home/work/openresty/
+    cp -rf /home/work/openresty/wngn-luastudy/src/openresty/nginx /home/work/openresty/
+    sudo cp -rf /home/work/openresty/nginx/nginx.conf /home/local/openresty/nginx/conf/
+    sh /home/work/openresty/nginx/nginx_start.sh
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/lua-openresty-install.html</link>
+            <guid isPermaLink="true">//blog/lua-openresty-install.html</guid>
                                                <category>Lua</category>
                                     </item>
                 <item>
-            <title>lua_use_default_type</title>
+            <title>nginx lua 环境搭建</title>
             <description>
             &lt;!--
 author: wngn123
-head: head.png
 date: 2016-08-24
-title: lua_use_default_type
+title: nginx lua 环境搭建
 tags: lua
 category: Lua
 status: publish
-summary: 指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态&gt;（off）。
+summary: nginx lua 环境搭建
 --&gt;
-&lt;h2&gt;lua_use_default_type&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on | off&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Specifies whether to use the MIME type specified by the &lt;a href=&quot;http://nginx.org/en/docs/http/ngx_http_core_module.html#default_type&quot;&gt;default_type&lt;/a&gt; directive for the default value of the &lt;code&gt;Content-Type&lt;/code&gt; response header. If you do not want a default &lt;code&gt;Content-Type&lt;/code&gt; response header for your Lua request handlers, then turn this directive off.&lt;/p&gt;
-&lt;p&gt;This directive is turned on by default.&lt;/p&gt;
-&lt;p&gt;This directive was first introduced in the &lt;code&gt;v0.9.1&lt;/code&gt; release.&lt;/p&gt;
-&lt;h2&gt;中文&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;语法 :&lt;/strong&gt; &lt;em&gt;lua_use_default_type on | off&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态（off）。&lt;/p&gt;
-&lt;p&gt;这个指令默认是开启状态（on）&lt;/p&gt;
-&lt;p&gt;这个指令第一次出现是在 v0.9.1 稳定版中。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;wngn123@163.com on 206-07-12&lt;/code&gt;&lt;/p&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/lua_use_default_type.html</link>
-            <guid isPermaLink="true">//blog/lua_use_default_type.html</guid>
-                                               <category>Lua</category>
-                                    </item>
-                <item>
-            <title>lua_regex_cache_max_entries</title>
-            <description>
-            &lt;!--
-author: wngn123
-head: head.png
-date: 2016-08-24
-title: lua_regex_cache_max_entries
-tags: lua
-category: Lua
-status: publish
-summary: 指定在worker进程级别编译的正则表达式缓存结果的最大数量
---&gt;
-&lt;h2&gt;lua_regex_cache_max_entries&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries &amp;lt;num&amp;gt;&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries 1024&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Specifies the maximum number of entries allowed in the worker process level compiled regex cache.&lt;/p&gt;
-&lt;p&gt;The regular expressions used in &lt;a href=&quot;#ngxrematch&quot;&gt;ngx.re.match&lt;/a&gt;, &lt;a href=&quot;#ngxregmatch&quot;&gt;ngx.re.gmatch&lt;/a&gt;, &lt;a href=&quot;#ngxresub&quot;&gt;ngx.re.sub&lt;/a&gt;, and &lt;a href=&quot;#ngxregsub&quot;&gt;ngx.re.gsub&lt;/a&gt; will be cached within this cache if the regex option &lt;code&gt;o&lt;/code&gt; (i.e., compile-once flag) is specified.&lt;/p&gt;
-&lt;p&gt;The default number of entries allowed is 1024 and when this limit is reached, new regular expressions will not be cached (as if the &lt;code&gt;o&lt;/code&gt; option was not specified) and there will be one, and only one, warning in the &lt;code&gt;error.log&lt;/code&gt; file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;2011/08/27 23:18:26 [warn] 31997#0: *1 lua exceeding regex cache max entries (1024), ...&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Do not activate the &lt;code&gt;o&lt;/code&gt; option for regular expressions (and/or &lt;code&gt;replace&lt;/code&gt; string arguments for &lt;a href=&quot;#ngxresub&quot;&gt;ngx.re.sub&lt;/a&gt; and &lt;a href=&quot;#ngxregsub)&quot;&gt;ngx.re.gsub&lt;/a&gt; that are generated &lt;em&gt;on the fly&lt;/em&gt; and give rise to infinite variations to avoid hitting the specified limit.&lt;/p&gt;
-&lt;h2&gt;中文&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;语法:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries &amp;lt;num&amp;gt;&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries 1024&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;指定在worker进程级别编译的正则表达式缓存结果的最大数量。&lt;/p&gt;
-&lt;p&gt;当正则选项o被指定的时候，ngx.re.match，ngx.re.gmatch，ngx.re.sub，ngx.re.gsub使用的正则表达式会被缓存在缓存中。&lt;/p&gt;
-&lt;p&gt;缓存数量的最大值默认是1024，如果数量达到最大值限定值，新的正则表达式将不会被缓存（就像o选项没有指定一样），但是会写一条，仅仅一条警告日志到error.log文件中。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;2011/08/27 23:18:26 [warn] 31997#0: *1 lua exceeding regex cache max entries (1024), ...&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;注意不要激活那些会很快的产生和引起无数的变化的正则表达式的o选项（或者为ngx.re.sub和ngx.re.gsub替换字符串参数），以避免达到指定的限制。&lt;/p&gt;
-&lt;h4&gt;扩展&lt;/h4&gt;
-&lt;p&gt;o 选项参数用于提高性能，指明该参数之后，被编译的 Pattern 将会在 worker 进程中缓存，并且被当前 worker 进程的每次请求所共享。 Pattern 缓存的上限值通过 lua_regex_cache_max_entries 来修改&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;# nginx.conf
-location /test {
-    content_by_lua '
-        local regex = [[\\d+]]
+&lt;h2&gt;目录结构&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;drwxr-xr-x. 6 wang wang     93 May 15  2015 LuaJIT-2.0.4
+-rw-r--r--. 1 root root 847615 Jun  6 21:16 LuaJIT-2.0.4.tar.gz
+drwxrwxr-x. 9 root root   4096 May 26 10:41 lua-nginx-module-0.10.5
+-rw-r--r--. 1 root root 579793 Jun  6 21:35 lua-nginx-module-0.10.5.tar.gz
+drwxr-xr-x. 9 work work   4096 Jun  6 21:25 nginx-1.10.1
+-rw-r--r--. 1 root root 909077 Jun  6 21:17 nginx-1.10.1.tar.gz
+drwxrwxr-x. 9 root root   4096 May 10 05:28 ngx_devel_kit-0.3.0
+-rw-r--r--. 1 root root  66455 Jun  6 21:34 ngx_devel_kit-0.3.0.tar.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;安装依赖&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#使用root用户登录
+yum -y install gcc gcc-c++ autoconf automake
+yum -y install zlib zlib-devel openssl openssl-devel pcre-devel&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;下载解压安装文件&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src
+wget http://nginx.org/download/nginx-1.10.1.tar.gz
+wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+wget https://github.com/chaoslawful/lua-nginx-module/archive/v1.10.5.tar.gz
+wget https://github.com/simpl/ngx_devel_kit/releases/tag/v0.3.0
+tar -zxvf LuaJIT-2.0.4.tar.gz
+tar -zxvf nginx-1.10.1.tar.gz
 
-        -- 参数&quot;o&quot;是开启缓存必须的
-        local m = ngx.re.match(&quot;hello, 1234&quot;, regex, &quot;o&quot;)  
-        if m then
-            ngx.say(m[0])
-        else
-            ngx.say(&quot;not matched!&quot;)
-        end
-    ';
-}
-# 在网址中输入&quot;yourURL/test&quot;，即会在网页中显示 1234 。&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/lua_regex_cache_max_entries.html</link>
-            <guid isPermaLink="true">//blog/lua_regex_cache_max_entries.html</guid>
+tar -zxvf lua-nginx-module-0.10.5.tar.gz
+tar -zxvf ngx_devel_kit-0.3.0.tar.gz
+tar -zxvf echo-nginx-module-0.59
+
+tar -zxvf v0.59
+tar -zxvf v1.10.5.tar.gz
+tar -zxvf v0.3.0.tar.gz&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;安装LuaJIT&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src/LuaJIT-2.0.4
+make
+make install
+export LUAJIT_LIB=/usr/local/lib
+export LUAJIT_INC=/usr/local/include/luajit-2.0
+ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;安装NGINX&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src/nginx-1.10.1
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0
+./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0 --add-module=/usr/local/src/echo-nginx-module-0.59 
+make -j2
+make install&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;配置NGINX&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak
+vi /usr/local/nginx/conf/nginx.conf
+
+location ~* ^/2328(/.*) {
+    default_type 'text/plain';
+    content_by_lua 'ngx.say(&quot;hello, ttlsa lua&quot;)';
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;启动NGINX&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;/usr/local/nginx/sbin/nginx -v
+/usr/local/nginx/sbin/nginx&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;测试NGINX&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;curl http://localhost/2328/&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;注&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;echo命令只能放在url请求中，如果放在url请求外，会报错 如果报[emerg]: &amp;quot;echo&amp;quot; directive is not allowed here in  ，请检查echo放置的位置&lt;/li&gt;
+&lt;li&gt;一次url请求，echo 只能打印一行，如果有逻辑判断，且判断成功，则echo会执行判断成功里边的echo，否则执行最后一句echo（此处不一定正确，在测试中发现是此现象）&lt;/li&gt;
+&lt;li&gt;如果echo后边有配置return 或者配置 proxy_pass，则echo的输出会被覆盖，即浏览器无法看到echo的内容&lt;/li&gt;
+&lt;li&gt;echo的内容不是写在nginx的配置文件中，而是输出到浏览器中，所以echo的打印字符的查看请在浏览器中查看&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;参考&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/&quot;&gt;&lt;a href=&quot;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua&quot;&gt;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua&lt;/a&gt;&lt;/a&gt;&lt;/p&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/lua-nginx-install.html</link>
+            <guid isPermaLink="true">//blog/lua-nginx-install.html</guid>
                                                <category>Lua</category>
                                     </item>
                 <item>
@@ -810,15 +2245,15 @@ location /test {
             <description>
             &lt;!--
 author: wngn123
-head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+head: head.png
 date: 2016-08-24
 title: Java源码 Integer
 tags: java
 category: Java
 status: publish
-summary: public final class Integer extends Number implements Comparable&lt;Integer&gt;
+summary: 阅读Java的源码，Integer源码
 --&gt;
-&lt;h1&gt;Java源码 Integer&lt;/h1&gt;
+&lt;h2&gt;Integer继承体系&lt;/h2&gt;
 &lt;p&gt;Integer的签名如下，继承了Number类并实现Comparable接口&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public final class Integer extends Number implements Comparable&amp;lt;Integer&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Comparable接口强行对实现它的每个类的对象进行整体排序。此排序被称为该类的自然排序，类的 compareTo 方法被称为它的自然比较方法。实现此接口的对象列表（和数组）可以通过Collections.sort（和Arrays.sort）进行自动排序。实现此接口的对象可以用作有序映射表中的键或有序集合中的元素，无需指定比较器。强烈推荐（虽然不是必需的）使自然排序与 equals 一致。所谓与equals一致是指对于类C的每一个e1和e2来说，当且仅当 (e1.compareTo((Object)e2) == 0) 与e1.equals((Object)e2) 具有相同的布尔值时，类C的自然排序才叫做与equals一致 &lt;/p&gt;
@@ -841,17 +2276,16 @@ Number的基本实现类有java.lang.Byte，java.lang.Double，java.lang.Float�
     private static final long serialVersionUID = -8742448824652078965L;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Integer类包装了int基本类型,所有Integer的实际值是存储在一个int类型的熟悉value上的，int存储占用4字节32位内存，第一位是符号位，所以int的最大值是2的31次幂减1，最小值是负2的31次幂，因此int的最大值是：0111 1111 1111 1111 1111 1111 1111 1111=0x7fffffff,int的最小值为负值，负数的表示为正值二进制的补码：
-```负数：正值的补码
+&lt;h2&gt;Integer基本概念&lt;/h2&gt;
+&lt;p&gt;Integer类包装了int基本类型,所有Integer的实际值是存储在一个int类型的熟悉value上的，int存储占用4字节32位内存，第一位是符号位，所以int的最大值是2的31次幂减1，最小值是负2的31次幂，因此int的最大值是：0111 1111 1111 1111 1111 1111 1111 1111=0x7fffffff,int的最小值为负值，负数的表示为正值二进制的补码：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;负数：正值的补码
 补码：反码加一
 源码：绝对值二进制
-反码：二进制按位取反&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;负数最小值的正值为2的31次幂，正值的二进制为：1000 0000 0000 0000 00000 0000 0000 0000，二进制取反之后为：0111 1111 1111 1111 1111 1111 1111 1111，则正值的补码为：1000 0000 0000 0000 00000 0000 0000 0000，即int的最小值为：0x80000000
-
-Integer有2个构造函数，可以传递一个int数字或者一个数字字符串，数字字符串会被转换成十进制的int数字。
-
-```java
-    private final int value;
+反码：二进制按位取反&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;负数最小值的正值为2的31次幂，正值的二进制为：1000 0000 0000 0000 00000 0000 0000 0000，二进制取反之后为：0111 1111 1111 1111 1111 1111 1111 1111，则正值的补码为：1000 0000 0000 0000 00000 0000 0000 0000，即int的最小值为：0x80000000&lt;/p&gt;
+&lt;h2&gt;Integer构造函数&lt;/h2&gt;
+&lt;p&gt;Integer有2个构造函数，可以传递一个int数字或者一个数字字符串，数字字符串会被转换成十进制的int数字。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private final int value;
     public static final int MIN_VALUE = 0x80000000;
     public static final int MAX_VALUE = 0x7fffffff;
     public static final int SIZE = 32;//int存储位数
@@ -862,6 +2296,7 @@ Integer有2个构造函数，可以传递一个int数字或者一个数字字符
     public Integer(String s) throws NumberFormatException {
         this.value = parseInt(s, 10);
     }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Integer实例方法&lt;/h2&gt;
 &lt;p&gt;Integer的实例方法，Integer实现了从Number类和Comparable接口以及Object继承的方法。&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    public byte byteValue() {
         return (byte)value;
@@ -902,7 +2337,7 @@ Integer有2个构造函数，可以传递一个int数字或者一个数字字符
     public static int compare(int x, int y) {
         return (x &amp;lt; y) ? -1 : ((x == y) ? 0 : 1);
     }&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;IntegerCache&lt;/h4&gt;
+&lt;h2&gt;IntegerCache&lt;/h2&gt;
 &lt;p&gt;Integer类内部有一个私有的静态内部类IntegerCache，该类缓存了一些常用的int值到缓存中，从而保证这些int可以直接获取而不用构造。最大值可以通过虚拟机参数java.lang.Integer.IntegerCache.high类配置，但是最小的为127.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;    private static class IntegerCache {
         static final int low = -128;//最小缓存int值
@@ -931,7 +2366,7 @@ Integer有2个构造函数，可以传递一个int数字或者一个数字字符
         private IntegerCache() {}
     }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;bitCount&lt;/h4&gt;
+&lt;h2&gt;bitCount&lt;/h2&gt;
 &lt;p&gt;Integer中的类方法：bitCount(int i),返回int数字的二进制原码中1出现的次数
 如&lt;code&gt;Integer.bitCount(10)==2&lt;/code&gt;,10的二进制源码为1010,1出现2次。&lt;/p&gt;
 &lt;h6&gt;原理：二分法，两两一组相加，之后四个四个一组相加，接着八个八个，最后就得到各位之和了。&lt;/h6&gt;
@@ -1031,7 +2466,7 @@ i &amp;amp; 0x3f:最后计算的结果只有后6位二进制是有效结果：10
         i = i + (i &amp;gt;&amp;gt;&amp;gt; 16);
         return i &amp;amp; 0x3f;
     }&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;String转换成Integer&lt;/h4&gt;
+&lt;h2&gt;String转换成Integer&lt;/h2&gt;
 &lt;p&gt;Integer的valueOf方法：如果缓存中有值，则读取缓存中的数字&lt;/p&gt;
 &lt;p&gt;Integer的parseInt方法：将字符串解析成Integer&lt;/p&gt;
 &lt;p&gt;Integer的decode方法： 字符串解码位数字。&lt;/p&gt;
@@ -1177,7 +2612,7 @@ System.out.println(Integer.decode(&quot;-100&quot;));//负数&lt;/code&gt;&lt;/p
         }
         return result;
     }&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;Integer转换成String&lt;/h4&gt;
+&lt;h2&gt;Integer转换成String&lt;/h2&gt;
 &lt;p&gt;toString(int i, int radix) 转换成指定进制的字符串&lt;/p&gt;
 &lt;p&gt;toString(int i) 转换成十进制的字符串&lt;/p&gt;
 &lt;p&gt;toHexString(int i) 转换成十六进制的字符串&lt;/p&gt;
@@ -1359,121 +2794,147 @@ i = 11111 - (11111 &amp;gt;&amp;gt;&amp;gt; 1) = 11111 - 1111 = 10000&lt;/p&gt;
         // HD, Section 2-1
         return i &amp;amp; -i;
     }&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/integer.html</link>
-            <guid isPermaLink="true">//blog/integer.html</guid>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/java-src-Integer.html</link>
+            <guid isPermaLink="true">//blog/java-src-Integer.html</guid>
                                                <category>Java</category>
                                     </item>
                 <item>
-            <title>OpenResty</title>
+            <title>lua_code_cache</title>
             <description>
             &lt;!--
 author: wngn123
-head: http://pingodata.qiniudn.com/jockchou-avatar.jpg
+head: head.png
 date: 2016-08-24
-title: OpenResty
+title: lua_code_cache
 tags: lua
 category: Lua
 status: publish
-summary: OpenResty
+summary: 开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效
 --&gt;
-&lt;h2&gt;OpenResty 练习目录&lt;/h2&gt;
-&lt;p&gt;学习openresty&lt;/p&gt;
-&lt;h2&gt;相关shell脚本&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;    mkdir /home/work/openresty
-    cd /home/work/openresty
-    git clone https://github.com/wngn123/wngn-luastudy.git
-    cd wngn-luastudy
-    cp -rf /home/work/openresty/wngn-luastudy/src/openresty/lua /home/work/openresty/
-    cp -rf /home/work/openresty/wngn-luastudy/src/openresty/nginx /home/work/openresty/
-    sudo cp -rf /home/work/openresty/nginx/nginx.conf /home/local/openresty/nginx/conf/
-    sh /home/work/openresty/nginx/nginx_start.sh
-&lt;/code&gt;&lt;/pre&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/openresty.html</link>
-            <guid isPermaLink="true">//blog/openresty.html</guid>
+&lt;h2&gt;lua_code_cache&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_code_cache on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_code_cache on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Enables or disables the Lua code cache for Lua code in &lt;code&gt;*_by_lua_file&lt;/code&gt; directives (like &lt;a href=&quot;#set_by_lua_file&quot;&gt;set_by_lua_file&lt;/a&gt; and
+&lt;a href=&quot;#content_by_lua_file)&quot;&gt;content_by_lua_file&lt;/a&gt; and Lua modules.&lt;/p&gt;
+&lt;p&gt;When turning off, every request served by ngx_lua will run in a separate Lua VM instance, starting from the &lt;code&gt;0.9.3&lt;/code&gt; release. So the Lua files referenced in &lt;a href=&quot;#set_by_lua_file&quot;&gt;set_by_lua_file&lt;/a&gt;,
+&lt;a href=&quot;#content_by_lua_file&quot;&gt;content_by_lua_file&lt;/a&gt;, &lt;a href=&quot;#access_by_lua_file&quot;&gt;access_by_lua_file&lt;/a&gt;,
+and etc will not be cached
+and all Lua modules used will be loaded from scratch. With this in place, developers can adopt an edit-and-refresh approach.&lt;/p&gt;
+&lt;p&gt;Please note however, that Lua code written inlined within nginx.conf
+such as those specified by &lt;a href=&quot;#set_by_lua&quot;&gt;set_by_lua&lt;/a&gt;, &lt;a href=&quot;#content_by_lua&quot;&gt;content_by_lua&lt;/a&gt;,
+&lt;a href=&quot;#access_by_lua&quot;&gt;access_by_lua&lt;/a&gt;, and &lt;a href=&quot;#rewrite_by_lua&quot;&gt;rewrite_by_lua&lt;/a&gt; will not be updated when you edit the inlined Lua code in your &lt;code&gt;nginx.conf&lt;/code&gt; file because only the Nginx config file parser can correctly parse the &lt;code&gt;nginx.conf&lt;/code&gt;
+file and the only way is to reload the config file
+by sending a &lt;code&gt;HUP&lt;/code&gt; signal or just to restart Nginx.&lt;/p&gt;
+&lt;p&gt;Even when the code cache is enabled, Lua files which are loaded by &lt;code&gt;dofile&lt;/code&gt; or &lt;code&gt;loadfile&lt;/code&gt;
+in *_by_lua_file cannot be cached (unless you cache the results yourself). Usually you can either use the &lt;a href=&quot;#init_by_lua&quot;&gt;init_by_lua&lt;/a&gt;
+or &lt;a href=&quot;#init-by_lua_file&quot;&gt;init_by_lua_file&lt;/a&gt; directives to load all such files or just make these Lua files true Lua modules
+and load them via &lt;code&gt;require&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The ngx_lua module does not support the &lt;code&gt;stat&lt;/code&gt; mode available with the
+Apache &lt;code&gt;mod_lua&lt;/code&gt; module (yet).&lt;/p&gt;
+&lt;p&gt;Disabling the Lua code cache is strongly
+discouraged for production use and should only be used during
+development as it has a significant negative impact on overall performance. For example, the performance a &amp;quot;hello world&amp;quot; Lua example can drop by an order of magnitude after disabling the Lua code cache.&lt;/p&gt;
+&lt;h2&gt;中文&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法:&lt;/strong&gt; &lt;em&gt;lua_code_cache on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_code_cache on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;开启或者关闭lua代码缓存，在*_by_lua_file（如set_by_lua_file和content_by_lua_file）指令和Lua模块中生效。
+从0.9.3稳定版开始，当lua_code_cache指令关闭时，所以被ngx_lua解析的请求都将运行在单独的虚拟机实例中。因此，被set_by_lua_file，content_by_lua_file，access_by_lua_file等等引用的Lua文件将不会被缓存，所有lua模块在被使用时都将会被重新读取加载，在这里，开发人员可以编辑刷新即可显示，不需要重启nginx服务。&lt;/p&gt;
+&lt;p&gt;然而,请注意,当你编辑lua脚本时，那些被写在nginx.conf内部的lua脚本（如set_by_lua，content_by_lua，access_by_lua和rewrite_by_lua引用的脚本）将不会被重新加载，因为只有Nginx配置文件解析器能正确解析nginx.conf配置文件，而且能够重新加载配置文件的方式只有发送HUP信号量和重启Nginx。&lt;/p&gt;
+&lt;p&gt;甚至当lua代码缓存被开启的时候，这些在*_by_lua_file中通过dofile或者loadfile被加载的lua文件也不能被缓存（除非你自己去缓存他）。通常你能用init_by_lua或者init-by_lua_file指令加载所以这样的文件，或者编译这些lua文件到lua模块通过require加载。&lt;/p&gt;
+&lt;p&gt;ngx_lua模块任然不支持stat模式。&lt;/p&gt;
+&lt;p&gt;强烈的不建议在生成环境中关闭lua代码缓存，仅仅在开发期间关闭，因为关闭缓存对整体性能有很大的负面影响。例如在一个hello world的lua示例中关闭代码缓存，性能将下降一个数量级。&lt;/p&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/lua-directive-lua_code_cache.html</link>
+            <guid isPermaLink="true">//blog/lua-directive-lua_code_cache.html</guid>
                                                <category>Lua</category>
                                     </item>
                 <item>
-            <title>nginx lua 环境搭建</title>
+            <title>lua_use_default_type</title>
             <description>
             &lt;!--
 author: wngn123
+head: head.png
 date: 2016-08-24
-title: nginx lua 环境搭建
+title: lua_use_default_type
 tags: lua
 category: Lua
 status: publish
-summary: nginx lua 环境搭建
+summary: 指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态&gt;（off）。
 --&gt;
-&lt;h2&gt;nginx lua 环境搭建&lt;/h2&gt;
-&lt;h6&gt;目录结构：&lt;/h6&gt;
-&lt;pre&gt;&lt;code&gt;drwxr-xr-x. 6 wang wang     93 May 15  2015 LuaJIT-2.0.4
--rw-r--r--. 1 root root 847615 Jun  6 21:16 LuaJIT-2.0.4.tar.gz
-drwxrwxr-x. 9 root root   4096 May 26 10:41 lua-nginx-module-0.10.5
--rw-r--r--. 1 root root 579793 Jun  6 21:35 lua-nginx-module-0.10.5.tar.gz
-drwxr-xr-x. 9 work work   4096 Jun  6 21:25 nginx-1.10.1
--rw-r--r--. 1 root root 909077 Jun  6 21:17 nginx-1.10.1.tar.gz
-drwxrwxr-x. 9 root root   4096 May 10 05:28 ngx_devel_kit-0.3.0
--rw-r--r--. 1 root root  66455 Jun  6 21:34 ngx_devel_kit-0.3.0.tar.gz&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;安装依赖&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#使用root用户登录
-yum -y install gcc gcc-c++ autoconf automake
-yum -y install zlib zlib-devel openssl openssl-devel pcre-devel&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;下载解压安装文件&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src
-wget http://nginx.org/download/nginx-1.10.1.tar.gz
-wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
-wget https://github.com/chaoslawful/lua-nginx-module/archive/v1.10.5.tar.gz
-wget https://github.com/simpl/ngx_devel_kit/releases/tag/v0.3.0
-tar -zxvf LuaJIT-2.0.4.tar.gz
-tar -zxvf nginx-1.10.1.tar.gz
+&lt;h2&gt;lua_use_default_type&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Specifies whether to use the MIME type specified by the &lt;a href=&quot;http://nginx.org/en/docs/http/ngx_http_core_module.html#default_type&quot;&gt;default_type&lt;/a&gt; directive for the default value of the &lt;code&gt;Content-Type&lt;/code&gt; response header. If you do not want a default &lt;code&gt;Content-Type&lt;/code&gt; response header for your Lua request handlers, then turn this directive off.&lt;/p&gt;
+&lt;p&gt;This directive is turned on by default.&lt;/p&gt;
+&lt;p&gt;This directive was first introduced in the &lt;code&gt;v0.9.1&lt;/code&gt; release.&lt;/p&gt;
+&lt;h2&gt;中文&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法 :&lt;/strong&gt; &lt;em&gt;lua_use_default_type on | off&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_use_default_type on&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http, server, location, location if&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;指定是否使用MIME类型（default_type指令指定的类型）作为Content-Type响应头信息。如果你不想使用这个默认的Content-Type响应头信息给你的Lua请求去处理，则将这个指令设置为关闭状态（off）。&lt;/p&gt;
+&lt;p&gt;这个指令默认是开启状态（on）&lt;/p&gt;
+&lt;p&gt;这个指令第一次出现是在 v0.9.1 稳定版中。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;wngn123@163.com on 206-07-12&lt;/code&gt;&lt;/p&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/lua-directive-lua_use_default_type.html</link>
+            <guid isPermaLink="true">//blog/lua-directive-lua_use_default_type.html</guid>
+                                               <category>Lua</category>
+                                    </item>
+                <item>
+            <title>lua_regex_cache_max_entries</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-08-24
+title: lua_regex_cache_max_entries
+tags: lua
+category: Lua
+status: publish
+summary: 指定在worker进程级别编译的正则表达式缓存结果的最大数量
+--&gt;
+&lt;h2&gt;lua_regex_cache_max_entries&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;syntax:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries &amp;lt;num&amp;gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;default:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries 1024&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;context:&lt;/strong&gt; &lt;em&gt;http&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Specifies the maximum number of entries allowed in the worker process level compiled regex cache.&lt;/p&gt;
+&lt;p&gt;The regular expressions used in &lt;a href=&quot;#ngxrematch&quot;&gt;ngx.re.match&lt;/a&gt;, &lt;a href=&quot;#ngxregmatch&quot;&gt;ngx.re.gmatch&lt;/a&gt;, &lt;a href=&quot;#ngxresub&quot;&gt;ngx.re.sub&lt;/a&gt;, and &lt;a href=&quot;#ngxregsub&quot;&gt;ngx.re.gsub&lt;/a&gt; will be cached within this cache if the regex option &lt;code&gt;o&lt;/code&gt; (i.e., compile-once flag) is specified.&lt;/p&gt;
+&lt;p&gt;The default number of entries allowed is 1024 and when this limit is reached, new regular expressions will not be cached (as if the &lt;code&gt;o&lt;/code&gt; option was not specified) and there will be one, and only one, warning in the &lt;code&gt;error.log&lt;/code&gt; file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2011/08/27 23:18:26 [warn] 31997#0: *1 lua exceeding regex cache max entries (1024), ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Do not activate the &lt;code&gt;o&lt;/code&gt; option for regular expressions (and/or &lt;code&gt;replace&lt;/code&gt; string arguments for &lt;a href=&quot;#ngxresub&quot;&gt;ngx.re.sub&lt;/a&gt; and &lt;a href=&quot;#ngxregsub)&quot;&gt;ngx.re.gsub&lt;/a&gt; that are generated &lt;em&gt;on the fly&lt;/em&gt; and give rise to infinite variations to avoid hitting the specified limit.&lt;/p&gt;
+&lt;h2&gt;中文&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries &amp;lt;num&amp;gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认值:&lt;/strong&gt; &lt;em&gt;lua_regex_cache_max_entries 1024&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;上下文:&lt;/strong&gt; &lt;em&gt;http&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;指定在worker进程级别编译的正则表达式缓存结果的最大数量。&lt;/p&gt;
+&lt;p&gt;当正则选项o被指定的时候，ngx.re.match，ngx.re.gmatch，ngx.re.sub，ngx.re.gsub使用的正则表达式会被缓存在缓存中。&lt;/p&gt;
+&lt;p&gt;缓存数量的最大值默认是1024，如果数量达到最大值限定值，新的正则表达式将不会被缓存（就像o选项没有指定一样），但是会写一条，仅仅一条警告日志到error.log文件中。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2011/08/27 23:18:26 [warn] 31997#0: *1 lua exceeding regex cache max entries (1024), ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注意不要激活那些会很快的产生和引起无数的变化的正则表达式的o选项（或者为ngx.re.sub和ngx.re.gsub替换字符串参数），以避免达到指定的限制。&lt;/p&gt;
+&lt;h4&gt;扩展&lt;/h4&gt;
+&lt;p&gt;o 选项参数用于提高性能，指明该参数之后，被编译的 Pattern 将会在 worker 进程中缓存，并且被当前 worker 进程的每次请求所共享。 Pattern 缓存的上限值通过 lua_regex_cache_max_entries 来修改&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# nginx.conf
+location /test {
+    content_by_lua '
+        local regex = [[\\d+]]
 
-tar -zxvf lua-nginx-module-0.10.5.tar.gz
-tar -zxvf ngx_devel_kit-0.3.0.tar.gz
-tar -zxvf echo-nginx-module-0.59
-
-tar -zxvf v0.59
-tar -zxvf v1.10.5.tar.gz
-tar -zxvf v0.3.0.tar.gz&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;安装LuaJIT&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src/LuaJIT-2.0.4
-make
-make install
-export LUAJIT_LIB=/usr/local/lib
-export LUAJIT_INC=/usr/local/include/luajit-2.0
-ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;安装NGINX&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd /usr/local/src/nginx-1.10.1
-./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0
-./configure --add-module=/usr/local/src/lua-nginx-module-0.10.5 --add-module=/usr/local/src/ngx_devel_kit-0.3.0 --add-module=/usr/local/src/echo-nginx-module-0.59 
-make -j2
-make install&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;配置NGINX&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak
-vi /usr/local/nginx/conf/nginx.conf
-
-location ~* ^/2328(/.*) {
-    default_type 'text/plain';
-    content_by_lua 'ngx.say(&quot;hello, ttlsa lua&quot;)';
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;启动NGINX&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;/usr/local/nginx/sbin/nginx -v
-/usr/local/nginx/sbin/nginx&lt;/code&gt;&lt;/pre&gt;
-&lt;h6&gt;测试NGINX&lt;/h6&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;curl http://localhost/2328/&lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;注&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;echo命令只能放在url请求中，如果放在url请求外，会报错 如果报[emerg]: &amp;quot;echo&amp;quot; directive is not allowed here in  ，请检查echo放置的位置&lt;/li&gt;
-&lt;li&gt;一次url请求，echo 只能打印一行，如果有逻辑判断，且判断成功，则echo会执行判断成功里边的echo，否则执行最后一句echo（此处不一定正确，在测试中发现是此现象）&lt;/li&gt;
-&lt;li&gt;如果echo后边有配置return 或者配置 proxy_pass，则echo的输出会被覆盖，即浏览器无法看到echo的内容&lt;/li&gt;
-&lt;li&gt;echo的内容不是写在nginx的配置文件中，而是输出到浏览器中，所以echo的打印字符的查看请在浏览器中查看&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h5&gt;参考：&lt;/h5&gt;
-&lt;p&gt;&lt;a href=&quot;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/&quot;&gt;http://www.ttlsa.com/nginx/nginx-modules-ngx_lua/&lt;/a&gt;&lt;/p&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
-            <link>//blog/install.html</link>
-            <guid isPermaLink="true">//blog/install.html</guid>
+        -- 参数&quot;o&quot;是开启缓存必须的
+        local m = ngx.re.match(&quot;hello, 1234&quot;, regex, &quot;o&quot;)  
+        if m then
+            ngx.say(m[0])
+        else
+            ngx.say(&quot;not matched!&quot;)
+        end
+    ';
+}
+# 在网址中输入&quot;yourURL/test&quot;，即会在网页中显示 1234 。&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-08-31 15:50:24</pubDate>
+            <link>//blog/lua-directive-lua_regex_cache_max_entries.html</link>
+            <guid isPermaLink="true">//blog/lua-directive-lua_regex_cache_max_entries.html</guid>
                                                <category>Lua</category>
                                     </item>
                 <item>
@@ -1551,7 +3012,7 @@ summary: GitBlog是一个简单易用的Markdown博客系统，它不需要数�
 &lt;p&gt;GitBlog的成长需要喜欢Markdown，喜欢写博客的各位亲们支持！感谢你们使用GitBlog，感激你们对Gitblog的良好建议与Bug反馈。&lt;/p&gt;
 &lt;p&gt;QQ群：&lt;code&gt;84692078&lt;/code&gt;&lt;br /&gt;
 作者邮箱：&lt;code&gt;164068300[AT]qq.com&lt;/code&gt;    &lt;/p&gt;            </description>
-            <pubDate>2016-08-28 16:35:55</pubDate>
+            <pubDate>2016-08-31 15:50:24</pubDate>
             <link>//blog/gitblog-welcome.html</link>
             <guid isPermaLink="true">//blog/gitblog-welcome.html</guid>
                                                <category>GitBlog</category>
