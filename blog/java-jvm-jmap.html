@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>JVM工具 jmap|wngn123-GitBlog</title>
+	<meta name="keywords" content="java,jvm,jmap,Java,wngn123-GitBlog">
+	<meta name="description" content="JVM工具 jmap">
+	
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/bootstrap/css/bootstrap.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/assets/plugins/font-awesome/css/font-awesome.min.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/style.css?ver=2.1" type="text/css" media="all" />
+	<link rel="stylesheet" href="/theme/quest/css/customizer.css?ver=2.1" type="text/css" media="all" />
+	<link rel="alternate" type="application/rss+xml" title="wngn123-GitBlog" href="//feed.xml" />
+	
+	</head>
+
+<body class="home blog wide">
+	<div id="page" class="hfeed site">
+		<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+		    <header id="masthead" class="main-header" role="banner">
+<div class="container">
+	<div class="row">
+		<div class="site-branding col-md-4">
+			<h1 class="site-title"><a href="/" rel="home">wngn123-GitBlog</a></h1>
+				<span class="site-description">GitBlog</span>
+		</div>
+		<!-- .site-branding -->
+	</div>
+</div>
+</header>		    <div id="content">
+	<div class="quest-row site-content">
+		<div class="container">
+			<div class="row">
+				<div id="primary" class="content-area single col-md-9">
+					<div id="main" class="site-main" role="main">
+						<article class="post hentry">
+	<header class="entry-header">
+	<h1 class="post-title"><a href="/blog/java-jvm-jmap.html" rel="bookmark">JVM工具 jmap</a></h1>
+	<div class="entry-meta">
+		<time class="post-date"><i class="fa fa-clock-o"></i>2016-09-13</time>
+				<span class="seperator">/</span>
+	    <span><i class="fa fa-user"></i> wngn123</span>
+	    	</div><!-- .entry-meta -->
+</header><!-- .entry-header -->	<div class="entry-content">
+	<p>
+		<!--
+author: wngn123
+head: head.png
+date: 2016-09-13
+title: JVM工具 jmap
+tags: java jvm jmap
+category: Java
+status: publish
+summary: JVM工具 jmap
+-->
+<h2>简介</h2>
+<p>打印出某个java进程（使用pid）内存内的，所有‘对象’的情况（如：产生那些对象，及其数量）。</p>
+<p>可以输出所有内存中对象的工具，甚至可以将JVM中的heap，以二进制输出成文本。使用方法<code>jmap -histo pid</code>。如果连用<code>SHELL jmap -histo pid&gt;a.log</code>可以将其保存到文本中去，在一段时间后，使用文本对比工具，可以对比出GC回收了哪些对象。<code>jmap -dump:format=b,file=outfile 3024</code>可以将3024进程的内存heap输出出来到outfile文件里，再配合MAT（内存分析工具(Memory Analysis Tool），使用参见：<a href="http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx"><a href="http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx">http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx</a></a> 或与jhat (Java Heap Analysis Tool)一起使用，能够以图像的形式直观的展示当前内存是否有问题。</p>
+<p>64位机上使用需要使用如下方式：</p>
+<pre><code>jmap -J-d64 -heap pid</code></pre>
+<h2>语法</h2>
+<pre><code>Usage:
+    jmap [option] &lt;pid&gt;
+        (to connect to running process)
+    jmap [option] &lt;executable &lt;core&gt;
+        (to connect to a core file)
+    jmap [option] [server_id@]&lt;remote server IP or hostname&gt;
+        (to connect to remote debug server)
+
+where &lt;option&gt; is one of:
+    &lt;none&gt;               to print same info as Solaris pmap
+    -heap                to print java heap summary
+    -histo[:live]        to print histogram of java object heap; if the "live"
+                         suboption is specified, only count live objects
+    -clstats             to print class loader statistics
+    -finalizerinfo       to print information on objects awaiting finalization
+    -dump:&lt;dump-options&gt; to dump java heap in hprof binary format
+                         dump-options:
+                           live         dump only live objects; if not specified,
+                                        all objects in the heap are dumped.
+                           format=b     binary format
+                           file=&lt;file&gt;  dump heap to &lt;file&gt;
+                         Example: jmap -dump:live,format=b,file=heap.bin &lt;pid&gt;
+    -F                   force. Use with -dump:&lt;dump-options&gt; &lt;pid&gt; or -histo
+                         to force a heap dump or histogram when &lt;pid&gt; does not
+                         respond. The "live" suboption is not supported
+                         in this mode.
+    -h | -help           to print this help message
+    -J&lt;flag&gt;             to pass &lt;flag&gt; directly to the runtime system
+</code></pre>
+<h2>jmap –heap pid</h2>
+<pre><code>[work@wanggang oom] jmap -heap 5773
+Attaching to process ID 5773, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.91-b14
+
+using parallel threads in the new generation. ##新生代采用的是并行线程处理方式
+using thread-local object allocation.
+Concurrent Mark-Sweep GC ##同步并行垃圾回收
+
+Heap Configuration: ##堆配置情况
+   MinHeapFreeRatio         = 40  ##最小堆使用比例
+   MaxHeapFreeRatio         = 70 ##最大堆可用比例
+   MaxHeapSize              = 1073741824 (1024.0MB) ##最大堆空间大小
+   NewSize                  = 348913664 (332.75MB)  ##新生代分配大小   
+   MaxNewSize               = 348913664 (332.75MB) ##最大可新生代分配大小
+   OldSize                  = 187957248 (179.25MB) ##老生代大小
+   NewRatio                 = 2 ##新生代比例
+   SurvivorRatio            = 8 ##新生代与suvivor的比例
+   MetaspaceSize            = 21807104 (20.796875MB) ##perm区大小  
+   CompressedClassSpaceSize = 1073741824 (1024.0MB) 
+   MaxMetaspaceSize         = 17592186044415 MB ##最大可分配perm区大小
+   G1HeapRegionSize         = 0 (0.0MB)
+
+Heap Usage:##堆使用情况
+New Generation (Eden + 1 Survivor Space):##新生代（伊甸区 + survior空间）
+   capacity = 314048512 (299.5MB)  ##伊甸区容量
+   used     = 50253216 (47.925201416015625MB) ##已经使用大小
+   free     = 263795296 (251.57479858398438MB) ##剩余容量
+   16.001736699838272% used  ##使用比例
+Eden Space:##伊甸区
+   capacity = 279183360 (266.25MB)  ##伊甸区容量
+   used     = 50253216 (47.925201416015625MB) ##伊甸区使用
+   free     = 228930144 (218.32479858398438MB) #伊甸区当前剩余容量
+   18.000075649207748% used ##伊甸区使用情况
+From Space: ##survior1区
+   capacity = 34865152 (33.25MB) ##survior1区容量
+   used     = 0 (0.0MB) ##surviror1区已使用情况
+   free     = 34865152 (33.25MB) ##surviror1区剩余容量
+   0.0% used ##survior1区使用比例
+To Space:  ##survior2 区
+   capacity = 34865152 (33.25MB) ##survior2区容量
+   used     = 0 (0.0MB) ##survior2区已使用情况
+   free     = 34865152 (33.25MB)##survior2区剩余容量
+   0.0% used ## survior2区使用比例
+concurrent mark-sweep generation: ##老生代使用情况
+   capacity = 187957248 (179.25MB) ##老生代容量
+   used     = 0 (0.0MB)##老生代已使用容量
+   free     = 187957248 (179.25MB)##老生代剩余容量
+   0.0% used ##老生代使用比例
+
+3589 interned Strings occupying 288776 bytes.
+</code></pre>
+		</p>
+</div><!-- .entry-content -->	<footer class="entry-footer">
+		<ul class="post-categories">
+          
+          <li><a href="/category/3803722005.html" rel="category">Java</a></li>
+        	</ul>
+		
+		<ul class="post-tags">
+                   <li><a href="/tags/3692263176.html" rel="tag">java</a></li>
+                   <li><a href="/tags/3602381148.html" rel="tag">jvm</a></li>
+                   <li><a href="/tags/1713449722.html" rel="tag">jmap</a></li>
+        	</ul>
+		
+	</footer><!-- .entry-footer --></article><!-- #post-## -->            								</div>
+					<!-- #main -->
+				</div>
+				<!-- #primary -->
+				<div id="secondary" class="widget-area main-sidebar col-md-3" role="complementary">
+	<aside class="widget widget_categories sidebar-widget clearfix">
+	<h3 class="widget-title">分类目录</h3>
+	<ul>
+		        <li class="cat-item"><a href="/category/107260689.html" >GitBlog</a></li>
+                <li class="cat-item"><a href="/category/1769324555.html" >HTTPS</a></li>
+                <li class="cat-item"><a href="/category/3803722005.html" >Java</a></li>
+                <li class="cat-item"><a href="/category/1914056710.html" >Lua</a></li>
+                <li class="cat-item"><a href="/category/505585837.html" >Other</a></li>
+                <li class="cat-item"><a href="/category/26890208.html" >PHP</a></li>
+                <li class="cat-item"><a href="/category/3026742571.html" >Centos</a></li>
+        	</ul>
+</aside>
+	<aside class="widget widget_archive sidebar-widget clearfix">
+	<h3 class="widget-title">文章归档</h3>
+	<ul>
+		<li><a href="/archive/201608.html">2016-08</a></li>
+		<li><a href="/archive/201507.html">2015-07</a></li>
+		<li><a href="/archive/201609.html">2016-09</a></li>
+		</ul>
+</aside>	<aside class="widget widget_recent_entries sidebar-widget clearfix">
+	<h3 class="widget-title">近期文章</h3>
+	<ul>
+	    <li><a href="/blog/java-jvm-jmap.html">JVM工具 jmap</a></li>
+        <li><a href="/blog/java-jvm-jstack.html">JVM工具 jstack</a></li>
+        <li><a href="/blog/java-jvm-jstat.html">JVM工具 jstat</a></li>
+        <li><a href="/blog/java-jvm-jps.html">JVM工具 jps</a></li>
+        <li><a href="/blog/java-thread-pool.html">Java线程 ThreadPoolExecutor</a></li>
+    	</ul>
+</aside>
+	<aside class="widget widget_tag_cloud sidebar-widget clearfix">
+	<h3 class="widget-title">标签</h3>
+	<div class="tagcloud">
+		<a href="/tags/2511338272.html"  title="git" >git</a>
+		<a href="/tags/2013555047.html"  title="blog" >blog</a>
+		<a href="/tags/2278070035.html"  title="keytool" >keytool</a>
+		<a href="/tags/3635419366.html"  title="https" >https</a>
+		<a href="/tags/3692263176.html"  title="java" >java</a>
+		<a href="/tags/3943951533.html"  title="ssl" >ssl</a>
+		<a href="/tags/915562279.html"  title="client" >client</a>
+		<a href="/tags/1386710576.html"  title="lua" >lua</a>
+		<a href="/tags/474222454.html"  title="markdown" >markdown</a>
+		<a href="/tags/1783669539.html"  title="php" >php</a>
+		<a href="/tags/1845431629.html"  title="php5" >php5</a>
+		<a href="/tags/367908174.html"  title="php7" >php7</a>
+		<a href="/tags/1334393457.html"  title="centos" >centos</a>
+		<a href="/tags/3084495193.html"  title="centos6" >centos6</a>
+		<a href="/tags/1155787600.html"  title="linux" >linux</a>
+		<a href="/tags/3602381148.html"  title="jvm" >jvm</a>
+		<a href="/tags/1713449722.html"  title="jmap" >jmap</a>
+		<a href="/tags/1250710160.html"  title="jps" >jps</a>
+		<a href="/tags/2437014784.html"  title="jstack" >jstack</a>
+		<a href="/tags/3360952118.html"  title="jstat" >jstat</a>
+		</div>
+</aside>
+	<aside class="widget widget_text sidebar-widget clearfix">
+	<h3 class="widget-title">介绍</h3>
+	<div class="textwidget">
+		<p>本博客使用Gitblog搭建，欢迎你!</p>
+	</div>
+</aside>
+</div><!-- #secondary -->			</div>
+			<!-- .row -->
+		</div>
+		<!-- .container -->
+	</div>
+	<!-- .quest-row -->
+</div>		    <footer id="colophon" class="copyright quest-row" role="contentinfo">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 copyright-text">
+				<a href="https://github.com/jockchou/gitblog">Proudly powered by Gitblog</a>
+			</div>
+			<div class="col-md-6 social-icon-container clearfix">
+				<ul></ul>
+			</div>
+		</div>
+		<!-- end row -->
+	</div>
+	<!-- end container -->
+</footer>	</div><!-- #page -->
+	<a href="#0" class="cd-top"><i class="fa fa-angle-up"></i></a>
+
+
+<script type="text/javascript" src="/theme/quest/assets/plugins/modernizr/modernizr.custom.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery.js?ver=1.11.2"></script>
+<script type="text/javascript" src="/theme/quest/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/bootstrap/js/bootstrap.min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/wow/wow.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/plugins/colorbox/jquery.colorbox-min.js?ver=2.1"></script>
+<script type="text/javascript" src="/theme/quest/assets/js/quest.js?ver=2.1"></script>
+	
+<link rel="stylesheet" href="http://cdn.bootcss.com/highlight.js/8.6/styles/default.min.css">
+<script src="http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

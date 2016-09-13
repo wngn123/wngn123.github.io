@@ -4,9 +4,2106 @@
         <description>GitBlog是一个简单易用的Markdown博客系统</description>
         <link>/</link>
         <atom:link href="//feed.xml" rel="self" type="application/rss+xml" />
-        <pubDate>2016-08-31 15:08:24</pubDate>
-        <lastBuildDate>2016-08-31 15:08:24</lastBuildDate>
+        <pubDate>2016-09-13 15:09:33</pubDate>
+        <lastBuildDate>2016-09-13 15:09:33</lastBuildDate>
         <generator>Gitblog v1.0</generator>
+                <item>
+            <title>JVM工具 jmap</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-13
+title: JVM工具 jmap
+tags: java jvm jmap
+category: Java
+status: publish
+summary: JVM工具 jmap
+--&gt;
+&lt;h2&gt;简介&lt;/h2&gt;
+&lt;p&gt;打印出某个java进程（使用pid）内存内的，所有‘对象’的情况（如：产生那些对象，及其数量）。&lt;/p&gt;
+&lt;p&gt;可以输出所有内存中对象的工具，甚至可以将JVM中的heap，以二进制输出成文本。使用方法&lt;code&gt;jmap -histo pid&lt;/code&gt;。如果连用&lt;code&gt;SHELL jmap -histo pid&amp;gt;a.log&lt;/code&gt;可以将其保存到文本中去，在一段时间后，使用文本对比工具，可以对比出GC回收了哪些对象。&lt;code&gt;jmap -dump:format=b,file=outfile 3024&lt;/code&gt;可以将3024进程的内存heap输出出来到outfile文件里，再配合MAT（内存分析工具(Memory Analysis Tool），使用参见：&lt;a href=&quot;http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx&quot;&gt;&lt;a href=&quot;http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx&quot;&gt;http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx&lt;/a&gt;&lt;/a&gt; 或与jhat (Java Heap Analysis Tool)一起使用，能够以图像的形式直观的展示当前内存是否有问题。&lt;/p&gt;
+&lt;p&gt;64位机上使用需要使用如下方式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;jmap -J-d64 -heap pid&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;语法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Usage:
+    jmap [option] &amp;lt;pid&amp;gt;
+        (to connect to running process)
+    jmap [option] &amp;lt;executable &amp;lt;core&amp;gt;
+        (to connect to a core file)
+    jmap [option] [server_id@]&amp;lt;remote server IP or hostname&amp;gt;
+        (to connect to remote debug server)
+
+where &amp;lt;option&amp;gt; is one of:
+    &amp;lt;none&amp;gt;               to print same info as Solaris pmap
+    -heap                to print java heap summary
+    -histo[:live]        to print histogram of java object heap; if the &quot;live&quot;
+                         suboption is specified, only count live objects
+    -clstats             to print class loader statistics
+    -finalizerinfo       to print information on objects awaiting finalization
+    -dump:&amp;lt;dump-options&amp;gt; to dump java heap in hprof binary format
+                         dump-options:
+                           live         dump only live objects; if not specified,
+                                        all objects in the heap are dumped.
+                           format=b     binary format
+                           file=&amp;lt;file&amp;gt;  dump heap to &amp;lt;file&amp;gt;
+                         Example: jmap -dump:live,format=b,file=heap.bin &amp;lt;pid&amp;gt;
+    -F                   force. Use with -dump:&amp;lt;dump-options&amp;gt; &amp;lt;pid&amp;gt; or -histo
+                         to force a heap dump or histogram when &amp;lt;pid&amp;gt; does not
+                         respond. The &quot;live&quot; suboption is not supported
+                         in this mode.
+    -h | -help           to print this help message
+    -J&amp;lt;flag&amp;gt;             to pass &amp;lt;flag&amp;gt; directly to the runtime system
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;jmap –heap pid&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jmap -heap 5773
+Attaching to process ID 5773, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.91-b14
+
+using parallel threads in the new generation. ##新生代采用的是并行线程处理方式
+using thread-local object allocation.
+Concurrent Mark-Sweep GC ##同步并行垃圾回收
+
+Heap Configuration: ##堆配置情况
+   MinHeapFreeRatio         = 40  ##最小堆使用比例
+   MaxHeapFreeRatio         = 70 ##最大堆可用比例
+   MaxHeapSize              = 1073741824 (1024.0MB) ##最大堆空间大小
+   NewSize                  = 348913664 (332.75MB)  ##新生代分配大小   
+   MaxNewSize               = 348913664 (332.75MB) ##最大可新生代分配大小
+   OldSize                  = 187957248 (179.25MB) ##老生代大小
+   NewRatio                 = 2 ##新生代比例
+   SurvivorRatio            = 8 ##新生代与suvivor的比例
+   MetaspaceSize            = 21807104 (20.796875MB) ##perm区大小  
+   CompressedClassSpaceSize = 1073741824 (1024.0MB) 
+   MaxMetaspaceSize         = 17592186044415 MB ##最大可分配perm区大小
+   G1HeapRegionSize         = 0 (0.0MB)
+
+Heap Usage:##堆使用情况
+New Generation (Eden + 1 Survivor Space):##新生代（伊甸区 + survior空间）
+   capacity = 314048512 (299.5MB)  ##伊甸区容量
+   used     = 50253216 (47.925201416015625MB) ##已经使用大小
+   free     = 263795296 (251.57479858398438MB) ##剩余容量
+   16.001736699838272% used  ##使用比例
+Eden Space:##伊甸区
+   capacity = 279183360 (266.25MB)  ##伊甸区容量
+   used     = 50253216 (47.925201416015625MB) ##伊甸区使用
+   free     = 228930144 (218.32479858398438MB) #伊甸区当前剩余容量
+   18.000075649207748% used ##伊甸区使用情况
+From Space: ##survior1区
+   capacity = 34865152 (33.25MB) ##survior1区容量
+   used     = 0 (0.0MB) ##surviror1区已使用情况
+   free     = 34865152 (33.25MB) ##surviror1区剩余容量
+   0.0% used ##survior1区使用比例
+To Space:  ##survior2 区
+   capacity = 34865152 (33.25MB) ##survior2区容量
+   used     = 0 (0.0MB) ##survior2区已使用情况
+   free     = 34865152 (33.25MB)##survior2区剩余容量
+   0.0% used ## survior2区使用比例
+concurrent mark-sweep generation: ##老生代使用情况
+   capacity = 187957248 (179.25MB) ##老生代容量
+   used     = 0 (0.0MB)##老生代已使用容量
+   free     = 187957248 (179.25MB)##老生代剩余容量
+   0.0% used ##老生代使用比例
+
+3589 interned Strings occupying 288776 bytes.
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-13 15:52:04</pubDate>
+            <link>//blog/java-jvm-jmap.html</link>
+            <guid isPermaLink="true">//blog/java-jvm-jmap.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>JVM工具 jstack</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-13
+title: JVM工具 jstack
+tags: java jvm jstack
+category: Java
+status: publish
+summary: JVM工具 jstack 主要用来查看某个Java进程内的线程堆栈信息
+--&gt;
+&lt;h2&gt;简介&lt;/h2&gt;
+&lt;p&gt;jstack用于打印出给定的java进程ID或core file或远程调试服务的Java堆栈信息，如果是在64位机器上，需要指定选项&lt;code&gt;-J-d64&lt;/code&gt;，Windows的jstack使用方式只支持以下的这种方式&lt;code&gt;jstack [-l] pid&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;如果java程序崩溃生成core文件，jstack工具可以用来获得core文件的java stack和native stack的信息，从而可以轻松地知道java程序是如何崩溃和在程序何处发生问题。另外，jstack工具还可以附属到正在运行的java程序中，看到当时运行的java程序的java stack和native stack的信息, 如果现在运行的java程序呈现hung的状态，jstack是非常有用的&lt;/p&gt;
+&lt;h2&gt;语法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Usage:
+    jstack [-l] &amp;lt;pid&amp;gt;
+        (to connect to running process)
+    jstack -F [-m] [-l] &amp;lt;pid&amp;gt;
+        (to connect to a hung process)
+    jstack [-m] [-l] &amp;lt;executable&amp;gt; &amp;lt;core&amp;gt;
+        (to connect to a core file)
+    jstack [-m] [-l] [server_id@]&amp;lt;remote server IP or hostname&amp;gt;
+        (to connect to a remote debug server)
+
+Options:
+    -F  to force a thread dump. Use when jstack &amp;lt;pid&amp;gt; does not respond (process is hung)
+    -m  to print both java and native frames (mixed mode)
+    -l  long listing. Prints additional information about locks
+    -h or -help to print this help message&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;core&lt;/code&gt; 将被打印信息的core dump文件&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;remote-hostname-or-IP&lt;/code&gt; 远程debug服务的主机名或ip&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;server-id&lt;/code&gt; 唯一id,假如一台主机上多个远程debug服务 &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-F&lt;/code&gt; 当&lt;code&gt;jstack [-l] pid&lt;/code&gt;没有相应的时候强制打印栈信息&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-l&lt;/code&gt;长列表. 打印关于锁的附加信息,例如属于java.util.concurrent的ownable synchronizers列表.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-m&lt;/code&gt;打印java和native c/c++框架的所有栈信息.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-h | -help&lt;/code&gt;打印帮助信息&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;pid&lt;/code&gt; 需要被打印配置信息的java进程id,可以用jps查询.&lt;/p&gt;
+&lt;h2&gt;使用&lt;/h2&gt;
+&lt;p&gt;jstack可以定位到线程堆栈，根据堆栈信息我们可以定位到具体代码，所以它在JVM性能调优中使用得非常多。下面我们来一个实例找出某个Java进程中最耗费CPU的Java线程并定位堆栈信息，用到的命令有ps、top、printf、jstack、grep&lt;/p&gt;
+&lt;p&gt;第一步先找出Java进程ID，我部署在服务器上的Java应用名称为mrf-center：
+&lt;code&gt;ps -ef | grep mrf-center | grep -v grep&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;第二步找出该进程内最耗费CPU的线程，可以使用&lt;code&gt;ps -Lfp pid&lt;/code&gt;或者&lt;code&gt;ps -mp pid -o THREAD, tid, time&lt;/code&gt;或者&lt;code&gt;top -Hp pid&lt;/code&gt;，我这里用第三个, TIME列就是各个Java线程耗费的CPU时间&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;printf &quot;%x\n&quot; 21742&lt;/code&gt;得到21742的十六进制值为54ee&lt;/p&gt;
+&lt;p&gt;jstack用来输出进程21711的堆栈信息，然后根据线程ID的十六进制值grep&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;stack 21711 | grep 54ee&lt;/code&gt;&lt;/p&gt;
+&lt;h4&gt;实例&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;jstack -F 8339&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Attaching to process ID 8339, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.91-b14
+Deadlock Detection:
+
+No deadlocks found.
+
+Thread 8357: (state = BLOCKED)
+ - java.lang.Thread.sleep(long) @bci=0 (Compiled frame; information may be imprecise)
+ - com.zzia.wngn.oom.task.MemTask.run() @bci=44, line=19 (Compiled frame)
+ - java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker) @bci=95, line=1142 (Interpreted frame)
+ - java.util.concurrent.ThreadPoolExecutor$Worker.run() @bci=5, line=617 (Interpreted frame)
+ - java.lang.Thread.run() @bci=11, line=745 (Interpreted frame)
+
+Thread 8350: (state = BLOCKED)
+
+Thread 8349: (state = BLOCKED)
+
+Thread 8348: (state = BLOCKED)
+ - java.lang.Object.wait(long) @bci=0 (Interpreted frame)
+ - java.lang.ref.ReferenceQueue.remove(long) @bci=59, line=143 (Interpreted frame)
+ - java.lang.ref.ReferenceQueue.remove() @bci=2, line=164 (Compiled frame)
+ - java.lang.ref.Finalizer$FinalizerThread.run() @bci=36, line=209 (Interpreted frame)
+
+Thread 8347: (state = BLOCKED)
+ - java.lang.Object.wait(long) @bci=0 (Interpreted frame)
+ - java.lang.Object.wait() @bci=2, line=502 (Compiled frame)
+ - java.lang.ref.Reference.tryHandlePending(boolean) @bci=54, line=191 (Compiled frame)
+ - java.lang.ref.Reference$ReferenceHandler.run() @bci=1, line=153 (Interpreted frame)
+
+Thread 8340: (state = BLOCKED)
+ - java.lang.Thread.sleep(long) @bci=0 (Compiled frame; information may be imprecise)
+ - com.zzia.wngn.oom.OOMServer.main(java.lang.String[]) @bci=134, line=56 (Interpreted frame)
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-13 15:49:37</pubDate>
+            <link>//blog/java-jvm-jstack.html</link>
+            <guid isPermaLink="true">//blog/java-jvm-jstack.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>JVM工具 jstat</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-13
+title: JVM工具 jstat
+tags: java jvm jstat
+category: Java
+status: publish
+summary: JVM工具 jstat JVM统计监测工具
+--&gt;
+&lt;h2&gt;简介&lt;/h2&gt;
+&lt;p&gt;Jstat用于监控基于HotSpot的JVM，对其堆的使用情况进行实时的命令行的统计，使用jstat我们可以对指定的JVM做如下监控：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;类的加载及卸载情况&lt;/li&gt;
+&lt;li&gt;查看新生代、老生代及持久代的容量及使用情况&lt;/li&gt;
+&lt;li&gt;查看新生代、老生代及持久代的垃圾收集情况，包括垃圾回收的次数及垃圾回收所占用的时间&lt;/li&gt;
+&lt;li&gt;查看新生代中Eden区及Survior区中容量及分配情况等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;jstat工具特别强大，它有众多的可选项，通过提供多种不同的监控维度，使我们可以从不同的维度来了解到当前JVM堆的使用情况。详细查看堆内各个部分的使用量，使用的时候必须加上待统计的Java进程号，可选的不同维度参数以及可选的统计频率参数。&lt;/p&gt;
+&lt;p&gt;它主要是用来显示GC及PermGen相关的信息，如果对GC不怎么了解，先看这篇文章
+&lt;a href=&quot;http://blog.csdn.net/fenglibing/archive/2011/04/13/6321453.aspx&quot;&gt;&lt;a href=&quot;http://blog.csdn.net/fenglibing/archive/2011/04/13/6321453.aspx&quot;&gt;http://blog.csdn.net/fenglibing/archive/2011/04/13/6321453.aspx&lt;/a&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;语法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Usage: jstat -help|-options
+       jstat -&amp;lt;option&amp;gt; [-t] [-h&amp;lt;lines&amp;gt;] &amp;lt;vmid&amp;gt; [&amp;lt;interval&amp;gt; [&amp;lt;count&amp;gt;]]
+
+Definitions:
+  &amp;lt;option&amp;gt;      An option reported by the -options option
+  &amp;lt;vmid&amp;gt;        Virtual Machine Identifier. A vmid takes the following form:
+                     &amp;lt;lvmid&amp;gt;[@&amp;lt;hostname&amp;gt;[:&amp;lt;port&amp;gt;]]
+                Where &amp;lt;lvmid&amp;gt; is the local vm identifier for the target
+                Java virtual machine, typically a process id; &amp;lt;hostname&amp;gt; is
+                the name of the host running the target Java virtual machine;
+                and &amp;lt;port&amp;gt; is the port number for the rmiregistry on the
+                target host. See the jvmstat documentation for a more complete
+                description of the Virtual Machine Identifier.
+  &amp;lt;lines&amp;gt;       Number of samples between header lines.
+  &amp;lt;interval&amp;gt;    Sampling interval. The following forms are allowed:
+                    &amp;lt;n&amp;gt;[&quot;ms&quot;|&quot;s&quot;]
+                Where &amp;lt;n&amp;gt; is an integer and the suffix specifies the units as 
+                milliseconds(&quot;ms&quot;) or seconds(&quot;s&quot;). The default units are &quot;ms&quot;.
+  &amp;lt;count&amp;gt;       Number of samples to take before terminating.
+  -J&amp;lt;flag&amp;gt;      Pass &amp;lt;flag&amp;gt; directly to the runtime system.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;option&amp;gt;&lt;/code&gt;   选项，我们一般使用 -gcutil 查看gc情况&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;vmid&amp;gt;&lt;/code&gt;     vmid 是Java虚拟机ID，在Linux/Unix系统上一般就是进程ID&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;lines&amp;gt;&lt;/code&gt;    lines 行数&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;interval&amp;gt;&lt;/code&gt; interval是监控时间间隔，单位为微妙，不提供就意味着单次输出&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;count&amp;gt;&lt;/code&gt;    count是最大输出次数,不提供且监控时间间隔有值的话， 就无限打印&lt;/p&gt;
+&lt;p&gt;参数interval和count代表查询间隔和次数，如果省略这两个参数，说明只查询一次。假设需要每250毫秒查询一次进程5828垃圾收集状况，一共查询5次，那命令行如下&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;jstat -gc 5828&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;选项option代表这用户希望查询的虚拟机信息，主要分为3类：类装载、垃圾收集和运行期编译状况，具体选项及作用如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;–class&lt;/code&gt; 监视类装载、卸载数量、总空间及类装载所耗费的时间,统计classloader的行为&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gc&lt;/code&gt; 监视Java堆状况，包括Eden区、2个Survivor区、老年代、永久代等的容量,统计gc行为&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gccapacity&lt;/code&gt; 监视内容与-gc基本相同，但输出主要关注Java堆各个区域使用到的最大和最小空间&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gcutil&lt;/code&gt; 监视内容与-gc基本相同，但输出主要关注已使用空间占总空间的百分比&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gccause&lt;/code&gt; 与-gcutil功能一样，但是会额外输出导致上一次GC产生的原因&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gcnew&lt;/code&gt; 监视新生代GC的状况&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gcnewcapacity&lt;/code&gt; 监视内容与-gcnew基本相同，输出主要关注使用到的最大和最小空间&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gcold&lt;/code&gt; 监视老年代GC的状况&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gcoldcapacity&lt;/code&gt; 监视内容与——gcold基本相同，输出主要关注使用到的最大和最小空间&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–gcpermcapacity&lt;/code&gt; 输出永久代使用到的最大和最小空间&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–compiler&lt;/code&gt; 输出JIT编译器编译过的方法、耗时等信息,统计hotspot just-in-time编译器的行为&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;–printcompilation&lt;/code&gt; 输出已经被JIT编译的方法&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;-h n 每n个样本，显示header一次
+-t n 在第一列显示时间戳列，时间戳时从jvm启动开始计算&lt;/p&gt;
+&lt;h2&gt;输出GC信息 jstat -gc&lt;/h2&gt;
+&lt;h4&gt;jstat -gc pid interval count&lt;/h4&gt;
+&lt;p&gt;输出的是GC信息，采样时间间隔为250ms，采样数为4&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;jstat -gc 21711 250 4&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;S0C    S1C    S0U   S1U  EC      EU      OC       OU      PC       PU       YGC  YGCT   FGC FGCT   GCT   
+192.0  192.0  64.0  0.0  6144.0  1854.9  32000.0  4111.6  55296.0  25472.7  702  0.431  3   0.218  0.649
+192.0  192.0  64.0  0.0  6144.0  1972.2  32000.0  4111.6  55296.0  25472.7  702  0.431  3   0.218  0.649
+192.0  192.0  64.0  0.0  6144.0  1972.2  32000.0  4111.6  55296.0  25472.7  702  0.431  3   0.218  0.649
+192.0  192.0  64.0  0.0  6144.0  2109.7  32000.0  4111.6  55296.0  25472.7  702  0.431  3   0.218  0.649&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;堆内存 = 年轻代 + 年老代 + 永久代
+年轻代 = Eden区 + 两个Survivor区（From和To）
+
+S0C、S1C、S0U、S1U：Survivor 0/1区容量（Capacity）和使用量（Used）
+EC、EU：Eden区容量和使用量
+OC、OU：年老代容量和使用量
+PC、PU：永久代容量和使用量
+YGC、YGT：年轻代GC次数和GC耗时
+FGC、FGCT：Full GC次数和Full GC耗时
+GCT：GC总耗时
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;输出GC信息 jstat -gcutil&lt;/h2&gt;
+&lt;h4&gt;jstat -gcutil pid interval count&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;jstat -gcutil 8339&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  S0     S1     E       O      M       CCS     YGC  YGCT    FGC  FGCT    GCT   
+  0.00   0.00   44.09   0.00   17.27   19.75   0    0.000   0    0.000   0.000&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;S0  — Heap上的 Survivor space 0 区已使用空间的百分比
+S1  — Heap上的 Survivor space 1 区已使用空间的百分比
+E   — Heap上的 Eden space 区已使用空间的百分比
+O   — Heap上的 Old space 区已使用空间的百分比
+P   — Perm space 区已使用空间的百分比
+YGC — 从应用程序启动到采样时发生 Young GC 的次数
+YGCT– 从应用程序启动到采样时 Young GC 所用的时间(单位秒)
+FGC — 从应用程序启动到采样时发生 Full GC 的次数
+FGCT– 从应用程序启动到采样时 Full GC 所用的时间(单位秒)
+GCT — 从应用程序启动到采样时用于垃圾回收的总时间(单位秒)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;输出class信息&lt;/h2&gt;
+&lt;h4&gt;jstat -class pid&lt;/h4&gt;
+&lt;p&gt;显示加载class的数量，及所占空间等信息。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jstat -class 8339
+Loaded  Bytes    Unloaded  Bytes     Time   
+1893    3556.3   0         0.0       3.36&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;Loaded 装载的类的数量
+Bytes 装载类所占用的字节数
+Unloaded 卸载类的数量
+Bytes 卸载类的字节数
+Time 装载和卸载类所花费的时间&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;显示VM实时编译的数量等信息 jstat -compiler&lt;/h2&gt;
+&lt;h4&gt;jstat -compiler pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;Compiled 编译任务执行数量
+Failed 编译任务执行失败数量
+Invalid 编译任务执行失效数量
+Time 编译任务消耗时间
+FailedType 最后一个编译失败任务的类型
+FailedMethod 最后一个编译失败任务所在的类及方法&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;显示对象大小 jstat -gccapacity&lt;/h2&gt;
+&lt;p&gt;显示VM内存中三代（young,old,perm）对象的使用和占用大小 &lt;/p&gt;
+&lt;h4&gt;jstat -gccapacity pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;NGCMN 年轻代(young)中初始化(最小)的大小(字节)
+NGCMX 年轻代(young)的最大容量 (字节)
+NGC 年轻代(young)中当前的容量 (字节)
+S0C 年轻代中第一个survivor（幸存区）的容量 (字节)
+S1C 年轻代中第二个survivor（幸存区）的容量 (字节)
+EC 年轻代中Eden（伊甸园）的容量 (字节)
+OGCMN old代中初始化(最小)的大小 (字节)
+OGCMX old代的最大容量(字节)
+OGC old代当前新生成的容量 (字节)
+OC Old代的容量 (字节)
+PGCMN perm代中初始化(最小)的大小 (字节)
+PGCMX perm代的最大容量 (字节)
+PGC perm代当前新生成的容量 (字节)
+PC Perm(持久代)的容量 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+FGC 从应用程序启动到采样时old代(全gc)gc次数&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;年轻代对象的信息 jstat -gcnew&lt;/h2&gt;
+&lt;h4&gt;jstat -gcnew pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;S0C 年轻代中第一个survivor（幸存区）的容量 (字节)
+S1C 年轻代中第二个survivor（幸存区）的容量 (字节)
+S0U 年轻代中第一个survivor（幸存区）目前已使用空间 (字节)
+S1U 年轻代中第二个survivor（幸存区）目前已使用空间 (字节)
+TT 持有次数限制
+MTT 最大持有次数限制
+EC 年轻代中Eden（伊甸园）的容量 (字节)
+EU 年轻代中Eden（伊甸园）目前已使用空间 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+YGCT 从应用程序启动到采样时年轻代中gc所用时间(s)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;年轻代对象的信息及其占用量 jstat -gcnewcapacity&lt;/h2&gt;
+&lt;h4&gt;jstat -gcnewcapacity pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;NGCMN 年轻代(young)中初始化(最小)的大小(字节)
+NGCMX 年轻代(young)的最大容量 (字节)
+NGC 年轻代(young)中当前的容量 (字节)
+S0CMX 年轻代中第一个survivor（幸存区）的最大容量 (字节)
+S0C 年轻代中第一个survivor（幸存区）的容量 (字节)
+S1CMX 年轻代中第二个survivor（幸存区）的最大容量 (字节)
+S1C 年轻代中第二个survivor（幸存区）的容量 (字节)
+ECMX 年轻代中Eden（伊甸园）的最大容量 (字节)
+EC 年轻代中Eden（伊甸园）的容量 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+FGC 从应用程序启动到采样时old代(全gc)gc次数&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;old代对象的信息 jstat -gcold&lt;/h2&gt;
+&lt;h4&gt;jstat -gcold  pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;PC Perm(持久代)的容量 (字节)
+PU Perm(持久代)目前已使用空间 (字节)
+OC Old代的容量 (字节)
+OU Old代目前已使用空间 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+FGC 从应用程序启动到采样时old代(全gc)gc次数
+FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s)
+GCT 从应用程序启动到采样时gc用的总时间(s)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;old代对象的信息及其占用量 jstat -gcoldcapacity&lt;/h2&gt;
+&lt;h4&gt;jstat -gcoldcapacity  pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;OGCMN old代中初始化(最小)的大小 (字节)
+OGCMX old代的最大容量(字节)
+OGC old代当前新生成的容量 (字节)
+OC Old代的容量 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+FGC 从应用程序启动到采样时old代(全gc)gc次数
+FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s)
+GCT 从应用程序启动到采样时gc用的总时间(s)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;perm对象的信息及其占用量 jstat -gcpermcapacity&lt;/h2&gt;
+&lt;h4&gt;jstat -gcpermcapacity  pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;PGCMN perm代中初始化(最小)的大小 (字节)
+PGCMX perm代的最大容量 (字节)
+PGC perm代当前新生成的容量 (字节)
+PC Perm(持久代)的容量 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+FGC 从应用程序启动到采样时old代(全gc)gc次数
+FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s)
+GCT 从应用程序启动到采样时gc用的总时间(s)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;当前VM执行的信息 jstat -printcompilation&lt;/h2&gt;
+&lt;h4&gt;jstat -printcompilation  pid&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;Compiled 编译任务的数目
+Size 方法生成的字节码的大小
+Type 编译类型
+Method 类名和方法名用来标识编译的方法。类名使用/做为一个命名空间分隔符。方法名是给定类中的方法。上述格式是由-XX:+PrintComplation选项进行设置的&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-13 15:49:37</pubDate>
+            <link>//blog/java-jvm-jstat.html</link>
+            <guid isPermaLink="true">//blog/java-jvm-jstat.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>JVM工具 jps</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-13
+title: JVM工具 jps
+tags: java jvm jps
+category: Java
+status: publish
+summary: JVM工具 jps 用来查看所有的jvm进程，包括进程ID，进程启动的路径等
+--&gt;
+&lt;h2&gt;介绍&lt;/h2&gt;
+&lt;p&gt;用来查看所有的jvm进程，包括进程ID，进程启动的路径等。&lt;/p&gt;
+&lt;h2&gt;语法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;jps -help
+usage: jps [-help]
+       jps [-q] [-mlvV] [&amp;lt;hostid&amp;gt;]
+
+Definitions:
+    &amp;lt;hostid&amp;gt;:      &amp;lt;hostname&amp;gt;[:&amp;lt;port&amp;gt;]&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;jps&lt;/h2&gt;
+&lt;p&gt;默认显示pid和class名称&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps
+6005 Jps
+5773 OOMServer&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;-q参数&lt;/h2&gt;
+&lt;p&gt;只显示pid，不显示class名称,jar文件名和传递给main 方法的参数&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps -q
+6028
+5773&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;-m参数&lt;/h2&gt;
+&lt;p&gt;输出传递给main 方法的参数，在嵌入式jvm上可能是null&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps -m
+6043 Jps -m
+5773 OOMServer&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;-l参数&lt;/h2&gt;
+&lt;p&gt;输出应用程序main class的完整package名 或者 应用程序的jar文件完整路径名&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps -l
+6149 sun.tools.jps.Jps
+5773 com.zzia.wngn.oom.OOMServer&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;-v参数(小写v)&lt;/h2&gt;
+&lt;p&gt;输出传递给JVM的参数&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps -v
+6164 Jps -Dapplication.home=/opt/dev/jdk/jdk1.8.0_91 -Xms8m
+5773 OOMServer -Xmx1024m -Xms512m -XX:+UseConcMarkSweepGC&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;-V参数(大写V)&lt;/h2&gt;
+&lt;p&gt;输出通过文件传递给JVM的参数（如.hotspotrc或通过-XX:Flags=&lt;filename&gt;指定的文件）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps -V
+6187 Jps
+5773 OOMServer&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;参数合并使用&lt;/h2&gt;
+&lt;p&gt;参数mlvV可以合并一起使用，但是q不能和其他参数一起使用&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[work@wanggang oom] jps -mlv
+6202 sun.tools.jps.Jps -mlv -Dapplication.home=/opt/dev/jdk/jdk1.8.0_91 -Xms8m
+5773 com.zzia.wngn.oom.OOMServer -Xmx1024m -Xms512m -XX:+UseConcMarkSweepGC&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-13 15:49:37</pubDate>
+            <link>//blog/java-jvm-jps.html</link>
+            <guid isPermaLink="true">//blog/java-jvm-jps.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>Java线程 ThreadPoolExecutor</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-13
+title: Java线程 ThreadPoolExecutor
+tags: java
+category: Java
+status: publish
+summary: 阅读Java的源码，Java线程，ThreadPoolExecutor
+--&gt;
+&lt;h2&gt;Executor接口&lt;/h2&gt;
+&lt;p&gt;执行已提交的 Runnable 任务的对象。此接口提供一种将任务提交与每个任务将如何运行的机制（包括线程使用的细节、调度等）分离开来的方法。通常使用 Executor 而不是显式地创建线程。例如，可能会使用以下方法，而不是为一组任务中的每个任务调用 &lt;code&gt;new Thread(new(RunnableTask())).start()&lt;/code&gt;： &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; Executor executor = anExecutor;
+ executor.execute(new RunnableTask1());
+ executor.execute(new RunnableTask2());
+ ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;不过，Executor 接口并没有严格地要求执行是异步的。在最简单的情况下，执行程序可以在调用者的线程中立即运行已提交的任务： &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; class DirectExecutor implements Executor {
+     public void execute(Runnable r) {
+         r.run();
+     }
+ }&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;更常见的是，任务是在某个不是调用者线程的线程中执行的。以下执行程序将为每个任务生成一个新线程。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; class ThreadPerTaskExecutor implements Executor {
+     public void execute(Runnable r) {
+         new Thread(r).start();
+     }
+ }&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;许多 Executor 实现都对调度任务的方式和时间强加了某种限制。以下执行程序使任务提交与第二个执行程序保持连续，这说明了一个复合执行程序。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; class SerialExecutor implements Executor {
+     final Queue&amp;lt;Runnable&amp;gt; tasks = new ArrayDeque&amp;lt;Runnable&amp;gt;();
+     final Executor executor;
+     Runnable active;
+
+     SerialExecutor(Executor executor) {
+         this.executor = executor;
+     }
+
+     public synchronized void execute(final Runnable r) {
+         tasks.offer(new Runnable() {
+             public void run() {
+                 try {
+                     r.run();
+                 } finally {
+                     scheduleNext();
+                 }
+             }
+         });
+         if (active == null) {
+             scheduleNext();
+         }
+     }
+
+     protected synchronized void scheduleNext() {
+         if ((active = tasks.poll()) != null) {
+             executor.execute(active);
+         }
+     }
+ }&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;此包中提供的 Executor 实现实现了 ExecutorService，这是一个使用更广泛的接口。ThreadPoolExecutor 类提供一个可扩展的线程池实现。Executors 类为这些 Executor 提供了便捷的工厂方法。
+内存一致性效果：线程中将 Runnable 对象提交到 Executor 之前的操作 happen-before 其执行开始（可能在另一个线程中）。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public interface Executor {
+    //在未来某个时间执行给定的命令
+    void execute(Runnable command);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ExecutorService接口&lt;/h2&gt;
+&lt;p&gt;Executor 提供了管理终止的方法，以及可为跟踪一个或多个异步任务执行状况而生成 Future 的方法。 &lt;/p&gt;
+&lt;p&gt;可以关闭 ExecutorService，这将导致其拒绝新任务。提供两个方法来关闭 ExecutorService。&lt;code&gt;shutdown()&lt;/code&gt; 方法在终止前允许执行以前提交的任务，而 &lt;code&gt;shutdownNow()&lt;/code&gt; 方法阻止等待任务启动并试图停止当前正在执行的任务。在终止时，执行程序没有任务在执行，也没有任务在等待执行，并且无法提交新任务。应该关闭未使用的 ExecutorService 以允许回收其资源。 &lt;/p&gt;
+&lt;p&gt;通过创建并返回一个可用于取消执行和/或等待完成的 &lt;code&gt;Future&lt;/code&gt;，方法 &lt;code&gt;submit&lt;/code&gt; 扩展了基本方法&lt;code&gt;Executor.execute(java.lang.Runnable)&lt;/code&gt;。方法 &lt;code&gt;invokeAny&lt;/code&gt; 和 &lt;code&gt;invokeAll&lt;/code&gt; 是批量执行的最常用形式，它们执行任务 collection，然后等待至少一个，或全部任务完成（可使用 &lt;code&gt;ExecutorCompletionService&lt;/code&gt; 类来编写这些方法的自定义变体）。 &lt;/p&gt;
+&lt;p&gt;Executors 类提供了用于此包中所提供的执行程序服务的工厂方法。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;shutdown()
+shutdownNow()
+isShutdown()
+isTerminated()
+awaitTermination(long, TimeUnit)
+submit(Callable&amp;lt;T&amp;gt;)
+submit(Runnable, T)
+submit(Runnable)
+invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;)
+invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;, long, TimeUnit)
+invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;)
+invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;, long, TimeUnit)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;public interface ExecutorService extends Executor {
+    //启动一次顺序关闭，执行以前提交的任务，但不接受新任务。如果已经关闭，则调用没有其他作用。 
+    void shutdown();
+
+    /**
+     * 试图停止所有正在执行的活动任务，暂停处理正在等待的任务，并返回等待执行的任务列表。
+     * 无法保证能够停止正在处理的活动执行任务，但是会尽力尝试。
+     * 例如，通过 Thread.interrupt() 来取消典型的实现，所以任何任务无法响应中断都可能永远无法终止
+     */
+    List&amp;lt;Runnable&amp;gt; shutdownNow();
+
+    //如果此执行程序已关闭，则返回 true
+    boolean isShutdown();
+
+    //如果关闭后所有任务都已完成，则返回 true。注意，除非首先调用 shutdown 或 shutdownNow，否则 isTerminated 永不为 true。 
+    boolean isTerminated();
+
+    /**
+     * 请求关闭、发生超时或者当前线程中断，无论哪一个首先发生之后，都将导致阻塞，直到所有任务完成执行。
+     * @param timeout 最长等待时间
+     * @param unit timeout参数的时间单位
+     * @return 如果此执行程序终止，则返回 true；如果终止前超时期满，则返回 false 
+     */
+    boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
+
+    /**
+     * 提交一个返回值的任务用于执行，返回一个表示任务的未决结果的 Future。
+     * 该 Future 的 get 方法在成功完成时将会返回该任务的结果。 
+     * 如果想立即阻塞任务的等待，则可以使用 result = exec.submit(aCallable).get(); 形式的构造。
+     */ 
+    &amp;lt;T&amp;gt; Future&amp;lt;T&amp;gt; submit(Callable&amp;lt;T&amp;gt; task);
+
+    /**
+     * 提交一个 Runnable 任务用于执行，并返回一个表示该任务的 Future。
+     * 该 Future 的 get 方法在成功完成时将会返回给定的结果。 
+     */
+    &amp;lt;T&amp;gt; Future&amp;lt;T&amp;gt; submit(Runnable task, T result);
+
+    /**
+     * 提交一个 Runnable 任务用于执行，并返回一个表示该任务的 Future。
+     * 该 Future 的 get 方法在成功完成时将会返回 null。 
+     */
+    Future&amp;lt;?&amp;gt; submit(Runnable task);
+
+    /**
+     * 执行给定的任务，当所有任务完成时，返回保持任务状态和结果的 Future 列表。
+     * 返回列表的所有元素的 Future.isDone() 为 true。
+     * 注意，可以正常地或通过抛出异常来终止已完成 任务。如果正在进行此操作时修改了给定的 collection，则此方法的结果是不确定的。
+     */
+    &amp;lt;T&amp;gt; List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks) throws InterruptedException;
+
+    /**
+     * 执行给定的任务，当所有任务完成或超时期满时（无论哪个首先发生），返回保持任务状态和结果的 Future 列表。
+     * 返回列表的所有元素的 Future.isDone() 为 true。一旦返回后，即取消尚未完成的任务。
+     * 注意，可以正常地或通过抛出异常来终止已完成 任务。如果此操作正在进行时修改了给定的 collection，则此方法的结果是不确定的
+     */
+    &amp;lt;T&amp;gt; List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks, long timeout, TimeUnit unit) throws InterruptedException;
+
+    /**
+     * 执行给定的任务，如果某个任务已成功完成（也就是未抛出异常），则返回其结果。一旦正常或异常返回后，则取消尚未完成的任务。
+     * 如果此操作正在进行时修改了给定的 collection，则此方法的结果是不确定的。
+     */
+    &amp;lt;T&amp;gt; T invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks) throws InterruptedException, ExecutionException;
+
+    /**
+     * 执行给定的任务，如果在给定的超时期满前某个任务已成功完成（也就是未抛出异常），则返回其结果。一旦正常或异常返回后，则取消尚未完成的任务。
+     * 如果此操作正在进行时修改了给定的 collection，则此方法的结果是不确定的。
+     */
+    &amp;lt;T&amp;gt; T invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;AbstractExecutorService抽象类&lt;/h2&gt;
+&lt;p&gt;提供 ExecutorService 执行方法的默认实现。此类使用 newTaskFor 返回的 RunnableFuture 实现 submit、invokeAny 和 invokeAll 方法，默认情况下，RunnableFuture 是此包中提供的 FutureTask 类。例如，submit(Runnable) 的实现创建了一个关联 RunnableFuture 类，该类将被执行并返回。子类可以重写 newTaskFor 方法，以返回 FutureTask 之外的 RunnableFuture 实现。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;doInvokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;, boolean, long)
+invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;)
+invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;, long, TimeUnit)
+invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;)
+invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt;, long, TimeUnit)
+newTaskFor(Runnable, T)
+newTaskFor(Callable&amp;lt;T&amp;gt;)
+submit(Runnable)
+submit(Runnable, T)
+submit(Callable&amp;lt;T&amp;gt;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;package java.util.concurrent;
+import java.util.*;
+
+public abstract class AbstractExecutorService implements ExecutorService {
+
+    /**
+     * 为给定可运行任务和默认值返回一个 RunnableFuture。
+     * @param runnable 将被包装的可运行任务
+     * @param value 用于所返回的将来任务的默认值
+     * @return a RunnableFuture，在运行的时候，它将运行底层可运行任务，作为 Future 任务，它将生成给定值作为其结果，并为底层任务提供取消操作。
+     */
+    protected &amp;lt;T&amp;gt; RunnableFuture&amp;lt;T&amp;gt; newTaskFor(Runnable runnable, T value) {
+        return new FutureTask&amp;lt;T&amp;gt;(runnable, value);
+    }
+
+    /**
+     * 为给定可调用任务返回一个 RunnableFuture。 
+     * @param callable 将包装的可调用任务 
+     */
+    protected &amp;lt;T&amp;gt; RunnableFuture&amp;lt;T&amp;gt; newTaskFor(Callable&amp;lt;T&amp;gt; callable) {
+        return new FutureTask&amp;lt;T&amp;gt;(callable);
+    }
+
+    /**
+     * 提交一个 Runnable 任务用于执行，并返回一个表示该任务的 Future。
+     * 该 Future 的 get 方法在成功完成时将会返回给定的结果。 
+     */
+    public Future&amp;lt;?&amp;gt; submit(Runnable task) {
+        if (task == null) throw new NullPointerException();
+        RunnableFuture&amp;lt;Void&amp;gt; ftask = newTaskFor(task, null);
+        execute(ftask);
+        return ftask;
+    }
+
+    /**
+     * 提交一个返回值的任务用于执行，返回一个表示任务的未决结果的 Future。
+     * 该 Future 的 get 方法在成功完成时将会返回该任务的结果。 
+     * 如果想立即阻塞任务的等待，则可以使用 result = exec.submit(aCallable).get(); 形式的构造。
+     */
+    public &amp;lt;T&amp;gt; Future&amp;lt;T&amp;gt; submit(Runnable task, T result) {
+        if (task == null) throw new NullPointerException();
+        RunnableFuture&amp;lt;T&amp;gt; ftask = newTaskFor(task, result);
+        execute(ftask);
+        return ftask;
+    }
+
+    public &amp;lt;T&amp;gt; Future&amp;lt;T&amp;gt; submit(Callable&amp;lt;T&amp;gt; task) {
+        if (task == null) throw new NullPointerException();
+        RunnableFuture&amp;lt;T&amp;gt; ftask = newTaskFor(task);
+        execute(ftask);
+        return ftask;
+    }
+
+    private &amp;lt;T&amp;gt; T doInvokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks,
+                            boolean timed, long nanos)
+        throws InterruptedException, ExecutionException, TimeoutException {
+        if (tasks == null)
+            throw new NullPointerException();
+        int ntasks = tasks.size();
+        if (ntasks == 0)
+            throw new IllegalArgumentException();
+        List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; futures= new ArrayList&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt;(ntasks);
+        ExecutorCompletionService&amp;lt;T&amp;gt; ecs =
+            new ExecutorCompletionService&amp;lt;T&amp;gt;(this);
+
+        // For efficiency, especially in executors with limited
+        // parallelism, check to see if previously submitted tasks are
+        // done before submitting more of them. This interleaving
+        // plus the exception mechanics account for messiness of main
+        // loop.
+
+        try {
+            // Record exceptions so that if we fail to obtain any
+            // result, we can throw the last exception we got.
+            ExecutionException ee = null;
+            long lastTime = timed ? System.nanoTime() : 0;
+            Iterator&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; it = tasks.iterator();
+
+            // Start one task for sure; the rest incrementally
+            futures.add(ecs.submit(it.next()));
+            --ntasks;
+            int active = 1;
+
+            for (;;) {
+                Future&amp;lt;T&amp;gt; f = ecs.poll();
+                if (f == null) {
+                    if (ntasks &amp;gt; 0) {
+                        --ntasks;
+                        futures.add(ecs.submit(it.next()));
+                        ++active;
+                    }
+                    else if (active == 0)
+                        break;
+                    else if (timed) {
+                        f = ecs.poll(nanos, TimeUnit.NANOSECONDS);
+                        if (f == null)
+                            throw new TimeoutException();
+                        long now = System.nanoTime();
+                        nanos -= now - lastTime;
+                        lastTime = now;
+                    }
+                    else
+                        f = ecs.take();
+                }
+                if (f != null) {
+                    --active;
+                    try {
+                        return f.get();
+                    } catch (ExecutionException eex) {
+                        ee = eex;
+                    } catch (RuntimeException rex) {
+                        ee = new ExecutionException(rex);
+                    }
+                }
+            }
+
+            if (ee == null)
+                ee = new ExecutionException();
+            throw ee;
+
+        } finally {
+            for (Future&amp;lt;T&amp;gt; f : futures)
+                f.cancel(true);
+        }
+    }
+
+    public &amp;lt;T&amp;gt; T invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks)
+        throws InterruptedException, ExecutionException {
+        try {
+            return doInvokeAny(tasks, false, 0);
+        } catch (TimeoutException cannotHappen) {
+            assert false;
+            return null;
+        }
+    }
+
+    public &amp;lt;T&amp;gt; T invokeAny(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks,
+                           long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
+        return doInvokeAny(tasks, true, unit.toNanos(timeout));
+    }
+
+    public &amp;lt;T&amp;gt; List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks)
+        throws InterruptedException {
+        if (tasks == null)
+            throw new NullPointerException();
+        List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; futures = new ArrayList&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt;(tasks.size());
+        boolean done = false;
+        try {
+            for (Callable&amp;lt;T&amp;gt; t : tasks) {
+                RunnableFuture&amp;lt;T&amp;gt; f = newTaskFor(t);
+                futures.add(f);
+                execute(f);
+            }
+            for (Future&amp;lt;T&amp;gt; f : futures) {
+                if (!f.isDone()) {
+                    try {
+                        f.get();
+                    } catch (CancellationException ignore) {
+                    } catch (ExecutionException ignore) {
+                    }
+                }
+            }
+            done = true;
+            return futures;
+        } finally {
+            if (!done)
+                for (Future&amp;lt;T&amp;gt; f : futures)
+                    f.cancel(true);
+        }
+    }
+
+    public &amp;lt;T&amp;gt; List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; invokeAll(Collection&amp;lt;? extends Callable&amp;lt;T&amp;gt;&amp;gt; tasks,
+                                         long timeout, TimeUnit unit)
+        throws InterruptedException {
+        if (tasks == null || unit == null)
+            throw new NullPointerException();
+        long nanos = unit.toNanos(timeout);
+        List&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; futures = new ArrayList&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt;(tasks.size());
+        boolean done = false;
+        try {
+            for (Callable&amp;lt;T&amp;gt; t : tasks)
+                futures.add(newTaskFor(t));
+
+            long lastTime = System.nanoTime();
+
+            // Interleave time checks and calls to execute in case
+            // executor doesn't have any/much parallelism.
+            Iterator&amp;lt;Future&amp;lt;T&amp;gt;&amp;gt; it = futures.iterator();
+            while (it.hasNext()) {
+                execute((Runnable)(it.next()));
+                long now = System.nanoTime();
+                nanos -= now - lastTime;
+                lastTime = now;
+                if (nanos &amp;lt;= 0)
+                    return futures;
+            }
+
+            for (Future&amp;lt;T&amp;gt; f : futures) {
+                if (!f.isDone()) {
+                    if (nanos &amp;lt;= 0)
+                        return futures;
+                    try {
+                        f.get(nanos, TimeUnit.NANOSECONDS);
+                    } catch (CancellationException ignore) {
+                    } catch (ExecutionException ignore) {
+                    } catch (TimeoutException toe) {
+                        return futures;
+                    }
+                    long now = System.nanoTime();
+                    nanos -= now - lastTime;
+                    lastTime = now;
+                }
+            }
+            done = true;
+            return futures;
+        } finally {
+            if (!done)
+                for (Future&amp;lt;T&amp;gt; f : futures)
+                    f.cancel(true);
+        }
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;AtomicInteger原子操作int&lt;/h2&gt;
+&lt;p&gt;可以用原子方式更新的 int 值。AtomicInteger 可用在应用程序中（如以原子方式增加的计数器），并且不能用于替换 Integer。但是，此类确实扩展了 Number，允许那些处理基于数字类的工具和实用工具进行统一访问。 &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public class AtomicInteger extends Number implements java.io.Serializable {
+
+    // setup to use Unsafe.compareAndSwapInt for updates
+    private static final Unsafe unsafe = Unsafe.getUnsafe();
+    private static final long valueOffset;
+    static {
+      try {
+        valueOffset = unsafe.objectFieldOffset
+            (AtomicInteger.class.getDeclaredField(&quot;value&quot;));
+      } catch (Exception ex) { throw new Error(ex); }
+    }
+
+    private volatile int value;
+    public AtomicInteger(int initialValue) {
+        value = initialValue;
+    }
+    public AtomicInteger() {
+    }
+    public final int get() {
+        return value;
+    }
+    public final void set(int newValue) {
+        value = newValue;
+    }
+
+    /**
+     * 最后设置为给定值
+     */
+    public final void lazySet(int newValue) {
+        unsafe.putOrderedInt(this, valueOffset, newValue);
+    }
+
+    /**
+     * 以原子方式设置为给定值，并返回旧值。
+     */
+    public final int getAndSet(int newValue) {
+        for (;;) {
+            int current = get();
+            if (compareAndSet(current, newValue))
+                return current;
+        }
+    }
+
+    /**
+     * 如果当前值 == 预期值，则以原子方式将该值设置为给定的更新值
+     */
+    public final boolean compareAndSet(int expect, int update) {
+        return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+    }
+
+    /**
+     * 如果当前值 == 预期值，则以原子方式将该设置为给定的更新值。
+     */
+    public final boolean weakCompareAndSet(int expect, int update) {
+        return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+    }
+
+    /**
+     * 以原子方式将当前值加 1。
+     */
+    public final int getAndIncrement() {
+        for (;;) {
+            int current = get();
+            int next = current + 1;
+            if (compareAndSet(current, next))
+                return current;
+        }
+    }
+
+    /**
+     * 以原子方式将当前值减 1。
+     */
+    public final int getAndDecrement() {
+        for (;;) {
+            int current = get();
+            int next = current - 1;
+            if (compareAndSet(current, next))
+                return current;
+        }
+    }
+
+    /**
+     * 以原子方式将给定值与当前值相加
+     */
+    public final int getAndAdd(int delta) {
+        for (;;) {
+            int current = get();
+            int next = current + delta;
+            if (compareAndSet(current, next))
+                return current;
+        }
+    }
+
+    /**
+     * 以原子方式将当前值加 1。
+     */
+    public final int incrementAndGet() {
+        for (;;) {
+            int current = get();
+            int next = current + 1;
+            if (compareAndSet(current, next))
+                return next;
+        }
+    }
+
+    /**
+     * 以原子方式将当前值减 1。
+     */
+    public final int decrementAndGet() {
+        for (;;) {
+            int current = get();
+            int next = current - 1;
+            if (compareAndSet(current, next))
+                return next;
+        }
+    }
+
+    /**
+     * 以原子方式将给定值与当前值相加。
+     */
+    public final int addAndGet(int delta) {
+        for (;;) {
+            int current = get();
+            int next = current + delta;
+            if (compareAndSet(current, next))
+                return next;
+        }
+    }
+
+    public String toString() {
+        return Integer.toString(get());
+    }
+
+    public int intValue() {
+        return get();
+    }
+
+    public long longValue() {
+        return (long)get();
+    }
+
+    public float floatValue() {
+        return (float)get();
+    }
+
+    public double doubleValue() {
+        return (double)get();
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ThreadPoolExecutor&lt;/h2&gt;
+&lt;p&gt;一个 ExecutorService，它使用可能的几个池线程之一执行每个提交的任务，通常使用 Executors 工厂方法配置。 &lt;/p&gt;
+&lt;p&gt;线程池可以解决两个不同问题：由于减少了每个任务调用的开销，它们通常可以在执行大量异步任务时提供增强的性能，并且还可以提供绑定和管理资源（包括执行任务集时使用的线程）的方法。每个 ThreadPoolExecutor 还维护着一些基本的统计数据，如完成的任务数。 &lt;/p&gt;
+&lt;p&gt;为了便于跨大量上下文使用，此类提供了很多可调整的参数和扩展钩子 (hook)。但是，强烈建议程序员使用较为方便的 Executors 工厂方法 &lt;code&gt;Executors.newCachedThreadPool()&lt;/code&gt;（无界线程池，可以进行自动线程回收）、&lt;code&gt;Executors.newFixedThreadPool(int)&lt;/code&gt;（固定大小线程池）和 &lt;code&gt;Executors.newSingleThreadExecutor()&lt;/code&gt;（单个后台线程），它们均为大多数使用场景预定义了设置。否则，在手动配置和调整此类时，使用以下指导： &lt;/p&gt;
+&lt;h4&gt;核心和最大池大小&lt;/h4&gt;
+&lt;p&gt;ThreadPoolExecutor 将根据 corePoolSize 和 maximumPoolSize 设置的边界自动调整池大小。当新任务在方法 &lt;code&gt;execute(java.lang.Runnable)&lt;/code&gt; 中提交时，如果运行的线程少于 corePoolSize，则创建新线程来处理请求，即使其他辅助线程是空闲的。如果运行的线程多于 corePoolSize 而少于 maximumPoolSize，则仅当队列满时才创建新线程。如果设置的 corePoolSize 和 maximumPoolSize 相同，则创建了固定大小的线程池。如果将 maximumPoolSize 设置为基本的无界值（如 Integer.MAX_VALUE），则允许池适应任意数量的并发任务。在大多数情况下，核心和最大池大小仅基于构造来设置，不过也可以使用 &lt;code&gt;setCorePoolSize(int)&lt;/code&gt; 和 &lt;code&gt;setMaximumPoolSize(int)&lt;/code&gt; 进行动态更改。 &lt;/p&gt;
+&lt;h4&gt;按需构造&lt;/h4&gt;
+&lt;p&gt;默认情况下，即使核心线程最初只是在新任务到达时才创建和启动的，也可以使用方法 &lt;code&gt;prestartCoreThread()&lt;/code&gt; 或 &lt;code&gt;prestartAllCoreThreads()&lt;/code&gt; 对其进行动态重写。如果构造带有非空队列的池，则可能希望预先启动线程。 &lt;/p&gt;
+&lt;h4&gt;创建新线程&lt;/h4&gt;
+&lt;p&gt;使用 ThreadFactory 创建新线程。如果没有另外说明，则在同一个 ThreadGroup 中一律使用 &lt;code&gt;Executors.defaultThreadFactory()&lt;/code&gt; 创建线程，并且这些线程具有相同的 NORM_PRIORITY 优先级和非守护进程状态。通过提供不同的 ThreadFactory，可以改变线程的名称、线程组、优先级、守护进程状态，等等。如果从 newThread 返回 null 时 ThreadFactory 未能创建线程，则执行程序将继续运行，但不能执行任何任务。 &lt;/p&gt;
+&lt;h4&gt;保持活动时间&lt;/h4&gt;
+&lt;p&gt;如果池中当前有多于 corePoolSize 的线程，则这些多出的线程在空闲时间超过 keepAliveTime 时将会终止。这提供了当池处于非活动状态时减少资源消耗的方法。如果池后来变得更为活动，则可以创建新的线程。也可以使用方法 &lt;code&gt;setKeepAliveTime(long, java.util.concurrent.TimeUnit)&lt;/code&gt; 动态地更改此参数。使用 &lt;code&gt;Long.MAX_VALUE&lt;/code&gt; &lt;code&gt;TimeUnit.NANOSECONDS&lt;/code&gt;的值在关闭前有效地从以前的终止状态禁用空闲线程。默认情况下，保持活动策略只在有多于 corePoolSizeThreads 的线程时应用。但是只要 keepAliveTime 值非 0，&lt;code&gt;allowCoreThreadTimeOut(boolean)&lt;/code&gt; 方法也可将此超时策略应用于核心线程。 &lt;/p&gt;
+&lt;h4&gt;排队&lt;/h4&gt;
+&lt;p&gt;所有 BlockingQueue 都可用于传输和保持提交的任务。可以使用此队列与池大小进行交互： &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果运行的线程少于 corePoolSize，则 Executor 始终首选添加新的线程，而不进行排队。 &lt;/li&gt;
+&lt;li&gt;如果运行的线程等于或多于 corePoolSize，则 Executor 始终首选将请求加入队列，而不添加新的线程。 &lt;/li&gt;
+&lt;li&gt;如果无法将请求加入队列，则创建新的线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。 &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;排队有三种通用策略： &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;直接提交： 工作队列的默认选项是 SynchronousQueue，它将任务直接提交给线程而不保持它们。在此，如果不存在可用于立即运行任务的线程，则试图把任务加入队列将失败，因此会构造一个新的线程。此策略可以避免在处理可能具有内部依赖性的请求集时出现锁。直接提交通常要求无界 maximumPoolSizes 以避免拒绝新提交的任务。当命令以超过队列所能处理的平均数连续到达时，此策略允许无界线程具有增长的可能性。 &lt;/li&gt;
+&lt;li&gt;无界队列： 使用无界队列（例如，不具有预定义容量的 LinkedBlockingQueue）将导致在所有 corePoolSize 线程都忙时新任务在队列中等待。这样，创建的线程就不会超过 corePoolSize。（因此，maximumPoolSize 的值也就无效了。）当每个任务完全独立于其他任务，即任务执行互不影响时，适合于使用无界队列；例如，在 Web 页服务器中。这种排队可用于处理瞬态突发请求，当命令以超过队列所能处理的平均数连续到达时，此策略允许无界线程具有增长的可能性。 &lt;/li&gt;
+&lt;li&gt;有界队列： 当使用有限的 maximumPoolSizes 时，有界队列（如 ArrayBlockingQueue）有助于防止资源耗尽，但是可能较难调整和控制。队列大小和最大池大小可能需要相互折衷：使用大型队列和小型池可以最大限度地降低 CPU 使用率、操作系统资源和上下文切换开销，但是可能导致人工降低吞吐量。如果任务频繁阻塞（例如，如果它们是 I/O 边界），则系统可能为超过您许可的更多线程安排时间。使用小型队列通常要求较大的池大小，CPU 使用率较高，但是可能遇到不可接受的调度开销，这样也会降低吞吐量。 &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;被拒绝的任务&lt;/h4&gt;
+&lt;p&gt;当 Executor 已经关闭，并且 Executor 将有限边界用于最大线程和工作队列容量，且已经饱和时，在方法 &lt;code&gt;execute(java.lang.Runnable)&lt;/code&gt; 中提交的新任务将被拒绝。在以上两种情况下，execute 方法都将调用其 RejectedExecutionHandler 的 &lt;code&gt;RejectedExecutionHandler.rejectedExecution(java.lang.Runnable, java.util.concurrent.ThreadPoolExecutor)&lt;/code&gt; 方法。下面提供了四种预定义的处理程序策略： &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在默认的 ThreadPoolExecutor.AbortPolicy 中，处理程序遭到拒绝将抛出运行时 RejectedExecutionException。 &lt;/li&gt;
+&lt;li&gt;在 ThreadPoolExecutor.CallerRunsPolicy 中，线程调用运行该任务的 execute 本身。此策略提供简单的反馈控制机制，能够减缓新任务的提交速度。 &lt;/li&gt;
+&lt;li&gt;在 ThreadPoolExecutor.DiscardPolicy 中，不能执行的任务将被删除。 &lt;/li&gt;
+&lt;li&gt;在 ThreadPoolExecutor.DiscardOldestPolicy 中，如果执行程序尚未关闭，则位于工作队列头部的任务将被删除，然后重试执行程序（如果再次失败，则重复此过程）。 &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;定义和使用其他种类的 RejectedExecutionHandler 类也是可能的，但这样做需要非常小心，尤其是当策略仅用于特定容量或排队策略时。 &lt;/p&gt;
+&lt;h4&gt;钩子 (hook) 方法&lt;/h4&gt;
+&lt;p&gt;此类提供 protected 可重写的 beforeExecute(java.lang.Thread, java.lang.Runnable) 和 afterExecute(java.lang.Runnable, java.lang.Throwable) 方法，这两种方法分别在执行每个任务之前和之后调用。它们可用于操纵执行环境；例如，重新初始化 ThreadLocal、搜集统计信息或添加日志条目。此外，还可以重写方法 terminated() 来执行 Executor 完全终止后需要完成的所有特殊处理。 &lt;/p&gt;
+&lt;p&gt;如果钩子 (hook) 或回调方法抛出异常，则内部辅助线程将依次失败并突然终止。 &lt;/p&gt;
+&lt;h4&gt;队列维护&lt;/h4&gt;
+&lt;p&gt;方法 getQueue() 允许出于监控和调试目的而访问工作队列。强烈反对出于其他任何目的而使用此方法。    &lt;code&gt;remove(java.lang.Runnable)&lt;/code&gt; 和 &lt;code&gt;purge()&lt;/code&gt; 这两种方法可用于在取消大量已排队任务时帮助进行存储回收。 &lt;/p&gt;
+&lt;h4&gt;终止&lt;/h4&gt;
+&lt;p&gt;程序 AND 不再引用的池没有剩余线程会自动 shutdown。如果希望确保回收取消引用的池（即使用户忘记调用 shutdown()），则必须安排未使用的线程最终终止：设置适当保持活动时间，使用 0 核心线程的下边界和/或设置   &lt;code&gt;allowCoreThreadTimeOut(boolean)&lt;/code&gt;   &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   // 1110 0000 0000 0000 0000 0000 0000 0000 | -536870912
+    private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+    // Integer.SIZE=32  | COUNT_BITS = 29 | 11101
+    private static final int COUNT_BITS = Integer.SIZE - 3;
+    // 1 &amp;lt;&amp;lt; COUNT_BITS = 10 0000 0000 0000 0000 0000 0000 0000 | 536870912 
+    // CAPACITY=1 1111  1111 1111 1111 1111 1111 1111=536870911 
+    private static final int CAPACITY   = (1 &amp;lt;&amp;lt; COUNT_BITS) - 1;
+
+    // runState is stored in the high-order bits
+    // -1 = 1111 1111 1111 1111 1111 1111 1111 1111
+    private static final int RUNNING    = -1 &amp;lt;&amp;lt; COUNT_BITS;//11100000000000000000000000000000|-536870912
+    private static final int SHUTDOWN   =  0 &amp;lt;&amp;lt; COUNT_BITS;//0
+    private static final int STOP       =  1 &amp;lt;&amp;lt; COUNT_BITS;//100000000000000000000000000000 | 536870912
+    private static final int TIDYING    =  2 &amp;lt;&amp;lt; COUNT_BITS;//1000000000000000000000000000000| 1073741824
+    private static final int TERMINATED =  3 &amp;lt;&amp;lt; COUNT_BITS;//1100000000000000000000000000000| 1610612736
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    // Packing and unpacking ctl 打包和拆包CTL
+    //c &amp;amp; 1110 0000 0000 0000 0000 0000 0000 0000 |取高3位 | &amp;amp;与遇0为0，同1为1
+    private static int runStateOf(int c)     { return c &amp;amp; ~CAPACITY; }
+    // c &amp;amp; 1 1111 1111 1111 1111 1111 1111 1111 | 取地位 |
+    private static int workerCountOf(int c)  { return c &amp;amp; CAPACITY; }
+    private static int ctlOf(int rs, int wc) { return rs | wc; }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    /*
+     * Bit field accessors that don't require unpacking ctl.
+     * These depend on the bit layout and on workerCount being never negative.
+     * 位字段访问不需要拆包CTL。
+     * 这取决于位布局和workerCount是永远不会为负。
+     */
+
+    private static boolean runStateLessThan(int c, int s) {
+        return c &amp;lt; s;
+    }
+
+    private static boolean runStateAtLeast(int c, int s) {
+        return c &amp;gt;= s;
+    }
+
+    private static boolean isRunning(int c) {
+        return c &amp;lt; SHUTDOWN;
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;     /**
+     * Attempt to CAS-increment the workerCount field of ctl.
+     * 预期值加1
+     */
+    private boolean compareAndIncrementWorkerCount(int expect) {
+        return ctl.compareAndSet(expect, expect + 1);
+    }
+
+    /**
+     * Attempt to CAS-decrement the workerCount field of ctl.
+     * 预期值减1
+     */
+    private boolean compareAndDecrementWorkerCount(int expect) {
+        return ctl.compareAndSet(expect, expect - 1);
+    }
+
+    /**
+     * Decrements the workerCount field of ctl. This is called only on
+     * abrupt termination of a thread (see processWorkerExit). Other
+     * decrements are performed within getTask.
+     */
+    private void decrementWorkerCount() {
+        do {} while (! compareAndDecrementWorkerCount(ctl.get()));
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;private final BlockingQueue&amp;lt;Runnable&amp;gt; workQueue;
+private final ReentrantLock mainLock = new ReentrantLock();
+private final HashSet&amp;lt;Worker&amp;gt; workers = new HashSet&amp;lt;Worker&amp;gt;();
+private final Condition termination = mainLock.newCondition();
+private int largestPoolSize;
+private long completedTaskCount;
+private volatile ThreadFactory threadFactory;
+private volatile RejectedExecutionHandler handler;
+private volatile long keepAliveTime;
+private volatile boolean allowCoreThreadTimeOut;
+private volatile int corePoolSize;
+private volatile int maximumPoolSize;
+private static final RejectedExecutionHandler defaultHandler = new AbortPolicy();
+private static final RuntimePermission shutdownPerm =  new RuntimePermission(&quot;modifyThread&quot;);&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;
+private final class Worker extends AbstractQueuedSynchronizer implements Runnable {
+        private static final long serialVersionUID = 6138294804551838833L;
+
+        /** Thread this worker is running in.  Null if factory fails. */
+        final Thread thread;
+        /** Initial task to run.  Possibly null. */
+        Runnable firstTask;
+        /** Per-thread task counter */
+        volatile long completedTasks;
+
+        /**
+         * Creates with given first task and thread from ThreadFactory.
+         * @param firstTask the first task (null if none)
+         */
+        Worker(Runnable firstTask) {
+            setState(-1); // inhibit interrupts until runWorker
+            this.firstTask = firstTask;
+            this.thread = getThreadFactory().newThread(this);
+        }
+
+        /** Delegates main run loop to outer runWorker  */
+        public void run() {
+            runWorker(this);
+        }
+
+        // Lock methods
+        //
+        // The value 0 represents the unlocked state.
+        // The value 1 represents the locked state.
+
+        protected boolean isHeldExclusively() {
+            return getState() != 0;
+        }
+
+        protected boolean tryAcquire(int unused) {
+            if (compareAndSetState(0, 1)) {
+                setExclusiveOwnerThread(Thread.currentThread());
+                return true;
+            }
+            return false;
+        }
+
+        protected boolean tryRelease(int unused) {
+            setExclusiveOwnerThread(null);
+            setState(0);
+            return true;
+        }
+
+        public void lock() {
+            acquire(1);
+        }
+
+        public boolean tryLock() {
+            return tryAcquire(1);
+        }
+
+        public void unlock() {
+            release(1);
+        }
+
+        public boolean isLocked() {
+            return isHeldExclusively();
+        }
+
+        void interruptIfStarted() {
+            Thread t;
+            if (getState() &amp;gt;= 0 &amp;amp;&amp;amp; (t = thread) != null &amp;amp;&amp;amp; !t.isInterrupted()) {
+                try {
+                    t.interrupt();
+                } catch (SecurityException ignore) {
+                }
+            }
+        }
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ThreadPoolExecutor构造函数&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;corePoolSize：&lt;/code&gt;核心池的大小，这个参数跟后面讲述的线程池的实现原理有非常大的关系。在创建了线程池后，默认情况下，线程池中并没有任何线程，而是等待有任务到来才创建线程去执行任务，除非调用了prestartAllCoreThreads()或者prestartCoreThread()方法，从这2个方法的名字就可以看出，是预创建线程的意思，即在没有任务到来之前就创建corePoolSize个线程或者一个线程。默认情况下，在创建了线程池后，线程池中的线程数为0，当有任务来之后，就会创建一个线程去执行任务，当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到缓存队列当中；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;maximumPoolSize：&lt;/code&gt;线程池最大线程数，这个参数也是一个非常重要的参数，它表示在线程池中最多能创建多少个线程；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;keepAliveTime：&lt;/code&gt;表示线程没有任务执行时最多保持多久时间会终止。默认情况下，只有当线程池中的线程数大于corePoolSize时，keepAliveTime才会起作用，直到线程池中的线程数不大于corePoolSize，即当线程池中的线程数大于corePoolSize时，如果一个线程空闲的时间达到keepAliveTime，则会终止，直到线程池中的线程数不超过corePoolSize。但是如果调用了allowCoreThreadTimeOut(boolean)方法，在线程池中的线程数不大于corePoolSize时，keepAliveTime参数也会起作用，直到线程池中的线程数为0；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;unit：&lt;/code&gt;参数keepAliveTime的时间单位，有7种取值，在TimeUnit类中有7种静态属性：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;TimeUnit.DAYS;               //天
+TimeUnit.HOURS;             //小时
+TimeUnit.MINUTES;           //分钟
+TimeUnit.SECONDS;           //秒
+TimeUnit.MILLISECONDS;      //毫秒
+TimeUnit.MICROSECONDS;      //微妙
+TimeUnit.NANOSECONDS;       //纳秒&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;workQueue：&lt;/code&gt;一个阻塞队列，用来存储等待执行的任务，这个参数的选择也很重要，会对线程池的运行过程产生重大影响，一般来说，这里的阻塞队列有以下几种选择：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ArrayBlockingQueue;
+LinkedBlockingQueue;
+SynchronousQueue;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ArrayBlockingQueue和PriorityBlockingQueue使用较少，一般使用LinkedBlockingQueue和Synchronous。线程池的排队策略与BlockingQueue有关。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;threadFactory：&lt;/code&gt;线程工厂，主要用来创建线程；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;handler：&lt;/code&gt;表示当拒绝处理任务时的策略，有以下四种取值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ThreadPoolExecutor.AbortPolicy:丢弃任务并抛出RejectedExecutionException异常。 
+ThreadPoolExecutor.DiscardPolicy：也是丢弃任务，但是不抛出异常。 
+ThreadPoolExecutor.DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试执行任务（重复此过程）
+ThreadPoolExecutor.CallerRunsPolicy：由调用线程处理该任务 &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    /**
+     * Creates a new {@code ThreadPoolExecutor} with the given initial
+     * parameters.
+     *
+     * @param corePoolSize the number of threads to keep in the pool, even
+     *        if they are idle, unless {@code allowCoreThreadTimeOut} is set
+     *        线程池中维持的线程数量，即使他们是空闲线程，除非allowCoreThreadTimeOut被设置
+     * @param maximumPoolSize the maximum number of threads to allow in the
+     *        pool 线程池允许存在的最大线程数量
+     * @param keepAliveTime when the number of threads is greater than
+     *        the core, this is the maximum time that excess idle threads
+     *        will wait for new tasks before terminating.
+     *        当线程池当前线程数量超过最大线程数量时，空闲线程等待新任务的最大时间
+     * @param unit the time unit for the {@code keepAliveTime} argument 时间单位参数
+     * @param workQueue the queue to use for holding tasks before they are
+     *        executed.  This queue will hold only the {@code Runnable}
+     *        tasks submitted by the {@code execute} method.
+     * @param threadFactory the factory to use when the executor
+     *        creates a new thread
+     * @param handler the handler to use when execution is blocked
+     *        because the thread bounds and queue capacities are reached
+     * @throws IllegalArgumentException if one of the following holds:&amp;lt;br&amp;gt;
+     *         {@code corePoolSize &amp;lt; 0}&amp;lt;br&amp;gt;
+     *         {@code keepAliveTime &amp;lt; 0}&amp;lt;br&amp;gt;
+     *         {@code maximumPoolSize &amp;lt;= 0}&amp;lt;br&amp;gt;
+     *         {@code maximumPoolSize &amp;lt; corePoolSize}
+     * @throws NullPointerException if {@code workQueue}
+     *         or {@code threadFactory} or {@code handler} is null
+     */
+    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,
+                              ThreadFactory threadFactory,
+                              RejectedExecutionHandler handler) {
+        if (corePoolSize &amp;lt; 0 ||
+            maximumPoolSize &amp;lt;= 0 ||
+            maximumPoolSize &amp;lt; corePoolSize ||
+            keepAliveTime &amp;lt; 0)
+            throw new IllegalArgumentException();
+        if (workQueue == null || threadFactory == null || handler == null)
+            throw new NullPointerException();
+        this.corePoolSize = corePoolSize;
+        this.maximumPoolSize = maximumPoolSize;
+        this.workQueue = workQueue;
+        this.keepAliveTime = unit.toNanos(keepAliveTime);
+        this.threadFactory = threadFactory;
+        this.handler = handler;
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue&amp;lt;Runnable&amp;gt; workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+             Executors.defaultThreadFactory(), defaultHandler);
+    }
+
+    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,
+                              ThreadFactory threadFactory) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+             threadFactory, defaultHandler);
+    }
+
+    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,
+                              RejectedExecutionHandler handler) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+             Executors.defaultThreadFactory(), handler);
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ThreadPoolExecutor线程池状态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt; RUNNING &lt;/strong&gt;  运行状态：-1&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt; SHUTDOWN &lt;/strong&gt; 停工状态：0&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt; STOP &lt;/strong&gt;     停止状态：1&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt; TIDYING &lt;/strong&gt;  整理状态：2&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt; TERMINATED &lt;/strong&gt; 结束状态：3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;状态描述&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;RUNNING:&lt;/code&gt;Accept new tasks and process queued tasks &lt;/p&gt;
+&lt;p&gt;接受新的任务和进程排队任务&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SHUTDOWN:&lt;/code&gt;Don't accept new tasks, but process queued tasks &lt;/p&gt;
+&lt;p&gt;不要接受新的任务，但进程排队任务&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;STOP:&lt;/code&gt;Don't accept new tasks, don't process queued tasks, and interrupt in-progress tasks &lt;/p&gt;
+&lt;p&gt;不要接受新的任务，不处理排队任务，中断正在进行的任务&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;TIDYING:&lt;/code&gt;All tasks have terminated, workerCount is zero, the thread transitioning to state TIDYING will run the terminated() hook method &lt;/p&gt;
+&lt;p&gt;所有任务已终止，workerCount为零，线程转换到TIDYING（整理）状态将运行terminated()挂钩方法&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;TERMINATED:&lt;/code&gt;terminated() has completed
+terminated（）方法已完成&lt;/p&gt;
+&lt;h4&gt;状态转换&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;RUNNING -&amp;gt; SHUTDOWN&lt;/code&gt; 调用shutdown(), 也许隐含在finalize（）&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;(RUNNING or SHUTDOWN) -&amp;gt; STOP&lt;/code&gt; 调用shutdownNow()&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SHUTDOWN -&amp;gt; TIDYING&lt;/code&gt; When both queue and pool are empty&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;STOP -&amp;gt; TIDYING&lt;/code&gt; When pool is empty&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;TIDYING -&amp;gt; TERMINATED&lt;/code&gt; When the terminated() hook method has completed&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    // runState is stored in the high-order bits
+    private static final int RUNNING    = -1 &amp;lt;&amp;lt; COUNT_BITS;
+    private static final int SHUTDOWN   =  0 &amp;lt;&amp;lt; COUNT_BITS;
+    private static final int STOP       =  1 &amp;lt;&amp;lt; COUNT_BITS;
+    private static final int TIDYING    =  2 &amp;lt;&amp;lt; COUNT_BITS;
+    private static final int TERMINATED =  3 &amp;lt;&amp;lt; COUNT_BITS;&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;当创建线程池后，初始时，线程池处于RUNNING状态；&lt;/li&gt;
+&lt;li&gt;如果调用了shutdown()方法，则线程池处于SHUTDOWN状态，此时线程池不能够接受新的任务，它会等待所有任务执行完毕；&lt;/li&gt;
+&lt;li&gt;如果调用了shutdownNow()方法，则线程池处于STOP状态，此时线程池不能接受新的任务，并且会去尝试终止正在执行的任务；&lt;/li&gt;
+&lt;li&gt;当线程池处于SHUTDOWN或STOP状态，并且所有工作线程已经销毁，任务缓存队列已经清空或执行结束后，线程池被设置为TERMINATED状态。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;execute提交任务&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;void execute(Runnable command)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;执行给定的任务，不会立即执行&lt;/p&gt;
+&lt;p&gt;如果少于corePoolSize线程正在运行，尝试启动一个新的线程并使用给定的任务作为他的第一个任务。
+调用addWorker呼叫原子检查runState和workerCount，以防止误报警（将当它不能添加线程，返回false）&lt;/p&gt;
+&lt;p&gt;如果任务被成功的添加到任务队列，然后我们任需要双重检测是否我们可以添加线程（因为上次检测存在的线程可能会死去）或者线程池在我们进入该方法时线程池已经关闭。因此我们重新检测状态，并在必要时回滚如果停止或启动一个新的线程如果有没有入队。&lt;/p&gt;
+&lt;p&gt;如果我们不能排队的任务，那么我们尝试添加一个新的线程。如果失败，我们知道我们正在关闭或饱和，所以拒绝的任务。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+        int c = ctl.get();//初始值为0
+        //workerCountOf(0) = 0
+        //如果当前线程数量小于corePoolSize，创建线程
+        if (workerCountOf(c) &amp;lt; corePoolSize) {
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+        if (isRunning(c) &amp;amp;&amp;amp; workQueue.offer(command)) {
+            int recheck = ctl.get();
+            if (! isRunning(recheck) &amp;amp;&amp;amp; remove(command))
+                reject(command);
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+        else if (!addWorker(command, false))
+            reject(command);
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;workerCountOf&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;// c &amp;amp; 0001 1111 1111 1111 1111 1111 1111 1111 | 遇0为0
+private static int workerCountOf(int c)  { return c &amp;amp; CAPACITY; }&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;addWorker&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;firstTask&lt;/code&gt; the task the new thread should run first (or null if none). Workers are created with an initial first task (in method execute()) to bypass queuing when there are fewer than corePoolSize threads (in which case we always start one), or when the queue is full (in which case we must bypass queue).  Initially idle threads are usually created via prestartCoreThread or to replace other dying workers.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;core&lt;/code&gt; if true use corePoolSize as bound, else&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;retry:&lt;/code&gt;标志符 指出下面语句从哪里开始执行 你代码里面有continue retry; 也就是说下面从 retry: 这里继续执行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    private boolean addWorker(Runnable firstTask, boolean core) {
+        retry:
+        for (;;) { //死循环
+            int c = ctl.get();
+            int rs = runStateOf(c);
+            //获取当前线程池的状态，如果是STOP，TIDYING,TERMINATED状态的话，则会返回false，
+            //如果现在状态是SHUTDOWN，但是firstTask不为空或者workQueue为空的话，那么直接返回false。
+            // Check if queue empty only if necessary.
+            if (rs &amp;gt;= SHUTDOWN &amp;amp;&amp;amp; 
+                ! (rs == SHUTDOWN &amp;amp;&amp;amp; firstTask == null &amp;amp;&amp;amp; ! workQueue.isEmpty()))
+                return false;
+            //通过自旋的方式，判断要添加的Worker是否是corePool，
+            //如果是的话，那么则判断当前的workerCount是否大于corePoolsize，否则则判断是否大于maximumPoolSize，
+            //如果满足的话，说明workerCount超出了线程池大小，直接返回false。
+            //如果小于的话，那么判断是否成功将WorkerCount通过CAS操作增加1，
+            //如果增加成功的话。则进行到第3步，否则则判断当前线程池的状态，
+            //如果现在获取到的状态与进入自旋的状态不一致的话，那么则通过continue retry重新进行状态的判断
+            for (;;) {
+                int wc = workerCountOf(c);//当前线程数量
+                if (wc &amp;gt;= CAPACITY ||
+                    wc &amp;gt;= (core ? corePoolSize : maximumPoolSize))
+                    return false;
+                if (compareAndIncrementWorkerCount(c))//线程数加1
+                    break retry;
+                c = ctl.get();  // Re-read ctl
+                if (runStateOf(c) != rs)
+                    continue retry;
+                // else CAS failed due to workerCount change; retry inner loop
+            }
+        }
+        //如果满足了的话，那么则创建一个新的Worker对象，
+        //然后获取线程池的重入锁后，判断当前线程池的状态，
+        //如果当前线程池状态为STOP,TIDYING,TERMINATED的话，
+        //那么调用decrementWorkerCount将workerCount减一，
+        //然后调用tryTerminate停止线程池，并且返回false。
+        boolean workerStarted = false;
+        boolean workerAdded = false;
+        Worker w = null;
+        try {
+            final ReentrantLock mainLock = this.mainLock;
+            w = new Worker(firstTask);
+            final Thread t = w.thread;
+            if (t != null) {
+                mainLock.lock();
+                try {
+                    // Recheck while holding lock.
+                    // Back out on ThreadFactory failure or if
+                    // shut down before lock acquired.
+                    int c = ctl.get();
+                    int rs = runStateOf(c);
+
+                    if (rs &amp;lt; SHUTDOWN ||
+                        (rs == SHUTDOWN &amp;amp;&amp;amp; firstTask == null)) {
+                        if (t.isAlive()) // precheck that t is startable
+                            throw new IllegalThreadStateException();
+                      //如果状态满足的话，那么则在workers中将新创建的worker添加，
+                     //并且重新计算largestPoolSize，然后启动Worker中的线程开始执行任务。
+                        workers.add(w);
+                        int s = workers.size();
+                        if (s &amp;gt; largestPoolSize)
+                            largestPoolSize = s;
+                        workerAdded = true;
+                    }
+                } finally {
+                    mainLock.unlock();
+                }
+                if (workerAdded) {
+                    t.start();
+                    workerStarted = true;
+                }
+            }
+        } finally {
+            if (! workerStarted)
+                addWorkerFailed(w);
+        }
+        return workerStarted;
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    private void addWorkerFailed(Worker w) {
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            if (w != null)
+                workers.remove(w);
+            decrementWorkerCount();
+            tryTerminate();
+        } finally {
+            mainLock.unlock();
+        }
+    }&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-13 14:11:31</pubDate>
+            <link>//blog/java-thread-pool.html</link>
+            <guid isPermaLink="true">//blog/java-thread-pool.html</guid>
+                                               <category>Java</category>
+                                    </item>
+                <item>
+            <title>CentOS6 alias别名</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 alias别名
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 alias别名 查看命令别名：alias  设置命令别名：alias 别名='命令' 取消命令别名：unalias 别名
+--&gt;
+&lt;pre&gt;&lt;code&gt;查看命令别名：alias
+设置命令别名：alias 别名='命令'
+取消命令别名：unalias 别名&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;查看别名&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;alias&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;设置别名&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;alias name='command'
+
+alias ll='ls --time-style &quot;+%Y-%m-%d %H:%M:%S&quot; -lht'&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;取消别名&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;unalias name
+
+unalias ll&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;设置全局别名&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;sudo vi /etc/bash.bashrc
+source /etc/bash.bashrc
+sudo vi/etc/bashrc
+source /etc/bashrc&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;默认别名&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;alias cp='cp -i'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias l.='ls -d .* --color=auto'
+alias ll='ls -l --color=auto'
+alias la='ls -la --color=auto'
+alias lh='ls -lah --color=auto'
+alias ls='ls --color=auto'
+alias mv='mv -i'
+alias rm='rm -i'
+alias vi='vim'
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+# 自定义的别名
+alias datetime='date +&quot;%Y-%m-%d %H:%M:%S&quot;'
+alias ll='ls --time-style &quot;+%Y-%m-%d %H:%M:%S&quot; -lht --color=auto'&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-alias.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-alias.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 CentOS修改ip</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 CentOS修改ip
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 CentOS修改ip
+--&gt;
+&lt;h2&gt;临时修改（重启失效）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ifconfig eth0 192.168.0.105&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;后面接IP地址， 网络掩码和 网关，如果不设置，就使用默认的掩码&lt;/p&gt;
+&lt;h2&gt;永久修改&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;vi /etc/sysconfig/network-scripts/ifcfg-eth0 &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;DEVICE=&quot;eth0&quot;
+BOOTPROTO=&quot;static&quot;
+BROADCAST=&quot;192.168.0.255&quot;
+DNS1=&quot;192.168.0.1&quot;
+GATEWAY=&quot;192.168.0.1&quot;
+HWADDR=&quot;00:0C:29:71:EC:09&quot;
+IPADDR=&quot;192.168.0.105&quot;
+IPV6INIT=&quot;yes&quot;
+NETMAST=&quot;255.255.255.0&quot;
+NM_CONTROLLED=&quot;yes&quot;
+ONBOOT=&quot;yes&quot;
+TYPE=&quot;Ethernet&quot;
+UUID=&quot;bb249954-ad15-468e-9604-752ce43d641b&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;DEVICE=eth0                     网卡对应的设备别名，如ifcfg-eth0第一块网卡 
+BOOTPROTO=static                网卡获得ip地址的方式，static（静态 ip地址）
+                                                     dhcp（通过dhcp协议获取ip）
+                                                     bootip通过bootp协议获得的ip地址 
+BROADCAST=192.168.0.255         子网广播地址 
+HWADDR=00:50:56:8E:47:EE        网卡物理地址 
+IPADDR=192.168.0.105            网卡IP地址
+IPV6INIT=no                     是否启用IPV6 IPV6_AUTOCONF=no 
+NETMASK=255.255.255.0           网卡对应网络掩码 
+NETWORK=192.168.1.0             网卡对应的网络地址 
+ONBOOT=yes                      系统启动时是否设置此网络接口，设置为yes时，系统启动时激活此设备。默认设置为yes&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;重启网络服务&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;service network restart 
+# 或
+/etc/init.d/network restart&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-ip.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-ip.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 修改环境变量</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 修改环境变量
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 修改环境变量
+--&gt;
+&lt;h2&gt;修改系统环境变量&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;vi /etc/profile&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;export JAVA_HOME=/opt/dev/jdk/jdk1.7.0_67
+export PATH=$PATH:$JAVA_HOME/bin&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;修改用户环境变量&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;vi /root/.bash_profile
+vi /home/user/.bash_profile
+vi ~/.bash_profile&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;export JAVA_HOME=/opt/dev/jdk/jdk1.7.0_67
+export PATH=$PATH:$JAVA_HOME/bin&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-env.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-env.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 查看端口占用</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 查看端口占用
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 查看端口占用
+--&gt;
+&lt;h2&gt;shell命令&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;    lsof -i tcp:80
+    netstat -ntlp
+    netstat -nlp | grep port
+    netstat -anp|grep port&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:40</pubDate>
+            <link>//blog/linux-centos6-port.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-port.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 修改hosts和hostname</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 修改hosts和hostname
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 修改hosts和hostname
+--&gt;
+&lt;h2&gt;修改hostname&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;cat /etc/sysconfig/network
+vi /etc/sysconfig/network&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;NETWORKING=yes
+HOSTNAME=wanggang&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;修改hosts&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;cat /etc/hosts
+vi /etc/hosts&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;127.0.0.1 localhost
+
+127.0.0.1 wanggang
+192.168.0.100 window.wngn.zzia.com
+127.0.0.1 linux.wngn.zzia.com
+127.0.0.1 server
+127.0.0.1 wngn.com
+127.0.0.1 wngn.php.com
+
+127.0.0.1 wngn.test.com
+127.0.0.1 php.wngn.com
+127.0.0.1 test.wngn.com
+127.0.0.1 book.wngn.com
+127.0.0.1 resource.wngn.com
+127.0.0.1 sources.wngn.com
+127.0.0.1 user.wngn.com
+127.0.0.1 blog.wngn.com
+127.0.0.1 crud.wngn.com
+
+127.0.0.1 www.php.com
+127.0.0.1 test.php.com
+127.0.0.1 test.lua.com
+127.0.0.1 user.lua.com
+127.0.0.1 crud.lua.com
+127.0.0.1 blog.lua.com
+127.0.0.1 www.lua.com
+127.0.0.1 echo.lua.com
+
+127.0.0.1 www.blog.com
+127.0.0.1 conf.lua.com
+127.0.0.1 user.lua.com
+&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-host.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-host.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 sudo权限</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 sudo权限
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 sudo权限
+--&gt;
+&lt;h2&gt;linux给用户添加sudo权限&lt;/h2&gt;
+&lt;p&gt;有时候，linux下面运行sudo命令，会提示类似： &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;xxxis not in the sudoers file.  This incident will be reported.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这里，xxx是用户名称，然后导致无法执行sudo命令，这时候，如下解决：
+进入超级用户模式。也就是输入&amp;quot;su -&amp;quot;,系统会让你输入超级用户密码，输入密码后就进入了超级用户模式。（当然，你也可以直接用root用）
+添加文件的写权限。也就是输入命令&amp;quot;chmod u+w /etc/sudoers&amp;quot;。
+编辑/etc/sudoers文件。也就是输入命令&amp;quot;vim /etc/sudoers&amp;quot;,进入编辑模式，找到这一 行：&amp;quot;root ALL=(ALL) ALL&amp;quot;在起下面添加&amp;quot;xxx ALL=(ALL) ALL&amp;quot;(这里的xxx是你的用户名)，然后保存退出。
+撤销文件的写权限。也就是输入命令&amp;quot;chmod u-w /etc/sudoers&amp;quot;。
+然后就行了。&lt;/p&gt;
+&lt;h2&gt;执行的shell命令&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;ll /etc/sudoers
+sudo chmod u+w /etc/sudoers
+sudo vi /etc/sudoers
+    root ALL=(ALL) ALL
+    user ALL=(ALL) ALL
+sudo chmod u-w /etc/sudoers
+
+# 如果sudo时不验证密码则使用下面配置：
+wang ALL=(ALL) NOPASSWD: ALL
+work ALL=(ALL) NOPASSWD: ALL&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:40</pubDate>
+            <link>//blog/linux-centos6-sudo.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-sudo.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 inittab启动方式</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 inittab启动方式
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 CentOS设置默认启动命令行(不启动图形界面)
+--&gt;
+&lt;p&gt;CentOS设置默认启动命令行(不启动图形界面),在centOS6 中的修改方法如下:&lt;/p&gt;
+&lt;p&gt;1.root登陆，免得老是sudo&lt;/p&gt;
+&lt;p&gt;2.打开/etc/inittab 文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   vi /etc/inittab&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;3.在默认的 run level 设置中,可以看到第一行书写如:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;id:5:initdefault&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(默认的 run level 等级为 5,即图形界面)&lt;/p&gt;
+&lt;p&gt;4.将第一行的 5 修改为 3 即可。&lt;/p&gt;
+&lt;p&gt;5.保存文件后重启系统你就可以看见是启动的文本界面了。&lt;/p&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-inittab.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-inittab.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 chkconfig开机启动</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 chkconfig开机启动
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 chkconfig开机启动 chkconfig --list chkconfig --list name
+--&gt;
+&lt;h2&gt;chkconfig查看&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;chkconfig --list
+chkconfig --list name&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;chkconfig添加&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;chkconfig --add
+chkconfig --add name&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;chkconfig删除&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;chkconfig --del
+chkconfig --del name&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;chkconfig设置&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;chkconfig name on/off
+
+#最后 还有个 --level 应该是对 0-6 某些 等级进行单独设置
+chkconfig --level 35 name on/off
+
+chkconfig httpd on
+chkconfig --level 35 httpd on 将3和5 设置成on&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;chkconfig等级&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt; 等级0表示：表示关机
+ 等级1表示：单用户模式
+ 等级2表示：无网络连接的多用户命令行模式
+ 等级3表示：有网络连接的多用户命令行模式
+ 等级4表示：不可用
+ 等级5表示：带图形界面的多用户模式
+ 等级6表示：重新启动&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;chkconfig使用&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;service name start
+service name stop
+service name status
+service name restart&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;vi /etc/rc.d/rc.local
+service vsftpd start
+service iptables stop&lt;/p&gt;
+&lt;p&gt;cd /etc/init.d
+cd /etc/rc.d/init.d&lt;/p&gt;
+&lt;p&gt;vi wang&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    #!/bin/sh
+    #add for chkconfig
+    #chkconfig: 2345 70 30
+    #description: the description of the shell
+    #processname: wang
+    activemq start
+    start-dfs.sh
+    start-yarn.sh
+    rm -rf /opt/dev/oozie/oozie-4.0.0-cdh5.2.0/logs/*
+    rm -rf /opt/dev/oozie/oozie-4.0.0-cdh5.2.0/oozie-server/temp/*
+    oozied.sh start&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;chmod +x wang.sh
+chkconfig --add wang
+
+2345是指脚本的运行级别，即在2345这4种模式下都可以运行，234都是文本界面，5就是图形界面X
+70是指脚本将来的启动顺序号，如果别的程序的启动顺序号比70小（比如44、45），则脚本需要等这些程序都启动以后才启动。
+30是指系统关闭时，脚本的停止顺序号。&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;linux 下shell脚本执行多个命令的方法 
+1.每个命令之间用;隔开
+说明：各命令的执行给果，不会影响其它命令的执行。换句话说，各个命令都会执行，但不保证每个命令都执行成功。
+2.每个命令之间用&amp;amp;&amp;amp;隔开
+说明：若前面的命令执行成功，才会去执行后面的命令。这样可以保证所有的命令执行完毕后，执行过程都是成功的。
+3.每个命令之间用||隔开
+说明：||是或的意思，只有前面的命令执行失败后才去执行下一条命令，直到执行成功一条命令为止&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-chkconfig.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-chkconfig.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 ln软连接</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 ln软连接
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 ln软连接 ln -s sourcepath targetpath
+--&gt;
+&lt;h2&gt;软连接语法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ln -s sourcepath targetpath&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;ant添加软连接&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ln -s /opt/dev/ant/apache-ant-1.9.4/bin/ant /usr/local/bin/ant&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;maven添加软连接&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ln -s /opt/dev/maven/apache-maven-3.3.3/bin/mvn /usr/local/bin/mvn&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;jdk添加软连接&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ln -s /opt/dev/jdk/jdk1.8.0_91/bin/java /usr/local/bin/java
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/javac /usr/local/bin/javac
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/javadoc /usr/local/bin/javadoc
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/jhat /usr/local/bin/jhat
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/jinfo /usr/local/bin/jinfo
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/jmap /usr/local/bin/jmap
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/jps /usr/local/bin/jps
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/jstack /usr/local/bin/jstack
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/jstat /usr/local/bin/jstat
+ln -s /opt/dev/jdk/jdk1.8.0_91/bin/keytool /usr/local/bin/keytool&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;nginx添加软连接&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;php添加软连接&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-ln.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-ln.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 firewall防火墙</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 firewall防火墙
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 firewall防火墙 service iptables start|stop|restart|status
+--&gt;
+&lt;h2&gt;启动防火墙&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;service iptables start
+service iptables restart&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;关闭防火墙&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;service iptables stop&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;查看防火墙&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;service iptables status
+whereis iptables
+sudo iptables -L
+sudo iptables -L -n --line-numbers &lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;设置防火墙&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;iptables -P INPUT DROP
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD DROP
+
+#ssh端口，开启目标端口
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+#http端口
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+#ftp端口
+iptables -A INPUT -p tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp --dport 20 -j ACCEPT
+#svn端口
+iptables -A INPUT -p tcp --dport 9999 -j ACCEPT
+#tomcat端口
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8081 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8086 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8085 -j ACCEPT
+
+iptables -A INPUT -p icmp -j ACCEPT
+iptables -A OUTPUT -p icmp -j ACCEPT
+
+iptables -A INPUT -i lo -p all -j ACCEPT
+iptables -A OUTPUT -o lo -p all -j ACCEPT
+
+iptables -A OUTPUT -p tcp --sport 31337 -j DROP
+iptables -A OUTPUT -p tcp --dport 31337 -j DROP
+
+#对外ping
+iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;端口开放&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 允许8081端口访问
+iptables -A INPUT -p tcp --dport 8081 -j ACCEPT&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;端口转发&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;#8101端口转发到80端口，tomcat用
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8101&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;端口测试&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;ping ip
+telnet ip port
+
+ping 192.168.0.105
+telnet 192.168.0.105 8081&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;允许指定IP登录&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;#允许指定IP登录
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 172.24.94.214 -p tcp --dport 22 -j ACCEPT
+iptables -D INPUT -s 172.24.94.214 -p tcp --dport 22 -j ACCEPT&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:39</pubDate>
+            <link>//blog/linux-centos6-firewall.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-firewall.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 更改时区和时间格式</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 更改时区和时间格式
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 更改时区和时间格式
+--&gt;
+&lt;h2&gt;修改时区&lt;/h2&gt;
+&lt;p&gt;所有的时区相关文件都存放在/usr/share/zoneinfo/下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ls -F /usr/share/zoneinfo/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;根据所需的时区文件做软链接：&lt;/p&gt;
+&lt;h4&gt;中国大陆&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;马来西亚&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;ln -sf /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+# 或者
+rm /etc/localtime
+cp /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;然后顺便修改下/etc/sysconfig/clock中ZONE选项，不改也不影响使用。&lt;/p&gt;
+&lt;p&gt;通过date命令查看是否变化&lt;/p&gt;
+&lt;p&gt;2010年 07月 27日 星期二 02:52:14 MYT&lt;/p&gt;
+&lt;p&gt;表明已经改为马来的时区了。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;date &quot;+%Y-%m-%d %H:%M:%S&quot; &lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;时间格式&lt;/h2&gt;
+&lt;h4&gt;临时更改显示样式，当回话结束后恢复原来的样式&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;export TIME_STYLE='+%Y-%m-%d %H:%M:%S'&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;永久改变显示样式，更改后的效果会保存下来&lt;/h4&gt;
+&lt;p&gt;修改/etc/profile文件，在文件内容末尾加入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;export TIME_STYLE='+%Y-%m-%d %H:%M:%S'&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;执行如下命令，使你修改后的/etc/profile文件配置内容生效&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;source /etc/profile&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:40</pubDate>
+            <link>//blog/linux-centos6-time.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-time.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 yum安装软件</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 yum安装软件
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 yum安装软件
+--&gt;
+&lt;h2&gt;安装gcc&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;yum -y install gcc
+yum -y install gcc-c++
+yum -y install make&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;-- 或者
+yum group install &quot;Development Tools&quot;
+
+-- 或者
+yum install gcc gcc-c++ kernel-devel&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:40</pubDate>
+            <link>//blog/linux-centos6-yum.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-yum.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 修改root管理员密码和用户操作</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 修改root管理员密码和用户操作
+tags: centos
+category: Centos
+status: publish
+summary: 修改root管理员密码和用户操作
+--&gt;
+&lt;h2&gt;修改root密码&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;以root 身份登录(SSH操作)
+输入 passwd 命令 就可以看到提示输入新密码了&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;用户组操作&lt;/h2&gt;
+&lt;h4&gt;添加组&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;groupadd groupname&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;修改组&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;groupmod -n groupname newname&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;删除组&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;groupdel groupname&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;用户操作&lt;/h2&gt;
+&lt;h4&gt;添加用户&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;useradd -g groupname username
+gpasswd -a username groupname 从组中添加用户&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;设置密码&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;passwd username&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;删除用户&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;userdel username
+usermod –g groupname username（强制删除该用户的主目录和主目录下的所有文件和子目录）
+gpasswd -d username groupname 从组中删除用户&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;修改用户&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;usermod -l username newname
+usermod -g groupname username&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;锁定用户&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;passwd username –l，usermod -l username &lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;释放用户&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;passwd username –u，usermod -u username &lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;查看权限&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;id
+id user&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:40</pubDate>
+            <link>//blog/linux-centos6-user.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-user.html</guid>
+                                               <category>Centos</category>
+                                    </item>
+                <item>
+            <title>CentOS6 关机与重启</title>
+            <description>
+            &lt;!--
+author: wngn123
+head: head.png
+date: 2016-09-03
+title: CentOS6 关机与重启
+tags: centos centos6 linux
+category: Centos
+status: publish
+summary: CentOS6 关机与重启
+--&gt;
+&lt;h2&gt;Linux centos重启命令&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;reboot
+shutdown -r now 立刻重启(root用户使用)
+shutdown -r 10 过10分钟自动重启(root用户使用)
+shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
+shutdown -c 取消重启&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Linux centos关机命令&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;halt 立刻关机
+poweroff 立刻关机
+shutdown -h now 立刻关机(root用户使用)
+shutdown -h 10 10分钟后自动关机&lt;/code&gt;&lt;/pre&gt;            </description>
+            <pubDate>2016-09-03 06:47:40</pubDate>
+            <link>//blog/linux-centos6-roboot.html</link>
+            <guid isPermaLink="true">//blog/linux-centos6-roboot.html</guid>
+                                               <category>Centos</category>
+                                    </item>
                 <item>
             <title>git使用</title>
             <description>
